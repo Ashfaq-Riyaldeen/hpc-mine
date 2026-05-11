@@ -1,0 +1,14 @@
+Version,Workers,Sim_Time_s,Pred_Time_s,Total_s,Speedup,Efficiency
+Serial,1,,,,1.00,1.00
+OpenMP,2,,,,,
+OpenMP,4,,,,,
+OpenMP,8,,,,,
+Pthreads,2,,,,,
+Pthreads,4,,,,,
+Pthreads,8,,,,,
+MPI,2,,,,,
+MPI,4,,,,,
+MPI,8,,,,,
+CUDA,GPU,,,,,
+Hybrid_2x4,8,,,,,
+Hybrid_4x2,8,,,,,
