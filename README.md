@@ -70,13 +70,43 @@ gcc -O2 -Wall -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
 
 ---
 
-## 4. Speedup Benchmark (for the report)
+## 4. MPI Distributed Memory Version
+
+### Compile (run once from the folder)
 
 ```bash
-# Compile all three shared-memory versions
-gcc -O2 -Wall -o serial_rec   serial/serial_recommender.c              -lm
-gcc -O2 -Wall -fopenmp -o openmp_rec   openmp/openmp_recommender.c     -lm
-gcc -O2 -Wall -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
+mpicc -O2 -Wall -o mpi_rec mpi/mpi_recommender.c -lm
+```
+
+### Run – process count via `-np` flag to mpirun
+
+```bash
+# Default: 1000 users, 1000 items
+mpirun -np 1  ./mpi_rec
+mpirun -np 2  ./mpi_rec
+mpirun -np 4  ./mpi_rec
+mpirun -np 8  ./mpi_rec
+
+# Custom sizes
+mpirun -np 4  ./mpi_rec 500  500
+mpirun -np 4  ./mpi_rec 2000 1500
+mpirun -np 8  ./mpi_rec 2000 1500
+```
+
+> **Note:** If `mpirun` is not found, try `mpiexec -n 4 ./mpi_rec`.
+> On an HPC cluster you may need to load the MPI module first:
+> `module load openmpi` or `module load mpich`.
+
+---
+
+## 5. Speedup Benchmark (for the report)
+
+```bash
+# Compile all versions
+gcc   -O2 -Wall            -o serial_rec   serial/serial_recommender.c              -lm
+gcc   -O2 -Wall -fopenmp   -o openmp_rec   openmp/openmp_recommender.c              -lm
+gcc   -O2 -Wall            -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
+mpicc -O2 -Wall            -o mpi_rec      mpi/mpi_recommender.c                    -lm
 
 # 1. Serial baseline
 ./serial_rec 1000 1000
@@ -92,6 +122,12 @@ OMP_NUM_THREADS=8  ./openmp_rec 1000 1000
 ./pthreads_rec 1000 1000 2
 ./pthreads_rec 1000 1000 4
 ./pthreads_rec 1000 1000 8
+
+# 4. MPI – vary process count
+mpirun -np 1  ./mpi_rec 1000 1000
+mpirun -np 2  ./mpi_rec 1000 1000
+mpirun -np 4  ./mpi_rec 1000 1000
+mpirun -np 8  ./mpi_rec 1000 1000
 ```
 
 Record the `[Timing] Total (sim+pred)` line from each run.
