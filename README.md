@@ -70,7 +70,49 @@ gcc -O2 -Wall -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
 
 ---
 
-## 4. MPI Distributed Memory Version
+## 4. CUDA GPU Version
+
+### Compile (run once from the folder)
+
+```bash
+nvcc -O2 -arch=sm_75 -o cuda_rec cuda/cuda_recommender.cu -lm
+```
+
+> Replace `sm_75` with the correct compute capability for your GPU:
+> - `sm_60` — Pascal (GTX 10xx)
+> - `sm_70` — Volta (V100)
+> - `sm_75` — Turing (RTX 20xx, GTX 16xx)
+> - `sm_80` — Ampere (A100)
+> - `sm_86` — Ampere (RTX 30xx)
+> - `sm_89` — Ada Lovelace (RTX 40xx)
+>
+> To detect your GPU's compute capability: `nvidia-smi --query-gpu=compute_cap --format=csv`
+
+### Run
+
+```bash
+# Default: 1000 users, 1000 items
+./cuda_rec
+
+# Custom sizes
+./cuda_rec 500  500
+./cuda_rec 2000 1500
+```
+
+### What gets parallelised on the GPU
+
+| Phase | Kernel | Parallelism |
+|-------|--------|-------------|
+| User means | `kernel_user_means` | 1 thread per user |
+| Similarity matrix | `kernel_similarity` | 1 thread per (u,v) pair – 2D grid |
+| Predictions | `kernel_predictions` | 1 thread per (user,item) pair – 2D grid |
+
+Timings are reported with CUDA events (kernel-only) and also include
+host↔device transfer time separately.
+
+---
+
+## 5. MPI Distributed Memory Version  
 
 ### Compile (run once from the folder)
 
@@ -99,7 +141,7 @@ mpirun -np 8  ./mpi_rec 2000 1500
 
 ---
 
-## 5. Speedup Benchmark (for the report)
+## 6. Speedup Benchmark (for the report)
 
 ```bash
 # Compile all versions
@@ -128,6 +170,9 @@ mpirun -np 1  ./mpi_rec 1000 1000
 mpirun -np 2  ./mpi_rec 1000 1000
 mpirun -np 4  ./mpi_rec 1000 1000
 mpirun -np 8  ./mpi_rec 1000 1000
+
+# 5. CUDA – single GPU run
+./cuda_rec 1000 1000
 ```
 
 Record the `[Timing] Total (sim+pred)` line from each run.
