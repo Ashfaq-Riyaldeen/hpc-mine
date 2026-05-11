@@ -141,7 +141,57 @@ mpirun -np 8  ./mpi_rec 2000 1500
 
 ---
 
-## 6. Speedup Benchmark (for the report)
+## 6. Hybrid MPI + OpenMP Version
+
+### Concept
+
+The Hybrid version combines both parallelism models:
+
+- **MPI (coarse grain)** — divides users across processes (separate nodes on a cluster, or separate processes on one machine). Each process has its own private address space.
+- **OpenMP (fine grain)** — threads within each MPI process share the same memory and cooperate over that process's rows.
+
+With **P** MPI processes and **T** OpenMP threads per process, the program uses **P × T** total workers while sending only **P** messages per collective call instead of **P × T** in a flat MPI model.
+
+### Compile (run once from the folder)
+
+```bash
+mpicc -O2 -Wall -fopenmp -o hybrid_rec hybrid/hybrid_recommender.c -lm
+```
+
+### Run – set MPI processes with `-np` and OpenMP threads with `OMP_NUM_THREADS`
+
+```bash
+# 2 MPI processes × 4 OpenMP threads = 8 total workers
+mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec
+
+# 4 MPI processes × 2 OpenMP threads = 8 total workers
+mpirun -np 4 env OMP_NUM_THREADS=2 ./hybrid_rec
+
+# 1 MPI process × 8 threads (pure OpenMP-like behaviour)
+mpirun -np 1 env OMP_NUM_THREADS=8 ./hybrid_rec
+
+# Custom problem size
+mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec 2000 1500
+mpirun -np 4 env OMP_NUM_THREADS=2 ./hybrid_rec 2000 1500
+```
+
+> **Note:** On some systems use `-x OMP_NUM_THREADS=4` (Open MPI) or
+> `-genv OMP_NUM_THREADS 4` (Intel MPI) instead of `env`.
+
+### Two-level parallelism at a glance
+
+| Phase | MPI (between processes) | OpenMP (within a process) |
+|-------|------------------------|--------------------------|
+| Data generation | Each rank runs same RNG | Serial (data is identical) |
+| User means | Each rank computes its rows | `#pragma omp parallel for schedule(static)` |
+| Similarity | Each rank computes its rows | `#pragma omp parallel for schedule(dynamic,4)` |
+| Gather | `MPI_Allgatherv` | — |
+| Predictions | Each rank predicts its users | `#pragma omp parallel` with private buffer |
+| MAE | `MPI_Reduce` | `reduction(+:local_err, local_cnt)` |
+
+---
+
+## 7. Speedup Benchmark (for the report)
 
 ```bash
 # Compile all versions
@@ -149,6 +199,7 @@ gcc   -O2 -Wall            -o serial_rec   serial/serial_recommender.c          
 gcc   -O2 -Wall -fopenmp   -o openmp_rec   openmp/openmp_recommender.c              -lm
 gcc   -O2 -Wall            -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
 mpicc -O2 -Wall            -o mpi_rec      mpi/mpi_recommender.c                    -lm
+mpicc -O2 -Wall -fopenmp   -o hybrid_rec   hybrid/hybrid_recommender.c              -lm
 
 # 1. Serial baseline
 ./serial_rec 1000 1000
@@ -173,6 +224,12 @@ mpirun -np 8  ./mpi_rec 1000 1000
 
 # 5. CUDA – single GPU run
 ./cuda_rec 1000 1000
+
+# 6. Hybrid – vary MPI × OpenMP combinations (same total workers)
+mpirun -np 1 env OMP_NUM_THREADS=8 ./hybrid_rec 1000 1000
+mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec 1000 1000
+mpirun -np 4 env OMP_NUM_THREADS=2 ./hybrid_rec 1000 1000
+mpirun -np 8 env OMP_NUM_THREADS=1 ./hybrid_rec 1000 1000
 ```
 
 Record the `[Timing] Total (sim+pred)` line from each run.
