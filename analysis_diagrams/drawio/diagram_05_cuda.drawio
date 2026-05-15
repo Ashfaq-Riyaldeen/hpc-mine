@@ -1,0 +1,120 @@
+<mxfile host="app.diagrams.net" modified="2025-05-16T00:00:00.000Z" version="21.1.2">
+  <diagram id="page5" name="5 - CUDA">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="CUDA — GPU Massively Parallel Computing" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="650" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="CUDA GRID  (⌈N/16⌉ × ⌈N/16⌉ = 63×63 blocks for N=1000)" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="430" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="Block(0,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="15" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Block(1,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="120" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Block(2,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="225" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="13b" value="…" style="text;html=1;fontSize=14;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="330" y="55" width="70" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Block(0,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="15" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="Block(1,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="120" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Block(2,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="225" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="⋮" style="text;html=1;fontSize=18;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="30" y="155" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="Block(0,62)  …  Block(62,62)     [63×63 = 3969 blocks total]" style="text;html=1;fontSize=9;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="185" width="400" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="&lt;b&gt;One Block  =  16×16 = 256 threads&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="220" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="T(0,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="15" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="T(1,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="65" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="T(2,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="115" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="22b" value="…16" style="text;html=1;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="163" y="252" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="T(0,1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="15" y="280" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="T(1,1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="65" y="280" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="⋮ 16 rows" style="text;html=1;fontSize=9;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="315" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="Thread index formula:&lt;br&gt;u = blockIdx.x × 16 + threadIdx.x&lt;br&gt;v = blockIdx.y × 16 + threadIdx.y" style="text;html=1;fontSize=9;fontColor=#4d007a;fontFamily=Courier New;" vertex="1" parent="10">
+          <mxGeometry x="200" y="270" width="220" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="&lt;b&gt;GPU Memory Hierarchy&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=11;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="490" y="70" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="REGISTERS (per-thread) — &lt;1 cycle&lt;br&gt;Local scalars: num, den_u, den_v, co&lt;br&gt;Top-K arrays: top_sim[20], top_rat[20], top_mu[20]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="100" width="350" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="SHARED MEMORY (per-block) — ~1 cycle, 48KB&lt;br&gt;Not used in this project (embarrassingly parallel)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#7600a3;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="163" width="350" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="L1 / L2 CACHE — hardware managed, transparent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b366cc;strokeColor=#7600a3;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="216" width="350" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="GLOBAL MEMORY (GPU DRAM) — ~300–600 cycles, GBs&lt;br&gt;d_ratings, d_user_mean, d_sim, d_pred live here" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="259" width="350" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="35" value="HOST MEMORY (CPU RAM) — via PCIe ~12 GB/s&lt;br&gt;h_ratings, h_sim_matrix, h_predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="315" width="350" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="36" value="cudaMemcpy HostToDevice" style="text;html=1;fontSize=8;fontColor=#7600a3;align=center;" vertex="1" parent="1">
+          <mxGeometry x="870" y="300" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="36a" value="" style="edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;strokeColor=#7600a3;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="850" y="340" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="355" />
+              <mxPoint x="860" y="283" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="37" value="cudaMemcpy DeviceToHost" style="text;html=1;fontSize=8;fontColor=#7600a3;align=center;" vertex="1" parent="1">
+          <mxGeometry x="870" y="200" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="&lt;b&gt;Three CUDA Kernels&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=11;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="30" y="445" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="&lt;b&gt;kernel_user_means&lt;/b&gt;&lt;br&gt;Grid: 1D  (blocks × 256 threads)&lt;br&gt;1 thread = 1 user row&lt;br&gt;Scans N_ITEMS items per thread&lt;br&gt;Launch: &lt;&lt;&lt;(N+255)/256, 256&gt;&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="475" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="&lt;b&gt;kernel_similarity&lt;/b&gt;&lt;br&gt;Grid: 2D  (⌈N/16⌉ × ⌈N/16⌉ blocks × 16×16)&lt;br&gt;1 thread = 1 (u,v) pair&lt;br&gt;Upper triangle only (if u&gt;v return early)&lt;br&gt;Writes SIM(u,v) AND SIM(v,u) — race-free&lt;br&gt;Launch: dim3 grid(⌈N/16⌉,⌈N/16⌉), dim3 block(16,16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="285" y="475" width="330" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="&lt;b&gt;kernel_predictions&lt;/b&gt;&lt;br&gt;Grid: 2D (users × items)&lt;br&gt;1 thread = 1 (user, item) pair&lt;br&gt;In-register min-heap TOP_K=20&lt;br&gt;(qsort unavailable in device code)&lt;br&gt;Arrays top_sim[20], top_rat[20],&lt;br&gt;top_mu[20] live in registers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="630" y="475" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="&lt;b&gt;Timing with CUDA Events (not clock_gettime)&lt;/b&gt;&lt;br&gt;Kernel launches are ASYNCHRONOUS — CPU returns immediately.&lt;br&gt;cudaEventRecord() inserts a GPU-side timestamp in the command stream.&lt;br&gt;cudaEventSynchronize() waits for GPU to finish before reading elapsed time." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="595" width="550" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="50" value="&lt;b&gt;Compile:&lt;/b&gt;  nvcc -O2 -arch=sm_75 -o cuda_rec cuda/cuda_recommender.cu -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  ./cuda_rec 1000 1000     (requires NVIDIA GPU + nvcc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="765" width="700" height="38" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

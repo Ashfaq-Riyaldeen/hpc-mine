@@ -1,0 +1,119 @@
+<mxfile host="app.diagrams.net" modified="2025-05-16T00:00:00.000Z" version="21.1.2">
+  <diagram id="page4" name="4 - MPI">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="MPI — Distributed-Memory Parallelism with Row Partitioning" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#d7191c;" vertex="1" parent="1">
+          <mxGeometry x="150" y="15" width="750" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="&lt;b&gt;MPI Rank 0  |  Private address space  |  Users 0–249&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="ratings[N_USERS×N_ITEMS]&lt;br&gt;(full private copy,&lt;br&gt;generated from SEED=42)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="user_mean[u] for u=0..249&lt;br&gt;(local slice; filled&lt;br&gt;→ Allgatherv → full array)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="sim_matrix rows 0..249&lt;br&gt;(computed locally; after&lt;br&gt;Allgatherv → full N×N)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="predictions rows 0..249&lt;br&gt;(no comms needed;&lt;br&gt;sim_matrix already full)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="&lt;b&gt;MPI Rank 1  |  Private address space  |  Users 250–499&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="200" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="ratings[N_USERS×N_ITEMS]&lt;br&gt;(full private copy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="user_mean[u] for u=250..499&lt;br&gt;(local slice)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="sim_matrix rows 250..499&lt;br&gt;(after Allgatherv → full)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="predictions rows 250..499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="&lt;b&gt;MPI Rank 2  |  Private address space  |  Users 500–749&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="335" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="ratings[N_USERS×N_ITEMS]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="user_mean[u] for u=500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="sim_matrix rows 500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="predictions rows 500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="&lt;b&gt;MPI Rank 3  |  Private address space  |  Users 750–999&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="ratings[N_USERS×N_ITEMS]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="user_mean[u] for u=750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="sim_matrix rows 750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="predictions rows 750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="50" value="&lt;b&gt;MPI_Allgatherv&lt;/b&gt;&lt;br&gt;Each rank sends its slice.&lt;br&gt;Every rank receives the&lt;br&gt;FULL assembled array.&lt;br&gt;Used for:&lt;br&gt;• user_mean[]&lt;br&gt;• sim_matrix[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="850" y="140" width="160" height="165" as="geometry" />
+        </mxCell>
+        <mxCell id="51" value="&lt;b&gt;MPI_Reduce&lt;/b&gt;&lt;br&gt;Each rank contributes&lt;br&gt;partial MAE sum.&lt;br&gt;Rank 0 receives&lt;br&gt;global total.&lt;br&gt;op = MPI_SUM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="850" y="405" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="52" value="" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="850" y="200" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="180" />
+              <mxPoint x="840" y="395" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53" value="" style="startArrow=none;endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry x="850" y="500" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="530" />
+              <mxPoint x="840" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53b" value="MAE sum to Rank 0" style="text;html=1;fontSize=9;fontColor=#d6b656;align=center;" vertex="1" parent="1">
+          <mxGeometry x="845" y="560" width="145" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="60" value="&lt;b&gt;Phase-by-Phase MPI Strategy&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="605" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="61" value="Phase 1: All ranks run srand(42) → identical data. No communication." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="630" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="62" value="Phase 2: Rank r computes mean[start..end], then MPI_Allgatherv assembles full mean[] on every rank." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="663" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="63" value="Phase 3: Rank r fills ALL columns for its rows. MPI_Allgatherv assembles full N×N sim_matrix on every rank." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="696" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="64" value="Phase 4: Each rank predicts only its users. No MPI needed (sim_matrix is already complete everywhere)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="729" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="65" value="Phase 5: Each rank accumulates local error. MPI_Reduce(MPI_SUM) sends total to Rank 0 for MAE." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="762" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="70" value="&lt;b&gt;Compile:&lt;/b&gt;  mpicc -O2 -Wall -o mpi_rec mpi/mpi_recommender.c -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  mpirun -np 4 ./mpi_rec 1000 1000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d7191c;strokeColor=#9e0000;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="570" y="762" width="470" height="38" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,779 @@
+<mxfile host="app.diagrams.net" modified="2025-05-16T00:00:00.000Z" version="21.1.2">
+
+<!-- ================================================================
+     PAGE 1 — 5-Phase Algorithm Pipeline
+     ================================================================ -->
+  <diagram id="page1" name="1 - Algorithm Pipeline">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="5-Phase Algorithm Pipeline — Pearson Correlation Recommender System" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="170" y="20" width="700" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 1 -->
+        <mxCell id="3" value="&lt;b&gt;Phase 1 — Data Generation&lt;/b&gt;&lt;br&gt;Complexity: O(N × M)  |  srand(SEED = 42) → identical data on every run&lt;br&gt;70% sparsity, 10% test-split, ratings ∈ {1, 2, 3, 4, 5}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="310" y="75" width="490" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow P1→P2 -->
+        <mxCell id="4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="3" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 2 -->
+        <mxCell id="5" value="&lt;b&gt;Phase 2 — User Mean Computation&lt;/b&gt;&lt;br&gt;Complexity: O(N × M)  |  μ_u = average of user u's known ratings&lt;br&gt;Required by Pearson formula to normalise individual rating scales" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="310" y="188" width="490" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow P2→P3 -->
+        <mxCell id="6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;" edge="1" source="5" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 3 BOTTLENECK -->
+        <mxCell id="7" value="&lt;b&gt;⚡  Phase 3 — Pearson Similarity Matrix  ⚡&lt;/b&gt;&lt;br&gt;Complexity: O(N² × M)  |  N(N-1)/2 = 499,500 Pearson calls  |  ≈ 500M operations&lt;br&gt;sim(u,v) = Σ(R_ui − μ_u)(R_vi − μ_v) / [√Σ(R_ui−μ_u)² × √Σ(R_vi−μ_v)²]&lt;br&gt;&lt;b&gt;— DOMINANT BOTTLENECK (~97% of total runtime) —&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;arcSize=6;fontColor=#6b0014;" vertex="1" parent="1">
+          <mxGeometry x="310" y="301" width="490" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow P3→P4 -->
+        <mxCell id="8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;" edge="1" source="7" target="9" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 4 -->
+        <mxCell id="9" value="&lt;b&gt;Phase 4 — Rating Predictions&lt;/b&gt;&lt;br&gt;Complexity: O(N² × M)  |  TOP_K = 20 best neighbours with positive similarity&lt;br&gt;pred(u,i) = μ_u + Σ_k[ sim(u,k) × (R_ki − μ_k) ] / Σ_k sim(u,k)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;arcSize=6;fontColor=#5c3d00;" vertex="1" parent="1">
+          <mxGeometry x="310" y="439" width="490" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow P4→P5 -->
+        <mxCell id="10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=2;" edge="1" source="9" target="11" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 5 -->
+        <mxCell id="11" value="&lt;b&gt;Phase 5 — MAE Evaluation&lt;/b&gt;&lt;br&gt;Complexity: O(|T|)  |  MAE = (1/|T|) Σ |pred(u,i) − actual(u,i)|&lt;br&gt;Correctness check: all versions must match serial within ±0.001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="310" y="565" width="490" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Right badges -->
+        <mxCell id="20" value="Serial only&lt;br&gt;(RNG determinism required)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="835" y="93" width="165" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="20e" value="" style="edgeStyle=elbowEdgeStyle;elbow=orthogonal;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#6c8ebf;" edge="1" source="3" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="21" value="&lt;b&gt;Parallelised by:&lt;/b&gt;&lt;br&gt;OpenMP | Pthreads | MPI | Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="835" y="205" width="165" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="21e" value="" style="edgeStyle=elbowEdgeStyle;elbow=orthogonal;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#82b366;" edge="1" source="5" target="21" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="22" value="&lt;b&gt;Parallelised by:&lt;/b&gt;&lt;br&gt;OpenMP | Pthreads | MPI&lt;br&gt;CUDA (GPU) | Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="835" y="318" width="165" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="22e" value="" style="edgeStyle=elbowEdgeStyle;elbow=orthogonal;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#b85450;" edge="1" source="7" target="22" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="23" value="&lt;b&gt;Parallelised by:&lt;/b&gt;&lt;br&gt;OpenMP | Pthreads | MPI&lt;br&gt;CUDA (GPU) | Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="835" y="452" width="165" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="23e" value="" style="edgeStyle=elbowEdgeStyle;elbow=orthogonal;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#d6b656;" edge="1" source="9" target="23" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="24" value="Serial only&lt;br&gt;(fast, O(|T|) ≈ 30k entries)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="835" y="580" width="165" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="24e" value="" style="edgeStyle=elbowEdgeStyle;elbow=orthogonal;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#6c8ebf;" edge="1" source="11" target="24" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Left info panels -->
+        <mxCell id="30" value="&lt;b&gt;Problem Parameters&lt;/b&gt;&lt;br&gt;N_USERS = 1,000&lt;br&gt;N_ITEMS = 1,000&lt;br&gt;SEED    = 42&lt;br&gt;TOP_K   = 20&lt;br&gt;SPARSITY = 70%&lt;br&gt;TEST_RATIO = 10%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="55" y="280" width="145" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="31" value="&lt;b&gt;Performance Metrics&lt;/b&gt;&lt;br&gt;Speedup:  S(p) = T_serial / T_p&lt;br&gt;Efficiency: E(p) = S(p) / p&lt;br&gt;Amdahl limit: 1/f (f = serial %)&lt;br&gt;MAE tolerance: ±0.001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontColor=#5c3d00;" vertex="1" parent="1">
+          <mxGeometry x="55" y="440" width="185" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="40" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="55" y="620" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="Serial only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="55" y="645" width="105" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="Parallelised" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="175" y="645" width="105" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="Bottleneck" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="295" y="645" width="105" height="28" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+<!-- ================================================================
+     PAGE 2 — OpenMP Fork-Join Parallelism
+     ================================================================ -->
+  <diagram id="page2" name="2 - OpenMP">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="OpenMP — Shared-Memory Fork-Join Parallelism" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#1a9641;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="650" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Subtitle -->
+        <mxCell id="3" value="Key idea: Master thread FORKS worker threads at a parallel region. All threads share the same memory. At the closing brace, all threads JOIN back into one." style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="100" y="50" width="900" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Master thread (left segment) -->
+        <mxCell id="4" value="&lt;b&gt;Master Thread&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#1a9641;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="100" width="130" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- FORK marker -->
+        <mxCell id="5" value="&lt;b&gt;FORK&lt;/b&gt;&lt;br&gt;#pragma omp parallel" style="shape=mxgraph.flowchart.start_2;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="175" y="85" width="80" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Thread 0 -->
+        <mxCell id="10" value="&lt;b&gt;Thread 0&lt;/b&gt;  |  users 0 – 249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#1a9641;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="85" width="620" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- Thread 1 -->
+        <mxCell id="11" value="&lt;b&gt;Thread 1&lt;/b&gt;  |  users 250 – 499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2daa55;strokeColor=#1a9641;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="133" width="620" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- Thread 2 -->
+        <mxCell id="12" value="&lt;b&gt;Thread 2&lt;/b&gt;  |  users 500 – 749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#52c270;strokeColor=#1a9641;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="181" width="620" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- Thread 3 -->
+        <mxCell id="13" value="&lt;b&gt;Thread 3&lt;/b&gt;  |  users 750 – 999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0ddad;strokeColor=#1a9641;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="229" width="620" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- JOIN marker -->
+        <mxCell id="14" value="&lt;b&gt;JOIN&lt;/b&gt;&lt;br&gt;(barrier)" style="shape=mxgraph.flowchart.start_2;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="915" y="85" width="80" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Master thread (right segment) -->
+        <mxCell id="15" value="&lt;b&gt;Master Thread&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#1a9641;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="100" width="130" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Phase Labels above threads -->
+        <mxCell id="16" value="Phase 3: Similarity  (schedule=dynamic,4)  — each thread pulls 4 rows at a time from queue when idle" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontStyle=1;fontColor=#1a9641;" vertex="1" parent="1">
+          <mxGeometry x="280" y="64" width="620" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- Implicit barrier note -->
+        <mxCell id="17" value="Implicit barrier: all threads finish&lt;br&gt;before next phase starts" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="900" y="195" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Separator line -->
+        <mxCell id="18" value="" style="endArrow=none;dashed=1;strokeColor=#888888;strokeWidth=1;" edge="1" parent="1">
+          <mxGeometry x="30" y="290" width="1100" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Why dynamic scheduling -->
+        <mxCell id="19" value="&lt;b&gt;Why schedule(dynamic, 4)?&lt;/b&gt;&lt;br&gt;Inner loop size for outer iteration u = N - u - 1.&lt;br&gt;Thread 0 gets most work (u=0 → 999 Pearson calls), Thread 3 gets least (u=750 → 249 calls).&lt;br&gt;Static scheduling causes severe load imbalance. Dynamic lets idle threads pull new chunks." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="310" width="500" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Race-free proof -->
+        <mxCell id="20" value="&lt;b&gt;Race-free SIM writes (no mutex needed)&lt;/b&gt;&lt;br&gt;Thread T owns outer-loop values u ∈ {chunk_T}.&lt;br&gt;It writes SIM(u,v) and SIM(v,u) for v &gt; u.&lt;br&gt;No other thread owns the same u, so no cell is&lt;br&gt;written by two threads simultaneously." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="310" width="380" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 4 private buffer -->
+        <mxCell id="21" value="&lt;b&gt;Phase 4 — Thread-Private Buffer&lt;/b&gt;&lt;br&gt;#pragma omp parallel { &lt;br&gt;  SimPair *nbrs = malloc(N_USERS * sizeof(SimPair)); ← each thread gets own buffer&lt;br&gt;  #pragma omp for schedule(dynamic, 2)&lt;br&gt;  for (u = 0..N_USERS) { ... use nbrs ... }&lt;br&gt;  free(nbrs);&lt;br&gt;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="30" y="420" width="500" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Phase 5 reduction -->
+        <mxCell id="22" value="&lt;b&gt;Phase 5 — OpenMP Reduction&lt;/b&gt;&lt;br&gt;#pragma omp parallel for reduction(+:err)&lt;br&gt;&lt;br&gt;Each thread gets a PRIVATE copy of err (init to 0).&lt;br&gt;Threads accumulate in parallel — no locks.&lt;br&gt;At end, OpenMP sums all private copies → shared err." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="560" y="420" width="380" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Timing note -->
+        <mxCell id="23" value="&lt;b&gt;Timing: omp_get_wtime()&lt;/b&gt;&lt;br&gt;NOT clock() — clock() sums CPU time across all threads&lt;br&gt;(4 threads × 1s = reports 4s, not 1s).&lt;br&gt;omp_get_wtime() measures actual wall-clock elapsed time." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="565" width="450" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Shared memory model -->
+        <mxCell id="24" value="&lt;b&gt;Shared Memory Model&lt;/b&gt;&lt;br&gt;All threads share:  ratings[], user_mean[], sim_matrix[], predictions[]&lt;br&gt;Variables declared INSIDE loop body are automatically thread-private.&lt;br&gt;No inter-thread copying. Race-free because writes to disjoint indices." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="565" width="470" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Compile/run -->
+        <mxCell id="25" value="&lt;b&gt;Compile:&lt;/b&gt;  gcc -O2 -Wall -fopenmp -o openmp_rec openmp/openmp_recommender.c -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  OMP_NUM_THREADS=4  ./openmp_rec 1000 1000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="765" width="700" height="40" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+<!-- ================================================================
+     PAGE 3 — Pthreads
+     ================================================================ -->
+  <diagram id="page3" name="3 - Pthreads">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Pthreads — Manual POSIX Thread Management" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#b8860b;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="650" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Main Thread bar -->
+        <mxCell id="3" value="MAIN THREAD (sequential)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="1100" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Phase sections background -->
+        <mxCell id="4" value="PHASE 2: User Means" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="130" y="60" width="270" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="PHASE 3: Similarity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="430" y="60" width="300" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="PHASE 4: Predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="760" y="60" width="280" height="260" as="geometry" />
+        </mxCell>
+
+        <!-- PHASE 2 Threads -->
+        <mxCell id="10" value="Thread 0  |  rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="145" y="110" width="240" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="Thread 1  |  rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c99d30;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="145" y="150" width="240" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Thread 2  |  rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9b558;strokeColor=#7d5c00;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="145" y="190" width="240" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Thread 3  |  rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#edcf85;strokeColor=#7d5c00;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="145" y="230" width="240" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="pthread_join × 4  (barrier)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=9;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="145" y="275" width="240" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- PHASE 3 Threads -->
+        <mxCell id="20" value="Thread 0  |  rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b85450;strokeColor=#6b0014;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="445" y="110" width="270" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="Thread 1  |  rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c87070;strokeColor=#6b0014;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="445" y="150" width="270" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="Thread 2  |  rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#df9a9a;strokeColor=#6b0014;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="445" y="190" width="270" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="Thread 3  |  rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f2c2c2;strokeColor=#6b0014;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="445" y="230" width="270" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="pthread_join × 4  (barrier)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b85450;strokeColor=#6b0014;fontColor=#ffffff;fontSize=9;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="445" y="275" width="270" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- PHASE 4 Threads -->
+        <mxCell id="30" value="Thread 0  |  rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="775" y="110" width="250" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="Thread 1  |  rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3aaa5d;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="775" y="150" width="250" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="Thread 2  |  rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#70c48a;strokeColor=#005723;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="775" y="190" width="250" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="Thread 3  |  rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a8ddb8;strokeColor=#005723;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="775" y="230" width="250" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="pthread_join × 4  (barrier)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="775" y="275" width="250" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Work range diagram -->
+        <mxCell id="40" value="&lt;b&gt;Ceiling-Division Work Range Assignment:  chunk = (N_USERS + nthreads - 1) / nthreads&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="30" y="355" width="800" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="Thread 0&lt;br&gt;rows 0–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="385" width="265" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="Thread 1&lt;br&gt;rows 250–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c99d30;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="305" y="385" width="265" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="Thread 2&lt;br&gt;rows 500–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9b558;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="385" width="265" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="Thread 3&lt;br&gt;rows 750–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#edcf85;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="855" y="385" width="245" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Key concepts panels -->
+        <mxCell id="50" value="&lt;b&gt;ThreadArgs Struct&lt;/b&gt;&lt;br&gt;typedef struct {&lt;br&gt;  int tid;      // 0-based thread index&lt;br&gt;  int nthreads; // total thread count&lt;br&gt;} ThreadArgs;&lt;br&gt;&lt;br&gt;Thread derives its [start, end) range&lt;br&gt;independently — no global state needed." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="30" y="455" width="320" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="51" value="&lt;b&gt;run_parallel() Harness&lt;/b&gt;&lt;br&gt;// Create all threads&lt;br&gt;for (t = 0; t &lt; N_THREADS; t++)&lt;br&gt;  pthread_create(&amp;threads[t], NULL, fn, &amp;args[t]);&lt;br&gt;&lt;br&gt;// Wait for ALL threads (= phase barrier)&lt;br&gt;for (t = 0; t &lt; N_THREADS; t++)&lt;br&gt;  pthread_join(threads[t], NULL);&lt;br&gt;&lt;br&gt;// pthread_join = BARRIER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="370" y="455" width="360" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="52" value="&lt;b&gt;Thread-Private nbrs Buffer&lt;/b&gt;&lt;br&gt;void *thread_predictions(void *arg) {&lt;br&gt;  // Heap allocation per thread — NEVER shared&lt;br&gt;  SimPair *nbrs = malloc(N_USERS * sizeof(...));&lt;br&gt;  for (u = start; u &lt; end; u++) {&lt;br&gt;    // use nbrs for neighbour sorting&lt;br&gt;  }&lt;br&gt;  free(nbrs);&lt;br&gt;  return NULL;&lt;br&gt;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="750" y="455" width="360" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Compile/run -->
+        <mxCell id="60" value="&lt;b&gt;Compile:&lt;/b&gt;  gcc -O2 -Wall -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  ./pthreads_rec 1000 1000 4     (args: N_USERS  N_ITEMS  N_THREADS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="765" width="750" height="38" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+<!-- ================================================================
+     PAGE 4 — MPI Distributed Memory
+     ================================================================ -->
+  <diagram id="page4" name="4 - MPI">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="MPI — Distributed-Memory Parallelism with Row Partitioning" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#d7191c;" vertex="1" parent="1">
+          <mxGeometry x="150" y="15" width="750" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Rank 0 -->
+        <mxCell id="10" value="&lt;b&gt;MPI Rank 0  |  Private address space  |  Users 0–249&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="ratings[N_USERS×N_ITEMS]&lt;br&gt;(full private copy,&lt;br&gt;generated from SEED=42)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="user_mean[u] for u=0..249&lt;br&gt;(local slice; filled&lt;br&gt;→ Allgatherv → full array)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="sim_matrix rows 0..249&lt;br&gt;(computed locally; after&lt;br&gt;Allgatherv → full N×N)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="predictions rows 0..249&lt;br&gt;(no comms needed;&lt;br&gt;sim_matrix already full)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="10">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Rank 1 -->
+        <mxCell id="20" value="&lt;b&gt;MPI Rank 1  |  Private address space  |  Users 250–499&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="200" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="ratings[N_USERS×N_ITEMS]&lt;br&gt;(full private copy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="user_mean[u] for u=250..499&lt;br&gt;(local slice)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="sim_matrix rows 250..499&lt;br&gt;(after Allgatherv → full)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="predictions rows 250..499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="20">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Rank 2 -->
+        <mxCell id="30" value="&lt;b&gt;MPI Rank 2  |  Private address space  |  Users 500–749&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="335" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="ratings[N_USERS×N_ITEMS]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="user_mean[u] for u=500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="sim_matrix rows 500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="predictions rows 500..749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="30">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Rank 3 -->
+        <mxCell id="40" value="&lt;b&gt;MPI Rank 3  |  Private address space  |  Users 750–999&lt;/b&gt;" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="790" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="ratings[N_USERS×N_ITEMS]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="15" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="user_mean[u] for u=750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="215" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="sim_matrix rows 750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="415" y="38" width="185" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="predictions rows 750..999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=8;" vertex="1" parent="40">
+          <mxGeometry x="615" y="38" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- MPI Allgatherv panel -->
+        <mxCell id="50" value="&lt;b&gt;MPI_Allgatherv&lt;/b&gt;&lt;br&gt;Each rank sends its slice.&lt;br&gt;Every rank receives the&lt;br&gt;FULL assembled array.&lt;br&gt;Used for:&lt;br&gt;• user_mean[]&lt;br&gt;• sim_matrix[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="850" y="140" width="160" height="165" as="geometry" />
+        </mxCell>
+
+        <!-- MPI Reduce panel -->
+        <mxCell id="51" value="&lt;b&gt;MPI_Reduce&lt;/b&gt;&lt;br&gt;Each rank contributes&lt;br&gt;partial MAE sum.&lt;br&gt;Rank 0 receives&lt;br&gt;global total.&lt;br&gt;op = MPI_SUM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="850" y="405" width="160" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- Bidirectional arrow for Allgatherv -->
+        <mxCell id="52" value="" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="850" y="200" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="180" />
+              <mxPoint x="840" y="395" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Reduce arrow (downward to rank 0) -->
+        <mxCell id="53" value="" style="startArrow=none;endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry x="850" y="500" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="530" />
+              <mxPoint x="840" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53b" value="MAE sum to Rank 0" style="text;html=1;fontSize=9;fontColor=#d6b656;align=center;" vertex="1" parent="1">
+          <mxGeometry x="845" y="560" width="145" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Phase summary table -->
+        <mxCell id="60" value="&lt;b&gt;Phase-by-Phase MPI Strategy&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="605" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="61" value="Phase 1: All ranks run srand(42) → identical data. No communication." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="630" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="62" value="Phase 2: Rank r computes mean[start..end], then MPI_Allgatherv assembles full mean[] on every rank." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="663" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="63" value="Phase 3: Rank r fills ALL columns for its rows. MPI_Allgatherv assembles full N×N sim_matrix on every rank." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="696" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="64" value="Phase 4: Each rank predicts only its users. No MPI needed (sim_matrix is already complete everywhere)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="729" width="520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="65" value="Phase 5: Each rank accumulates local error. MPI_Reduce(MPI_SUM) sends total to Rank 0 for MAE." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="762" width="520" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- Compile/Run -->
+        <mxCell id="70" value="&lt;b&gt;Compile:&lt;/b&gt;  mpicc -O2 -Wall -o mpi_rec mpi/mpi_recommender.c -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  mpirun -np 4 ./mpi_rec 1000 1000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d7191c;strokeColor=#9e0000;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="570" y="762" width="470" height="38" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+<!-- ================================================================
+     PAGE 5 — CUDA GPU Parallelism
+     ================================================================ -->
+  <diagram id="page5" name="5 - CUDA">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="CUDA — GPU Massively Parallel Computing" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="650" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- GRID container -->
+        <mxCell id="10" value="CUDA GRID  (⌈N/16⌉ × ⌈N/16⌉ = 63×63 blocks for N=1000)" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="65" width="430" height="360" as="geometry" />
+        </mxCell>
+
+        <!-- Blocks inside grid -->
+        <mxCell id="11" value="Block(0,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="15" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Block(1,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="120" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Block(2,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="225" y="45" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="13b" value="…" style="text;html=1;fontSize=14;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="330" y="55" width="70" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Block(0,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="15" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="Block(1,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="120" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Block(2,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="225" y="105" width="95" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="⋮" style="text;html=1;fontSize=18;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="30" y="155" width="370" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="Block(0,62)  …  Block(62,62)     [63×63 = 3969 blocks total]" style="text;html=1;fontSize=9;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="185" width="400" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Block zoom -->
+        <mxCell id="19" value="&lt;b&gt;One Block  =  16×16 = 256 threads&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=10;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="220" width="400" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Thread grid inside block -->
+        <mxCell id="20" value="T(0,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="15" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="T(1,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="65" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="T(2,0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="115" y="245" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="22b" value="…16" style="text;html=1;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="163" y="252" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="T(0,1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="15" y="280" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="T(1,1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=7;" vertex="1" parent="10">
+          <mxGeometry x="65" y="280" width="46" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="⋮ 16 rows" style="text;html=1;fontSize=9;fontColor=#7600a3;" vertex="1" parent="10">
+          <mxGeometry x="15" y="315" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="Thread index formula:&lt;br&gt;u = blockIdx.x × 16 + threadIdx.x&lt;br&gt;v = blockIdx.y × 16 + threadIdx.y" style="text;html=1;fontSize=9;fontColor=#4d007a;fontFamily=Courier New;" vertex="1" parent="10">
+          <mxGeometry x="200" y="270" width="220" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Memory Hierarchy -->
+        <mxCell id="30" value="&lt;b&gt;GPU Memory Hierarchy&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=11;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="490" y="70" width="250" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="REGISTERS (per-thread) — &lt;1 cycle&lt;br&gt;Local scalars: num, den_u, den_v, co&lt;br&gt;Top-K arrays: top_sim[20], top_rat[20], top_mu[20]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="100" width="350" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="SHARED MEMORY (per-block) — ~1 cycle, 48KB&lt;br&gt;Not used in this project (embarrassingly parallel)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#7600a3;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="163" width="350" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="L1 / L2 CACHE — hardware managed, transparent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b366cc;strokeColor=#7600a3;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="216" width="350" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="GLOBAL MEMORY (GPU DRAM) — ~300–600 cycles, GBs&lt;br&gt;d_ratings, d_user_mean, d_sim, d_pred live here" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="259" width="350" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="35" value="HOST MEMORY (CPU RAM) — via PCIe ~12 GB/s&lt;br&gt;h_ratings, h_sim_matrix, h_predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="490" y="315" width="350" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- Memory flow arrows -->
+        <mxCell id="36" value="cudaMemcpy HostToDevice" style="text;html=1;fontSize=8;fontColor=#7600a3;align=center;" vertex="1" parent="1">
+          <mxGeometry x="870" y="300" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="36a" value="" style="edgeStyle=orthogonalEdgeStyle;startArrow=none;endArrow=block;endFill=1;strokeColor=#7600a3;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="850" y="340" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="355" />
+              <mxPoint x="860" y="283" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="37" value="cudaMemcpy DeviceToHost" style="text;html=1;fontSize=8;fontColor=#7600a3;align=center;" vertex="1" parent="1">
+          <mxGeometry x="870" y="200" width="160" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Three Kernels -->
+        <mxCell id="40" value="&lt;b&gt;Three CUDA Kernels&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=11;fontColor=#7600a3;" vertex="1" parent="1">
+          <mxGeometry x="30" y="445" width="250" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="41" value="&lt;b&gt;kernel_user_means&lt;/b&gt;&lt;br&gt;Grid: 1D  (blocks × 256 threads)&lt;br&gt;1 thread = 1 user row&lt;br&gt;Scans N_ITEMS items per thread&lt;br&gt;Launch: &lt;&lt;&lt;(N+255)/256, 256&gt;&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="475" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="42" value="&lt;b&gt;kernel_similarity&lt;/b&gt;&lt;br&gt;Grid: 2D  (⌈N/16⌉ × ⌈N/16⌉ blocks × 16×16)&lt;br&gt;1 thread = 1 (u,v) pair&lt;br&gt;Upper triangle only (if u&gt;v return early)&lt;br&gt;Writes SIM(u,v) AND SIM(v,u) — race-free&lt;br&gt;Launch: dim3 grid(⌈N/16⌉,⌈N/16⌉), dim3 block(16,16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="285" y="475" width="330" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="43" value="&lt;b&gt;kernel_predictions&lt;/b&gt;&lt;br&gt;Grid: 2D (users × items)&lt;br&gt;1 thread = 1 (user, item) pair&lt;br&gt;In-register min-heap TOP_K=20&lt;br&gt;(qsort unavailable in device code)&lt;br&gt;Arrays top_sim[20], top_rat[20],&lt;br&gt;top_mu[20] live in registers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="630" y="475" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- CUDA Events timing -->
+        <mxCell id="44" value="&lt;b&gt;Timing with CUDA Events (not clock_gettime)&lt;/b&gt;&lt;br&gt;Kernel launches are ASYNCHRONOUS — CPU returns immediately.&lt;br&gt;cudaEventRecord() inserts a GPU-side timestamp in the command stream.&lt;br&gt;cudaEventSynchronize() waits for GPU to finish before reading elapsed time." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="595" width="550" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Compile/run -->
+        <mxCell id="50" value="&lt;b&gt;Compile:&lt;/b&gt;  nvcc -O2 -arch=sm_75 -o cuda_rec cuda/cuda_recommender.cu -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  ./cuda_rec 1000 1000     (requires NVIDIA GPU + nvcc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="765" width="700" height="38" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+<!-- ================================================================
+     PAGE 6 — Hybrid MPI+OpenMP
+     ================================================================ -->
+  <diagram id="page6" name="6 - Hybrid MPI+OpenMP">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="2" value="Hybrid MPI+OpenMP — Two-Level Parallelism" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;fontColor=#d45f00;" vertex="1" parent="1">
+          <mxGeometry x="200" y="15" width="650" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="2b" value="MPI handles coarse-grain distribution across nodes. OpenMP handles fine-grain threading within each node. Total workers = P × T." style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="100" y="48" width="900" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- CLUSTER container -->
+        <mxCell id="3" value="HPC CLUSTER" style="swimlane;startSize=30;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d45f00;fontSize=12;fontStyle=1;fontColor=#d45f00;" vertex="1" parent="1">
+          <mxGeometry x="30" y="80" width="1100" height="400" as="geometry" />
+        </mxCell>
+
+        <!-- NODE 0 -->
+        <mxCell id="4" value="Node 0 — MPI Rank 0&lt;br&gt;Users 0–499  |  Private RAM" style="swimlane;startSize=40;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" vertex="1" parent="3">
+          <mxGeometry x="40" y="50" width="470" height="310" as="geometry" />
+        </mxCell>
+
+        <!-- OMP Threads inside Node 0 -->
+        <mxCell id="5" value="OMP Thread 0&lt;br&gt;rows 0–124" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="4">
+          <mxGeometry x="20" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="OMP Thread 1&lt;br&gt;rows 125–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2daa55;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="4">
+          <mxGeometry x="130" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="OMP Thread 2&lt;br&gt;rows 250–374" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#52c270;strokeColor=#005723;fontColor=#ffffff;fontSize=9;" vertex="1" parent="4">
+          <mxGeometry x="240" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="OMP Thread 3&lt;br&gt;rows 375–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a0ddad;strokeColor=#005723;fontColor=#333333;fontSize=9;" vertex="1" parent="4">
+          <mxGeometry x="350" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="Shared RAM: ratings[], user_mean[], sim_matrix[], predictions[]" style="text;html=1;fontSize=8;fontColor=#333333;align=center;" vertex="1" parent="4">
+          <mxGeometry x="20" y="138" width="430" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="9b" value="#pragma omp parallel for schedule(dynamic, 4)&lt;br&gt;for (u = start_u; u &lt; end_u; u++) { pearson_similarity(u, v); }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8;fontFamily=Courier New;" vertex="1" parent="4">
+          <mxGeometry x="20" y="168" width="430" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="9c" value="MPI_Allgatherv(&amp;sim_matrix[start_u*N], local_rows*N, MPI_FLOAT, sim_matrix, rcvcts, displs, MPI_FLOAT, MPI_COMM_WORLD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=8;fontFamily=Courier New;" vertex="1" parent="4">
+          <mxGeometry x="20" y="223" width="430" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="9d" value="OMP barrier (implicit) then MPI_Allgatherv from main thread — satisfies MPI_THREAD_FUNNELED" style="text;html=1;fontSize=8;fontColor=#d45f00;align=center;fontStyle=2;" vertex="1" parent="4">
+          <mxGeometry x="20" y="275" width="430" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- NODE 1 -->
+        <mxCell id="14" value="Node 1 — MPI Rank 1&lt;br&gt;Users 500–999  |  Private RAM" style="swimlane;startSize=40;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d45f00;fontSize=10;fontStyle=1;" vertex="1" parent="3">
+          <mxGeometry x="590" y="50" width="470" height="310" as="geometry" />
+        </mxCell>
+
+        <!-- OMP Threads inside Node 1 -->
+        <mxCell id="15" value="OMP Thread 0&lt;br&gt;rows 500–624" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d45f00;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="14">
+          <mxGeometry x="20" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="OMP Thread 1&lt;br&gt;rows 625–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e07a28;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="14">
+          <mxGeometry x="130" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="OMP Thread 2&lt;br&gt;rows 750–874" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a060;strokeColor=#8c3d00;fontColor=#333333;fontSize=9;" vertex="1" parent="14">
+          <mxGeometry x="240" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="OMP Thread 3&lt;br&gt;rows 875–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad0a8;strokeColor=#8c3d00;fontColor=#333333;fontSize=9;" vertex="1" parent="14">
+          <mxGeometry x="350" y="55" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="Shared RAM: ratings[], user_mean[], sim_matrix[], predictions[]" style="text;html=1;fontSize=8;fontColor=#333333;align=center;" vertex="1" parent="14">
+          <mxGeometry x="20" y="138" width="430" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="19b" value="Same two-level pattern: OpenMP loop inside MPI rank's row range" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="14">
+          <mxGeometry x="20" y="168" width="430" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- InfiniBand arrow inside cluster -->
+        <mxCell id="25" value="InfiniBand / MPI network&lt;br&gt;MPI_Allgatherv, MPI_Reduce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d7191c;strokeColor=#9e0000;fontColor=#ffffff;fontSize=9;" vertex="1" parent="3">
+          <mxGeometry x="512" y="180" width="76" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="25a" value="" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeColor=#d7191c;strokeWidth=2;" edge="1" parent="3">
+          <mxGeometry x="510" y="210" width="10" height="10" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="210" />
+              <mxPoint x="590" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Config table -->
+        <mxCell id="30" value="&lt;b&gt;Benchmarked Configurations  (all = 8 total workers)&lt;/b&gt;" style="text;html=1;fontStyle=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="500" width="600" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="31" value="Hybrid 2×4&lt;br&gt;2 MPI ranks × 4 OMP threads&lt;br&gt;Less network traffic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d45f00;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="530" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="Hybrid 4×2&lt;br&gt;4 MPI ranks × 2 OMP threads&lt;br&gt;Balanced" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e07a28;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="230" y="530" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="Hybrid 8×1&lt;br&gt;8 MPI ranks × 1 OMP thread&lt;br&gt;≈ Pure MPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a060;strokeColor=#8c3d00;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="430" y="530" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="Hybrid 1×8&lt;br&gt;1 MPI rank × 8 OMP threads&lt;br&gt;≈ Pure OpenMP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad0a8;strokeColor=#8c3d00;fontColor=#333333;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="630" y="530" width="190" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Two-level reduction -->
+        <mxCell id="40" value="&lt;b&gt;Two-Level Reduction (Phase 5 MAE)&lt;/b&gt;&lt;br&gt;Level 2 (OpenMP): reduction(+:local_err, local_cnt) — per-thread private copies merged at OMP barrier&lt;br&gt;Level 1 (MPI):  MPI_Reduce(&amp;local_err, &amp;global_err, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD)&lt;br&gt;Result: global MAE printed by Rank 0 only." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="615" width="850" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Thread safety note -->
+        <mxCell id="41" value="&lt;b&gt;MPI_Init_thread(FUNNELED)&lt;/b&gt;&lt;br&gt;MPI calls ONLY from main thread&lt;br&gt;(never inside omp parallel block)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="900" y="530" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Compile/run -->
+        <mxCell id="50" value="&lt;b&gt;Compile:&lt;/b&gt;  mpicc -O2 -Wall -fopenmp -o hybrid_rec hybrid/hybrid_recommender.c -lm&lt;br&gt;&lt;b&gt;Run:&lt;/b&gt;  mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec 1000 1000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d45f00;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="30" y="765" width="800" height="38" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

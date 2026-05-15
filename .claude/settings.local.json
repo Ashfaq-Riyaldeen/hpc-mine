@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python analysis_diagrams/generate_charts.py)"
+    ]
+  }
+}
