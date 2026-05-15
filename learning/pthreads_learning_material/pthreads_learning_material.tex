@@ -1,0 +1,425 @@
+% =============================================================================
+% pthreads_learning_material.tex
+% Learning Material: POSIX Threads (Pthreads)
+% EC7207 High Performance Computing – Group 11
+% =============================================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red!70!black},
+    numbers=left, numberstyle=\tiny\color{gray},
+    numbersep=8pt, frame=single, rulecolor=\color{black!30},
+    breaklines=true, showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    tabsize=4
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{EC7207 HPC – Group 11}
+\rhead{POSIX Threads (Pthreads)}
+\cfoot{\thepage}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+
+% =============================================================================
+\begin{document}
+% =============================================================================
+
+\begin{center}
+    {\LARGE\bfseries POSIX Threads (Pthreads) — Manual Thread Management}\\[0.5em]
+    {\large Learning Material for EC7207 High Performance Computing}\\[0.3em]
+    {\normalsize Group 11 — Pearson Correlation Recommender System}
+\end{center}
+\vspace{1em}\hrule\vspace{1.5em}
+
+% =============================================================================
+\section{What are POSIX Threads?}
+% =============================================================================
+
+\textbf{Pthreads} (POSIX Threads) is the standard low-level threading API
+for UNIX/Linux systems.  Unlike OpenMP, which uses compiler directives and
+hides thread management, Pthreads requires the programmer to:
+
+\begin{itemize}
+    \item Explicitly \textbf{create} each thread with \texttt{pthread\_create()}
+    \item Explicitly define what each thread does (a function with the signature
+          \texttt{void* fn(void*)})
+    \item Explicitly \textbf{divide} the work among threads
+    \item Explicitly \textbf{wait} for threads to finish with
+          \texttt{pthread\_join()}
+\end{itemize}
+
+\subsection{OpenMP vs.\ Pthreads — The Key Difference}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Feature & OpenMP & Pthreads \\
+\midrule
+Thread creation & Automatic (\texttt{\#pragma}) & Manual (\texttt{pthread\_create}) \\
+Work distribution & Automatic (\texttt{schedule}) & Manual (divide indices) \\
+Synchronisation & Automatic (barriers) & Manual (\texttt{pthread\_join}) \\
+Code changes & Minimal (add pragmas) & Significant (refactor into functions) \\
+Portability & C/C++/Fortran standard & POSIX systems (Linux, macOS) \\
+Control & Limited (clause-based) & Full (arbitrary logic) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Why learn Pthreads?}  OpenMP is convenient but opaque.  Pthreads
+shows you \emph{exactly} what happens underneath: how threads are created,
+how work is partitioned, and how synchronisation is achieved.  Understanding
+Pthreads makes you a better parallel programmer even when using higher-level
+APIs.
+
+% =============================================================================
+\section{Core Pthreads API}
+% =============================================================================
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+Function & Purpose \\
+\midrule
+\texttt{pthread\_create(\&tid, attr, fn, arg)} &
+  Create a new thread that runs \texttt{fn(arg)}.
+  \texttt{attr = NULL} uses default attributes. \\
+\texttt{pthread\_join(tid, \&retval)} &
+  Wait for thread \texttt{tid} to finish.
+  Returns the thread's return value via \texttt{retval}. \\
+\texttt{pthread\_mutex\_lock(\&m)} &
+  Acquire mutex \texttt{m} (blocks until available). \\
+\texttt{pthread\_mutex\_unlock(\&m)} &
+  Release mutex \texttt{m}. \\
+\texttt{pthread\_barrier\_wait(\&b)} &
+  Wait until all participating threads reach this point. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Our project uses only \texttt{pthread\_create} and \texttt{pthread\_join}
+because our work partitioning is disjoint — no thread ever writes to an index
+another thread writes to, so no mutex is needed.
+
+% =============================================================================
+\section{Work Partitioning: \texttt{work\_range()}}
+% =============================================================================
+
+The key challenge in Pthreads is deciding \emph{which} thread does
+\emph{which} work.  We use \textbf{ceiling division} to divide $N$ items
+across $T$ threads:
+
+\begin{lstlisting}
+static void work_range(int total, int tid, int nthreads,
+                       int *start, int *end)
+{
+    /* Ceiling division: (total + nthreads - 1) / nthreads */
+    int chunk = (total + nthreads - 1) / nthreads;
+    *start = tid * chunk;
+    *end   = *start + chunk;
+    if (*end > total) *end = total;  /* last thread may get fewer */
+}
+\end{lstlisting}
+
+\textbf{Example} ($N = 10$ users, $T = 3$ threads):
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+Thread & \texttt{start} & \texttt{end} & Users owned \\
+\midrule
+0 & 0 & 4 & 0, 1, 2, 3 \\
+1 & 4 & 8 & 4, 5, 6, 7 \\
+2 & 8 & 10 & 8, 9 (last thread, fewer) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ceiling division ensures all $N$ items are covered with no gaps and no
+overlaps.  The last thread may get up to $T-1$ fewer items than the others —
+this is the maximum load imbalance.
+
+% =============================================================================
+\section{Thread Argument Structure: \texttt{ThreadArgs}}
+% =============================================================================
+
+\texttt{pthread\_create} passes a single \texttt{void*} to the thread function.
+We pack all the information a thread needs into a struct:
+
+\begin{lstlisting}
+typedef struct {
+    int tid;       /* this thread's 0-based index */
+    int nthreads;  /* total threads launched      */
+} ThreadArgs;
+\end{lstlisting}
+
+From \texttt{tid} and \texttt{nthreads}, every thread can independently
+compute its \texttt{[start, end)} work range.  No global variables are needed
+for work distribution.
+
+% =============================================================================
+\section{Thread Functions: One Per Phase}
+% =============================================================================
+
+\subsection{Phase 2 — User Means Thread}
+
+\begin{lstlisting}
+static void *thread_user_means(void *arg)
+{
+    ThreadArgs *a = (ThreadArgs *)arg;
+    int start, end;
+    work_range(N_USERS, a->tid, a->nthreads, &start, &end);
+
+    for (int u = start; u < end; u++) {
+        double sum = 0.0; int cnt = 0;
+        for (int i = 0; i < N_ITEMS; i++)
+            if (R(u, i) != 0.0f) { sum += R(u, i); cnt++; }
+        user_mean[u] = (cnt > 0) ? (float)(sum / cnt) : 3.0f;
+    }
+    return NULL;  /* thread function must return void* */
+}
+\end{lstlisting}
+
+\textbf{Safety:}  Thread $t$ writes only to \texttt{user\_mean[start..end)}.
+No two threads share an index.  No mutex needed.
+
+\subsection{Phase 3 — Similarity Thread}
+
+\begin{lstlisting}
+static void *thread_similarities(void *arg)
+{
+    ThreadArgs *a = (ThreadArgs *)arg;
+    int start, end;
+    work_range(N_USERS, a->tid, a->nthreads, &start, &end);
+
+    for (int u = start; u < end; u++) {
+        SIM(u, u) = 1.0f;
+        for (int v = u + 1; v < N_USERS; v++) {
+            float s = pearson_similarity(u, v);
+            SIM(u, v) = s;
+            SIM(v, u) = s;  /* mirror -- race-free (same analysis as OpenMP) */
+        }
+    }
+    return NULL;
+}
+\end{lstlisting}
+
+\textbf{Race-free analysis:}  Thread $t$ owns outer loop values $u \in
+[\text{start}, \text{end})$.  It writes \texttt{SIM(u,v)} and
+\texttt{SIM(v,u)} for $v > u$.  No other thread processes the same outer
+$u$ value.  When another thread (say thread $s$ owning $u' > u$) writes
+\texttt{SIM(u',v')} for $v' > u'$, it never touches the cell
+\texttt{SIM(v,u)} because $v > u$ and $u' > u$ means $u' \neq u$.
+
+\subsection{Phase 4 — Prediction Thread}
+
+\begin{lstlisting}
+static void *thread_predictions(void *arg)
+{
+    ThreadArgs *a = (ThreadArgs *)arg;
+    int start, end;
+    work_range(N_USERS, a->tid, a->nthreads, &start, &end);
+
+    /* Private scratch buffer for this thread only */
+    SimPair *nbrs = (SimPair *)malloc(N_USERS * sizeof(SimPair));
+
+    for (int u = start; u < end; u++) {
+        for (int item = 0; item < N_ITEMS; item++) {
+            /* ... prediction logic using nbrs ... */
+        }
+    }
+
+    free(nbrs);
+    return NULL;
+}
+\end{lstlisting}
+
+Each thread allocates its own \texttt{nbrs} buffer on the heap.  Unlike a
+global buffer, this is never shared between threads.
+
+% =============================================================================
+\section{The \texttt{run\_parallel()} Harness}
+% =============================================================================
+
+A helper function handles the create/join pattern for each phase:
+
+\begin{lstlisting}
+static double run_parallel(void *(*fn)(void *),
+                           pthread_t  *threads,
+                           ThreadArgs *args)
+{
+    double t0 = now_sec();
+
+    /* Create all N_THREADS threads */
+    for (int t = 0; t < N_THREADS; t++) {
+        args[t].tid      = t;
+        args[t].nthreads = N_THREADS;
+        pthread_create(&threads[t], NULL, fn, &args[t]);
+    }
+
+    /* Wait for all threads to complete */
+    for (int t = 0; t < N_THREADS; t++)
+        pthread_join(threads[t], NULL);
+
+    return now_sec() - t0;  /* wall-clock time for this phase */
+}
+\end{lstlisting}
+
+\textbf{The join is a barrier:}  \texttt{pthread\_join} returns only after
+the named thread has exited.  Joining all $T$ threads sequentially guarantees
+that Phase $n+1$ starts only after every thread of Phase $n$ has finished.
+This is equivalent to the implicit barrier in OpenMP's \texttt{parallel for}.
+
+% =============================================================================
+\section{Phase Control Flow in \texttt{main()}}
+% =============================================================================
+
+\begin{lstlisting}
+pthread_t  threads[MAX_THREADS];
+ThreadArgs args[MAX_THREADS];
+
+/* Stack-allocated: no malloc needed for these arrays */
+generate_data();                            /* serial */
+run_parallel(thread_user_means,  threads, args);   /* parallel */
+run_parallel(thread_similarities, threads, args);  /* parallel */
+run_parallel(thread_predictions,  threads, args);  /* parallel */
+evaluate_mae();                             /* serial */
+\end{lstlisting}
+
+Threads are created fresh for each phase.  This re-creation overhead
+(\texttt{pthread\_create} takes $\sim$10--100 \textmu s) is negligible
+compared to the similarity computation ($\sim$seconds).
+
+An alternative is a \textbf{thread pool} with condition variables (threads
+sleep between phases and wake on a signal).  We chose the simpler
+create/join pattern because it makes phase ordering obvious and the overhead
+is trivially small.
+
+% =============================================================================
+\section{Data Races — What They Are and How We Avoid Them}
+% =============================================================================
+
+\subsection{What is a Data Race?}
+
+A data race occurs when:
+\begin{enumerate}
+    \item Two or more threads access the same memory location concurrently,
+    \item At least one access is a write, and
+    \item There is no synchronisation (mutex, atomic, barrier) ordering the accesses.
+\end{enumerate}
+
+Data races produce \textbf{undefined behaviour} — the result may be wrong,
+different on every run, or apparently correct but broken on a different CPU.
+
+\subsection{How Our Code Avoids Data Races}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Array & Access & Race-free because \\
+\midrule
+\texttt{ratings[]} & Read only after Phase 1 & Multiple readers are safe \\
+\texttt{user\_mean[]} & Written per-thread & Disjoint index ranges \\
+\texttt{sim\_matrix[]} & Written per-thread & Disjoint outer-loop rows \\
+\texttt{predictions[]} & Written per-thread & Disjoint row ranges \\
+\texttt{nbrs[]} & Per-thread private allocation & Never shared \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{If We Had a Bug — What Would Happen?}
+
+If two threads wrote to the same \texttt{sim\_matrix} cell, the result would
+be one of the two values (whichever write ``won'' the race).  The
+sim-matrix checksum would then differ from the serial baseline.  Our
+\texttt{[Check]} output line catches this.
+
+% =============================================================================
+\section{Pthreads vs.\ OpenMP for This Project}
+% =============================================================================
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Aspect & Pthreads & OpenMP \\
+\midrule
+Lines of new code & $\sim$50 extra (run\_parallel, thread fns) & $\sim$6 extra pragmas \\
+Scheduling & Manual (static only as implemented) & static / dynamic / guided \\
+Load balancing & Our \texttt{work\_range()} divides equally & Dynamic handles unequal work \\
+Barrier & Explicit (\texttt{pthread\_join} loop) & Implicit (end of parallel for) \\
+Debugging & Easier (see every thread creation) & Harder (abstracted away) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Why does OpenMP potentially outperform our Pthreads for Phase 3?}
+OpenMP's \texttt{schedule(dynamic)} adapts to the decreasing inner-loop
+size.  Our Pthreads version uses static chunking of outer rows, which
+can leave the thread assigned to small-$u$ rows (more work) as the
+bottleneck while others sit idle.
+
+% =============================================================================
+\section{Compile and Run}
+% =============================================================================
+
+\begin{verbatim}
+# Compile (-lpthread links the pthreads library)
+gcc -O2 -Wall -o pthreads_rec pthreads/pthreads_recommender.c -lpthread -lm
+
+# Run with different thread counts
+./pthreads_rec 1000 1000 1    # 1 thread (serial-equivalent)
+./pthreads_rec 1000 1000 2    # 2 threads
+./pthreads_rec 1000 1000 4    # 4 threads
+./pthreads_rec 1000 1000 8    # 8 threads
+\end{verbatim}
+
+Arguments: \texttt{num\_users num\_items num\_threads}
+
+% =============================================================================
+\section{Key Points to Explain in a Presentation}
+% =============================================================================
+
+\begin{enumerate}
+    \item \textbf{Why create threads fresh per phase, not once at the start?}
+          Simplicity and clarity.  Creating threads once would require condition
+          variables to signal work; the overhead of create/join for
+          3 phases is $\ll 1$\% of compute time.
+    \item \textbf{What is the \texttt{void* fn(void*)} signature?}  Pthreads
+          requires a uniform function signature for the thread entry point.  The
+          \texttt{void*} argument is a generic pointer that we cast to
+          \texttt{ThreadArgs*} inside the function.
+    \item \textbf{Why is \texttt{pearson\_similarity()} safe to call from multiple threads?}
+          It reads only from \texttt{ratings[]} and \texttt{user\_mean[]},
+          which are fully written before the parallel phase begins, and writes
+          only to local variables (stack-allocated scalars).  This makes it a
+          pure function with no side effects — inherently thread-safe.
+    \item \textbf{How does ceiling division handle non-divisible sizes?}
+          For $N=1000, T=3$: chunk $= \lceil 1000/3 \rceil = 334$.
+          Thread 0: 0--333, Thread 1: 334--667, Thread 2: 668--999 (332 items).
+          All covered, no gaps, no overlaps.
+\end{enumerate}
+
+\vfill
+\begin{center}
+    \small\textit{Group 11 — EC7207 High Performance Computing}
+\end{center}
+
+\end{document}

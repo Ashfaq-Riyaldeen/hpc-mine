@@ -1,0 +1,513 @@
+% =============================================================================
+% hpc_complete_learning_guide.tex
+% Master document — includes all six topic files
+% EC7207 High Performance Computing – Group 11
+%
+% Compile with:
+%   pdflatex hpc_complete_learning_guide.tex   (run twice for TOC)
+% =============================================================================
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{tcolorbox}
+\usepackage{multicol}
+
+% ── Code listing style ────────────────────────────────────────────────────────
+\lstdefinestyle{cstyle}{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red!70!black},
+    numbers=left, numberstyle=\tiny\color{gray},
+    numbersep=8pt, frame=single, rulecolor=\color{black!30},
+    breaklines=true, showstringspaces=false,
+    backgroundcolor=\color{gray!5},
+    tabsize=4
+}
+\lstset{style=cstyle}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{EC7207 HPC – Group 11}
+\rhead{Complete Learning Guide}
+\cfoot{\thepage}
+
+% =============================================================================
+\begin{document}
+% =============================================================================
+
+% ── Title Page ────────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries HPC Learning Guide\\[0.5em]
+Pearson Correlation\\[0.2em]
+Recommender System}\\[2em]
+{\Large EC7207 High Performance Computing}\\[1em]
+{\large Group 11}\\[3em]
+\begin{tcolorbox}[colback=blue!5,colframe=blue!50,width=0.85\textwidth]
+\centering
+\textbf{Parallelisation Versions Covered:}\\[0.8em]
+\begin{tabular}{lll}
+1. & Serial Baseline & Algorithm foundation \\
+2. & OpenMP & Shared-memory, fork-join \\
+3. & Pthreads & Manual thread management \\
+4. & MPI & Distributed-memory, message passing \\
+5. & CUDA & GPU massively parallel \\
+6. & Hybrid MPI+OpenMP & Two-level parallelism \\
+\end{tabular}
+\end{tcolorbox}
+\vfill
+{\large\today}
+\end{titlepage}
+
+% ── Table of Contents ─────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% =============================================================================
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+% =============================================================================
+
+\section*{Project Overview}
+
+This project implements a \textbf{User-Based Collaborative Filtering
+Recommender System} using Pearson Correlation Similarity, parallelised with
+five different HPC techniques.
+
+\textbf{The algorithm in one sentence:}  Given a sparse matrix of user ratings
+($1$--$5$ stars), predict what rating each user would give to items they
+haven't seen, using the ratings of the most similar users as a guide.
+
+\section*{Performance Metrics}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+Metric & Definition \\
+\midrule
+Speedup & $S(p) = T_{\text{serial}} / T_{\text{parallel}}(p)$ \\
+Efficiency & $E(p) = S(p) / p$ — fraction of ideal speedup \\
+MAE & $\frac{1}{|T|}\sum_{(u,i)\in T}|\text{pred}(u,i) - \text{actual}(u,i)|$ \\
+Sim checksum & Sum of all $N^2$ similarity values — cross-version sanity check \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Output Tags (Parsed by Benchmark Script)}
+
+\begin{verbatim}
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test: 29874
+[Timing] Similarity matrix  : 12.3456 s
+[Timing] Prediction phase   : 8.7654 s
+[Timing] Total (sim+pred)   : 21.1110 s
+[Check]  Sim-matrix checksum: 499876.543210
+[Eval]   MAE on test set    : 0.4523
+\end{verbatim}
+
+\section*{Amdahl's Law — The Fundamental Limit}
+
+\[
+S_{\max}(p) = \frac{1}{f + (1-f)/p}
+\quad\xrightarrow{p\to\infty}\quad \frac{1}{f}
+\]
+
+$f$ = fraction of time that \emph{cannot} be parallelised (data generation,
+I/O).  For our project, $f \approx 2$--$5\%$, giving $S_{\max} \approx
+20$--$50\times$.
+
+\section*{How the Files Relate}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Source file & Topic covered in this guide \\
+\midrule
+\texttt{serial/serial\_recommender.c} & Chapter 1 \\
+\texttt{openmp/openmp\_recommender.c} & Chapter 2 \\
+\texttt{pthreads/pthreads\_recommender.c} & Chapter 3 \\
+\texttt{mpi/mpi\_recommender.c} & Chapter 4 \\
+\texttt{cuda/cuda\_recommender.cu} & Chapter 5 \\
+\texttt{hybrid/hybrid\_recommender.c} & Chapter 6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\chapter{Serial Baseline \& Algorithm Foundation}
+% =============================================================================
+
+\section{Why a Serial Baseline?}
+
+Before parallelising anything, every HPC project must have a correct serial
+implementation serving three roles:
+
+\begin{enumerate}
+    \item \textbf{Correctness reference}: every parallel MAE must match within $\pm 0.001$
+    \item \textbf{Speedup denominator}: $S = T_{\text{serial}} / T_{\text{parallel}}$
+    \item \textbf{Algorithm clarity}: understand the logic before adding concurrency
+\end{enumerate}
+
+\section{The 5-Phase Algorithm}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Phase & Operation & Complexity \\
+\midrule
+1 & Data Generation & $O(N \times M)$ \\
+2 & User Means & $O(N \times M)$ \\
+3 & Similarity Matrix & $O(N^2 \times M)$ \textbf{— Bottleneck} \\
+4 & Predictions & $O(N^2 \times M)$ \\
+5 & MAE Evaluation & $O(|T|)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Pearson Correlation Formula}
+
+\[
+\text{sim}(u,v) = \frac
+{\sum_{i \in I_{uv}} (R_{u,i} - \bar{R}_u)(R_{v,i} - \bar{R}_v)}
+{\sqrt{\sum_{i\in I_{uv}}(R_{u,i}-\bar{R}_u)^2}
+ \times\sqrt{\sum_{i\in I_{uv}}(R_{v,i}-\bar{R}_v)^2}}
+\]
+
+where $I_{uv}$ = items rated by \emph{both} $u$ and $v$, and
+$\bar{R}_u$ = mean rating of user $u$.
+
+\textbf{Result range}: $[-1, +1]$. $+1$ = always agree, $0$ = unrelated,
+$-1$ = always disagree.
+
+\section{Prediction Formula}
+
+\[
+\text{pred}(u,i) = \bar{R}_u +
+\frac{\sum_{k\in K}\text{sim}(u,k)\cdot(R_{k,i}-\bar{R}_k)}{\sum_{k\in K}\text{sim}(u,k)}
+\]
+
+$K$ = top-20 most similar neighbours who rated item $i$ with positive similarity.
+
+\section{Key Constants}
+
+\begin{lstlisting}
+#define DEFAULT_USERS  1000    /* rows in ratings matrix */
+#define DEFAULT_ITEMS  1000    /* columns */
+#define SPARSITY       0.70f   /* 70% of entries are unrated */
+#define TOP_K            20    /* max neighbours for prediction */
+#define SEED             42    /* fixed RNG seed (same data every run) */
+#define TEST_RATIO      0.10f  /* 10% held out for MAE */
+\end{lstlisting}
+
+% =============================================================================
+\chapter{OpenMP — Shared-Memory Parallelism}
+% =============================================================================
+
+\section{Fork-Join Model}
+
+OpenMP uses compiler directives (\texttt{\#pragma omp}) to automatically
+manage a team of threads that share the same address space.
+
+\section{Directives Used in This Project}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Phase & Directive & Schedule \\
+\midrule
+2 (means) & \texttt{\#pragma omp parallel for} & \texttt{static} \\
+3 (sim) & \texttt{\#pragma omp parallel for} & \texttt{dynamic, 4} \\
+4 (pred) & \texttt{\#pragma omp parallel} + \texttt{for} & \texttt{dynamic, 2} \\
+5 (MAE) & \texttt{\#pragma omp parallel for reduction(+:err)} & \texttt{static} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Schedule Comparison}
+
+\begin{center}
+\begin{tabular}{lp{6cm}l}
+\toprule
+Schedule & When to use & Overhead \\
+\midrule
+\texttt{static} & Equal work per iteration & None \\
+\texttt{dynamic,C} & Unequal/unpredictable work & Queue lookup \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Phase 2 uses \texttt{static} (all rows scan exactly \texttt{N\_ITEMS} items).
+Phases 3 \& 4 use \texttt{dynamic} (work varies with sparsity and triangle shape).
+
+\section{Thread-Private Buffer Pattern (Phase 4)}
+
+\begin{lstlisting}
+#pragma omp parallel        /* fork threads */
+{
+    SimPair *nbrs = malloc(N_USERS * sizeof(SimPair));  /* private per thread */
+    #pragma omp for schedule(dynamic, 2)
+    for (int u = 0; u < N_USERS; u++) { /* distributed */ }
+    free(nbrs);
+}
+\end{lstlisting}
+
+\section{Why \texttt{omp\_get\_wtime()} not \texttt{clock()}?}
+
+\texttt{clock()} sums CPU time across all threads ($4 \times 1\,\text{s} = 4\,\text{s}$
+for 4 threads each working 1 second).  \texttt{omp\_get\_wtime()} measures
+actual wall-clock elapsed time ($1\,\text{s}$).  Speedup requires wall-clock time.
+
+% =============================================================================
+\chapter{Pthreads — Manual Thread Management}
+% =============================================================================
+
+\section{Key Difference from OpenMP}
+
+Pthreads requires explicit thread creation, work partitioning, and joining.
+OpenMP hides all of this behind compiler directives.
+
+\section{Core Pattern}
+
+\begin{lstlisting}
+/* Thread function */
+void *thread_fn(void *arg) {
+    ThreadArgs *a = (ThreadArgs *)arg;
+    int start, end;
+    work_range(N_USERS, a->tid, a->nthreads, &start, &end);
+    /* ... process rows [start, end) ... */
+    return NULL;
+}
+
+/* Launch in main() */
+for (int t = 0; t < N_THREADS; t++) {
+    args[t] = (ThreadArgs){t, N_THREADS};
+    pthread_create(&threads[t], NULL, thread_fn, &args[t]);
+}
+for (int t = 0; t < N_THREADS; t++)
+    pthread_join(threads[t], NULL);  /* wait = phase barrier */
+\end{lstlisting}
+
+\section{Ceiling Division for Work Partitioning}
+
+\begin{lstlisting}
+void work_range(int total, int tid, int nthreads, int *start, int *end) {
+    int chunk = (total + nthreads - 1) / nthreads;
+    *start = tid * chunk;
+    *end   = min(*start + chunk, total);
+}
+\end{lstlisting}
+
+Ensures all $N$ items are covered with no gaps and no overlaps even when
+$N$ is not divisible by the thread count.
+
+\section{No Mutex Needed}
+
+Our code avoids mutexes entirely because each thread writes to a disjoint
+range of indices.  Mutexes would serialise access and eliminate the speedup
+benefit.
+
+% =============================================================================
+\chapter{MPI — Distributed-Memory Parallelism}
+% =============================================================================
+
+\section{Core Concept: Private Memory Spaces}
+
+Each MPI rank is an independent process with its own private RAM.  Data
+must be explicitly sent and received using MPI functions — no shared pointers.
+
+\section{Initialisation}
+
+\begin{lstlisting}
+MPI_Init(&argc, &argv);
+MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);  /* 0-based rank ID */
+MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);  /* total ranks */
+/* ... */
+MPI_Finalize();   /* must be last MPI call */
+\end{lstlisting}
+
+\section{Key Collectives}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+Call & Effect \\
+\midrule
+\texttt{MPI\_Allgatherv} &
+  Each rank contributes a slice; every rank receives the complete assembled
+  result.  Used for \texttt{user\_mean} and \texttt{sim\_matrix}. \\
+\texttt{MPI\_Reduce} &
+  Combines one value per rank (e.g.\ partial error sum) to rank 0.
+  Used for MAE. \\
+\texttt{MPI\_Barrier} &
+  All ranks wait until every rank reaches the barrier.
+  Used to bracket timed sections. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Parallelisation Per Phase}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Phase & Local work & Communication \\
+\midrule
+1 (data gen) & Each rank runs \texttt{srand(42)} independently & None \\
+2 (means) & Each rank computes its rows & \texttt{MPI\_Allgatherv} \\
+3 (sim) & Each rank fills all columns for its rows & \texttt{MPI\_Allgatherv} \\
+4 (pred) & Each rank predicts for its users only & None \\
+5 (MAE) & Each rank sums its partial error & \texttt{MPI\_Reduce} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\chapter{CUDA — GPU Massively Parallel Computing}
+% =============================================================================
+
+\section{CPU vs.\ GPU}
+
+GPU has thousands of simple cores; ideal for data-parallel work where the same
+operation applies to many independent elements.  Our $N^2$ independent Pearson
+computations are a textbook GPU workload.
+
+\section{Thread Hierarchy}
+
+\textbf{Thread}: smallest unit, own registers, unique \texttt{threadIdx}\\
+\textbf{Block}: up to 1024 threads sharing fast shared memory (\texttt{\_\_syncthreads})\\
+\textbf{Grid}: all blocks for one kernel launch, scheduled across all SMs
+
+\section{The Three Kernels}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Kernel & Grid & Thread maps to \\
+\midrule
+\texttt{kernel\_user\_means} & 1D & One thread per user \\
+\texttt{kernel\_similarity} & 2D & One thread per $(u,v)$ pair \\
+\texttt{kernel\_predictions} & 2D & One thread per $(u,\text{item})$ pair \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Memory Flow}
+
+\begin{center}
+CPU RAM $\xrightarrow{\texttt{cudaMemcpy (H2D)}}$ GPU DRAM
+$\xrightarrow{\text{kernel}}$ GPU DRAM
+$\xrightarrow{\texttt{cudaMemcpy (D2H)}}$ CPU RAM
+\end{center}
+
+\section{Timing GPU Code}
+
+Use CUDA events (not \texttt{clock\_gettime}) because kernel launches are
+\emph{asynchronous}:
+\begin{lstlisting}
+cudaEventRecord(ev_start);
+kernel<<<grid,block>>>(...);
+cudaEventRecord(ev_stop);
+cudaEventSynchronize(ev_stop);
+float ms; cudaEventElapsedTime(&ms, ev_start, ev_stop);
+\end{lstlisting}
+
+% =============================================================================
+\chapter{Hybrid MPI+OpenMP — Two-Level Parallelism}
+% =============================================================================
+
+\section{Motivation}
+
+Real clusters have multi-core nodes connected by a network.
+\begin{itemize}
+    \item \textbf{Pure MPI}: intra-node communication is wasteful (cores share RAM)
+    \item \textbf{Pure OpenMP}: cannot cross node boundaries
+    \item \textbf{Hybrid}: MPI between nodes, OpenMP within nodes
+\end{itemize}
+
+\section{Thread-Safe MPI Initialisation}
+
+\begin{lstlisting}
+int provided;
+MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
+/* MPI_THREAD_FUNNELED: MPI only called from main thread */
+\end{lstlisting}
+
+\section{Two-Level Work Division}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Level & Technology & Grain \\
+\midrule
+Coarse & MPI & Rows assigned to different ranks \\
+Fine & OpenMP & Threads share rows within a rank \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Total workers = $P \times T$, MPI messages = $P$ (not $P \times T$).
+
+\section{Two-Level Reduction (Phase 5)}
+
+\begin{enumerate}
+    \item OpenMP \texttt{reduction(+:local\_err, local\_cnt)}: private per-thread copies merged at barrier
+    \item \texttt{MPI\_Reduce}: per-rank totals summed to rank 0
+\end{enumerate}
+
+\section{Benchmarked Configurations}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Config & $P \times T$ & Notes \\
+\midrule
+Hybrid\_2x4 & 2 ranks, 4 threads & Balanced \\
+Hybrid\_4x2 & 4 ranks, 2 threads & More MPI \\
+Hybrid\_8x1 & 8 ranks, 1 thread & Equivalent to pure MPI \\
+Hybrid\_1x8 & 1 rank, 8 threads & Equivalent to pure OpenMP \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+\chapter*{Summary Comparison}
+\addcontentsline{toc}{chapter}{Summary Comparison}
+% =============================================================================
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+Version & Memory & Parallelism & Best for & Communication \\
+\midrule
+Serial & Shared & None & Baseline & None \\
+OpenMP & Shared & Fork-join & Single machine & None \\
+Pthreads & Shared & Manual threads & Full control & None \\
+MPI & Distributed & Processes & Multi-node & Messages \\
+CUDA & Host+GPU & 1000s of threads & Data-parallel & PCIe transfer \\
+Hybrid & Distributed & MPI$\times$OMP & Large clusters & MPI only \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+\begin{center}
+\textbf{Expected Speedup Order} (approximate, 8 workers or equivalent)\\[0.5em]
+\texttt{CUDA} $>$ \texttt{Hybrid} $\geq$ \texttt{MPI} $\approx$ \texttt{OpenMP}
+$>$ \texttt{Pthreads} $>$ \texttt{Serial}
+\end{center}
+
+\end{document}
