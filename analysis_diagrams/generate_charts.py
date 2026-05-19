@@ -58,40 +58,40 @@ N_USERS = 1000
 N_ITEMS = 1000
 
 # ── Serial baseline ───────────────────────────────────────────────────────────
-SERIAL_SIM  = 14.52      # [Timing] Similarity matrix  (seconds)
-SERIAL_PRED = 9.38       # [Timing] Prediction phase   (seconds)
+SERIAL_SIM  = 1.1165     # [Timing] Similarity matrix  (seconds)
+SERIAL_PRED = 5.2862     # [Timing] Prediction phase   (seconds)
 SERIAL_TOT  = SERIAL_SIM + SERIAL_PRED
-SERIAL_MAE  = 0.4521     # [Eval]   MAE on test set
+SERIAL_MAE  = 1.2574     # [Eval]   MAE on test set
 
 # ── OpenMP (sim+pred total at each thread count) ──────────────────────────────
 #   workers:       1       2       4       8
-OPENMP_SIM  = [ 14.48,  7.51,   3.89,   2.14 ]
-OPENMP_PRED = [  9.35,  4.89,   2.51,   1.38 ]
-OPENMP_MAE  = [ 0.4521, 0.4521, 0.4521, 0.4521 ]
+OPENMP_SIM  = [ 1.1470,  0.5768,  0.2855,  0.1474 ]
+OPENMP_PRED = [ 5.5064,  2.7558,  1.3791,  0.6973 ]
+OPENMP_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
 
 # ── Pthreads (sim+pred total at each thread count) ───────────────────────────
 #   workers:       1       2       4       8
-PTHREADS_SIM  = [ 14.50,  7.63,   4.02,   2.31 ]
-PTHREADS_PRED = [  9.36,  4.93,   2.58,   1.47 ]
-PTHREADS_MAE  = [ 0.4521, 0.4521, 0.4521, 0.4521 ]
+PTHREADS_SIM  = [ 0.9404,  0.6929,  0.4066,  0.2177 ]
+PTHREADS_PRED = [ 5.5292,  2.7646,  1.3816,  0.7047 ]
+PTHREADS_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
 
 # ── MPI (sim+pred total at each process count) ───────────────────────────────
 #   workers:       1       2       4       8
-MPI_SIM  = [ 14.55,  7.42,   3.78,   2.05 ]
-MPI_PRED = [  9.40,  4.82,   2.45,   1.32 ]
-MPI_MAE  = [ 0.4521, 0.4521, 0.4521, 0.4521 ]
+MPI_SIM  = [ 2.3949,  1.1931,  0.5972,  0.3007 ]
+MPI_PRED = [ 5.5561,  2.7599,  1.3848,  0.7083 ]
+MPI_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
 
 # ── CUDA (single GPU run) ────────────────────────────────────────────────────
-CUDA_SIM   = 0.89        # set None if not available: CUDA_SIM = None
-CUDA_PRED  = 0.54
-CUDA_MAE   = 0.4523      # may differ very slightly due to float32 GPU math
+CUDA_SIM   = None        # CUDA not available on this system
+CUDA_PRED  = None
+CUDA_MAE   = None
 
 # ── Hybrid (P MPI ranks × T OpenMP threads, 8 total workers) ─────────────────
-# Config:           2×4    4×2    8×1    1×8
+# Config:           2×4     4×2     8×1     1×8
 HYBRID_LABELS  = ["2×4", "4×2", "8×1", "1×8"]
-HYBRID_SIM     = [ 2.05,  2.18,  2.09,  2.12 ]
-HYBRID_PRED    = [ 1.30,  1.39,  1.35,  1.36 ]
-HYBRID_MAE     = [ 0.4521, 0.4521, 0.4521, 0.4521 ]
+HYBRID_SIM     = [ 0.7651,  0.3802,  0.2333,  1.5311 ]
+HYBRID_PRED    = [ 1.7681,  0.8893,  0.7008,  3.5192 ]
+HYBRID_MAE     = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DERIVED QUANTITIES

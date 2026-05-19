@@ -1,7 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python analysis_diagrams/generate_charts.py)"
+      "Bash(python analysis_diagrams/generate_charts.py)",
+      "Bash(gcc --version)",
+      "Bash(mpicc --version)",
+      "Bash(python3 -c \"import matplotlib, numpy\")",
+      "Bash(pip3 install *)",
+      "Bash(bash *)",
+      "Bash(python3 *)",
+      "Bash(sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended)",
+      "Bash(apt list *)",
+      "Bash(curl -sL \"https://yihui.org/tinytex/install-bin-unix.sh\")",
+      "Bash(sh)",
+      "Bash(echo \"TinyTeX install started in background \\(PID $!\\)\")",
+      "Bash(sudo -n apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended)",
+      "Bash(snap install *)",
+      "Bash(wget -qO- \"https://yihui.org/tinytex/install-bin-unix.sh\")",
+      "Bash(apt-cache show *)"
     ]
   }
 }

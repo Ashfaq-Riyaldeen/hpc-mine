@@ -1,21 +1,24 @@
-# MAE Correctness Comparison  (problem size: 1000 x 1000, SEED=42)
-# All versions must match Serial MAE within ±0.001
+# MAE Correctness Comparison  (1000 x 1000, SEED=42)
+# All versions must match Serial MAE within +/-0.001
 # Sim-matrix checksum must also match exactly across all CPU versions.
 #
-# HOW TO FILL:
-#   Run each version with:  ./serial_rec 1000 1000
-#                           OMP_NUM_THREADS=4 ./openmp_rec 1000 1000
-#                           ./pthreads_rec 1000 1000 4
-#                           mpirun -np 4 ./mpi_rec 1000 1000
-#                           ./cuda_rec 1000 1000
-#                           mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec 1000 1000
-#   Copy the [Eval] MAE and [Check] Sim-matrix checksum lines below.
-
-Version         | MAE       | Matches Serial? | Sim Checksum
-----------------|-----------|-----------------|-------------
-Serial          |           | baseline        |
-OpenMP (4T)     |           |                 |
-Pthreads (4T)   |           |                 |
-MPI (4P)        |           |                 |
-CUDA            |           |                 |
-Hybrid (2x4)    |           |                 |
+Version           | MAE    | Matches Serial? | Sim Checksum
+------------------|--------|-----------------|------------------
+Serial            | 1.2574 | baseline        | 942.387323
+OpenMP  (1T)      | 1.2574 | YES             | 942.387323
+OpenMP  (2T)      | 1.2574 | YES             | 942.387323
+OpenMP  (4T)      | 1.2574 | YES             | 942.387323
+OpenMP  (8T)      | 1.2574 | YES             | 942.387323
+Pthreads (1T)     | 1.2574 | YES             | 942.387323
+Pthreads (2T)     | 1.2574 | YES             | 942.387323
+Pthreads (4T)     | 1.2574 | YES             | 942.387323
+Pthreads (8T)     | 1.2574 | YES             | 942.387323
+MPI     (1P)      | 1.2574 | YES             | 942.387323
+MPI     (2P)      | 1.2574 | YES             | 942.387323
+MPI     (4P)      | 1.2574 | YES             | 942.387323
+MPI     (8P)      | 1.2574 | YES             | 942.387323
+Hybrid  (2x4)     | 1.2574 | YES             | 942.387323
+Hybrid  (4x2)     | 1.2574 | YES             | 942.387323
+Hybrid  (8x1)     | 1.2574 | YES             | 942.387323
+Hybrid  (1x8)     | 1.2574 | YES             | 942.387323
+CUDA              | N/A    | N/A (no GPU)    | N/A

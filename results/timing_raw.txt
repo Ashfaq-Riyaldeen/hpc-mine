@@ -1,0 +1,364 @@
+HPC Group 11 — Benchmark Run  Tue May 19 15:25:20 +0530 2026
+Problem size: 1000 1000  |  SEED=42  |  TOP_K=20
+==========================================
+=== Serial (1 workers) ===
+=== Pearson Correlation Recommender – Serial Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0100 s
+[Timing] User mean compute  : 0.0022 s
+[Timing] Similarity matrix  : 1.1165 s
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 5.2862 s
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 6.4027 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== OpenMP (1 workers) ===
+=== Pearson Correlation Recommender – OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 1
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0144 s
+[Timing] User mean compute  : 0.0022 s  [parallel, 1 threads]
+[Timing] Similarity matrix  : 1.1470 s  [parallel, 1 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 5.5064 s  [parallel, 1 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 6.6534 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== OpenMP (2 workers) ===
+=== Pearson Correlation Recommender – OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 2
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0217 s
+[Timing] User mean compute  : 0.0018 s  [parallel, 2 threads]
+[Timing] Similarity matrix  : 0.5768 s  [parallel, 2 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 2.7558 s  [parallel, 2 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 3.3326 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== OpenMP (4 workers) ===
+=== Pearson Correlation Recommender – OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 4
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0202 s
+[Timing] User mean compute  : 0.0007 s  [parallel, 4 threads]
+[Timing] Similarity matrix  : 0.2855 s  [parallel, 4 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 1.3791 s  [parallel, 4 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 1.6646 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== OpenMP (8 workers) ===
+=== Pearson Correlation Recommender – OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0193 s
+[Timing] User mean compute  : 0.0004 s  [parallel, 8 threads]
+[Timing] Similarity matrix  : 0.1474 s  [parallel, 8 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 0.6973 s  [parallel, 8 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 0.8447 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Pthreads (1 workers) ===
+=== Pearson Correlation Recommender – Pthreads Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 1
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0106 s
+[Timing] User mean compute  : 0.0026 s  [pthreads, 1 threads]
+[Timing] Similarity matrix  : 0.9404 s  [pthreads, 1 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 5.5292 s  [pthreads, 1 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 6.4697 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Pthreads (2 workers) ===
+=== Pearson Correlation Recommender – Pthreads Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 2
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0132 s
+[Timing] User mean compute  : 0.0018 s  [pthreads, 2 threads]
+[Timing] Similarity matrix  : 0.6929 s  [pthreads, 2 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 2.7646 s  [pthreads, 2 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 3.4575 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Pthreads (4 workers) ===
+=== Pearson Correlation Recommender – Pthreads Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 4
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0118 s
+[Timing] User mean compute  : 0.0008 s  [pthreads, 4 threads]
+[Timing] Similarity matrix  : 0.4066 s  [pthreads, 4 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 1.3816 s  [pthreads, 4 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 1.7882 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Pthreads (8 workers) ===
+=== Pearson Correlation Recommender – Pthreads Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0104 s
+[Timing] User mean compute  : 0.0005 s  [pthreads, 8 threads]
+[Timing] Similarity matrix  : 0.2177 s  [pthreads, 8 threads]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 0.7047 s  [pthreads, 8 threads]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 0.9224 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== MPI (1 workers) ===
+=== Pearson Correlation Recommender – MPI Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 1
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0178 s
+[Timing] User mean compute  : 0.0020 s  [MPI, 1 processes]
+[Timing] Similarity matrix  : 2.3949 s  [MPI, 1 processes]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 5.5561 s  [MPI, 1 processes]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 7.9510 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== MPI (2 workers) ===
+=== Pearson Correlation Recommender – MPI Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 2
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0164 s
+[Timing] User mean compute  : 0.0011 s  [MPI, 2 processes]
+[Timing] Similarity matrix  : 1.1931 s  [MPI, 2 processes]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 2.7599 s  [MPI, 2 processes]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 3.9529 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== MPI (4 workers) ===
+=== Pearson Correlation Recommender – MPI Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 4
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0159 s
+[Timing] User mean compute  : 0.0005 s  [MPI, 4 processes]
+[Timing] Similarity matrix  : 0.5972 s  [MPI, 4 processes]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 1.3848 s  [MPI, 4 processes]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 1.9820 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== MPI (8 workers) ===
+=== Pearson Correlation Recommender – MPI Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0157 s
+[Timing] User mean compute  : 0.0003 s  [MPI, 8 processes]
+[Timing] Similarity matrix  : 0.3007 s  [MPI, 8 processes]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 0.7083 s  [MPI, 8 processes]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 1.0090 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Hybrid_2x4 (8 workers) ===
+=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20
+    MPI Processes: 2 | OpenMP Threads/Process: 4 | Total workers: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0162 s
+[Timing] User mean compute  : 0.0008 s  [MPI 2 × OMP 4]
+[Timing] Similarity matrix  : 0.7651 s  [MPI 2 × OMP 4]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 1.7681 s  [MPI 2 × OMP 4]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 2.5332 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Hybrid_4x2 (8 workers) ===
+=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20
+    MPI Processes: 4 | OpenMP Threads/Process: 2 | Total workers: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0157 s
+[Timing] User mean compute  : 0.0004 s  [MPI 4 × OMP 2]
+[Timing] Similarity matrix  : 0.3802 s  [MPI 4 × OMP 2]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 0.8893 s  [MPI 4 × OMP 2]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 1.2695 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Hybrid_8x1 (8 workers) ===
+=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20
+    MPI Processes: 8 | OpenMP Threads/Process: 1 | Total workers: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0155 s
+[Timing] User mean compute  : 0.0004 s  [MPI 8 × OMP 1]
+[Timing] Similarity matrix  : 0.2333 s  [MPI 8 × OMP 1]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 0.7008 s  [MPI 8 × OMP 1]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 0.9342 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
+=== Hybrid_1x8 (8 workers) ===
+=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
+    Users: 1000 | Items: 1000 | Top-K: 20
+    MPI Processes: 1 | OpenMP Threads/Process: 8 | Total workers: 8
+
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Data generation    : 0.0172 s
+[Timing] User mean compute  : 0.0018 s  [MPI 1 × OMP 8]
+[Timing] Similarity matrix  : 1.5311 s  [MPI 1 × OMP 8]
+[Check]  Sim-matrix checksum: 942.387323
+[Timing] Prediction phase   : 3.5192 s  [MPI 1 × OMP 8]
+[Eval]   MAE on test set    : 1.2574  (test size: 29866)
+[Timing] Total (sim+pred)   : 5.0503 s
+
+--- Sample Predictions (first 5 users, 5 items) ---
+User\Item  Item0    Item1    Item2    Item3    Item4  
+User 0      2.81     2.89     3.21     2.93     2.74  
+User 1      3.05     3.00     2.74     2.00     2.98  
+User 2      3.37     3.23     3.24     5.00     2.80  
+User 3      2.69     3.60     3.31     2.79     2.74  
+User 4      2.95     3.05     5.00     2.97     3.13  
+
