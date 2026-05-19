@@ -16,7 +16,19 @@
       "Bash(sudo -n apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended)",
       "Bash(snap install *)",
       "Bash(wget -qO- \"https://yihui.org/tinytex/install-bin-unix.sh\")",
-      "Bash(apt-cache show *)"
+      "Bash(apt-cache show *)",
+      "Bash(nvidia-smi)",
+      "Read(//dev/**)",
+      "Read(//proc/driver/nvidia/**)",
+      "Read(//usr/local/**)",
+      "Bash(find / -name \"nvcc\")",
+      "Bash(dpkg -l)",
+      "Bash(apt-cache search *)",
+      "Bash(lspci)",
+      "Bash(apt-cache policy *)",
+      "Bash(lsmod)",
+      "Bash(sudo -n modprobe nvidia)",
+      "Bash(nvcc --version)"
     ]
   }
 }
