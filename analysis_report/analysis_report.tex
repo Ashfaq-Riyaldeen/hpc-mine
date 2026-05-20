@@ -153,22 +153,20 @@ CPU / GPU              & Intel Core i7-11800H (8 phys / 16 logical) / NVIDIA RTX
 \]
 
 Both phases are \emph{embarrassingly parallel at the row level}, making them
-ideal targets for all five parallelisation strategies.
+ideal targets for all five parallelisation strategies.  Figure~\ref{fig:pipeline}
+summarises the pipeline and marks which phases each technology parallelises;
+the row-wise decomposition that makes every model race-free is then shown in the
+per-technology diagrams that follow.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.92\textwidth]{../analysis_diagrams/charts/concept_overview.png}
-  \caption{How the parallel programming concepts map onto the recommender
-  pipeline. Phases 3 (similarity) and 4 (prediction) dominate the runtime and
-  are partitioned by user-row across every parallel model.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.78\textwidth]{../analysis_diagrams/charts/concept_partition.png}
-  \caption{Row-wise domain decomposition of the ratings/similarity matrices.
-  Each worker (OpenMP thread, Pthread, MPI rank, or CUDA thread) owns a disjoint
-  set of user rows~$u$ and writes only those rows --- the key to race-freedom.}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_01_algorithm_pipeline.png}
+  \caption{The five-phase recommender pipeline, shared by every implementation.
+  The same algorithm and data (\code{SEED=42}) are used throughout --- only the
+  runtime changes. Phase~3 (Pearson similarity) is the $O(N^2 M)$ bottleneck;
+  Phases~3--4 are the targets of all five parallel models, while data generation
+  stays serial.}
+  \label{fig:pipeline}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -176,7 +174,7 @@ ideal targets for all five parallelisation strategies.
 
 OpenMP exploits shared-memory parallelism using compiler directives.
 A master thread forks into $T$ workers sharing the same address space,
-then rejoins at an implicit barrier.
+then rejoins at an implicit barrier (Figure~\ref{fig:openmp}).
 
 \textbf{Phase 3 (key design choice):}
 The outer loop uses \code{\#pragma omp parallel for schedule(dynamic,4)}.
@@ -195,17 +193,21 @@ a private accumulator; OpenMP sums all copies at the barrier.  The same pattern
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_openmp.png}
-  \caption{OpenMP fork-join model applied to Phases 3--4. A master thread forks
-  $T$ workers that pull dynamic row-chunks from a shared queue, then rejoin at an
-  implicit barrier.}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_02_openmp.png}
+  \caption{OpenMP fork/join model. The master thread forks a team of $T$ workers
+  over one shared address space (\code{ratings}, \code{sim\_matrix}, \ldots), each
+  owning a disjoint slice of user rows, then rejoins at an implicit barrier. The
+  side notes show the three race-free techniques used: \code{schedule(dynamic,4)}
+  for the triangular loop, disjoint-row writes, and a thread-private \code{nbrs[]}
+  buffer with \code{reduction(+:err)}.}
+  \label{fig:openmp}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Pthreads --- Manual POSIX Thread Management}
 
 POSIX Threads require the programmer to explicitly create threads, assign work,
-and synchronise with \code{pthread\_join}.
+and synchronise with \code{pthread\_join} (Figure~\ref{fig:pthreads}).
 
 A \code{run\_parallel(fn, nthreads)} harness is called at the start of each of
 Phases 2, 3, and 4:
@@ -225,18 +227,21 @@ loop imbalance --- which explains the slightly lower efficiency vs.\ OpenMP.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_pthreads.png}
-  \caption{Manual POSIX-thread management. The \code{run\_parallel} harness
-  creates $T$ threads with static \code{ceil}-division row ranges and joins them
-  as a phase barrier, once per phase.}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_03_pthreads.png}
+  \caption{Manual POSIX-thread management. \code{main()} calls \code{run\_parallel}
+  once per parallel phase: \code{pthread\_create} spawns $T$ threads, each deriving
+  its own \code{ceil}-division row range from a \code{ThreadArgs} struct, and
+  \code{pthread\_join} on all threads acts as the phase barrier. Disjoint rows plus
+  a private \code{nbrs[]} buffer make it lock-free.}
+  \label{fig:pthreads}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{MPI --- Distributed-Memory Parallelism}
 
-Each MPI rank is an independent process with its own private address space.
-The $N=1{,}000$ users are divided evenly: rank $r$ owns rows
-$[r \cdot N/P,\; (r{+}1)\cdot N/P)$.
+Each MPI rank is an independent process with its own private address space
+(Figure~\ref{fig:mpi}). The $N=1{,}000$ users are divided evenly: rank $r$ owns
+rows $[r \cdot N/P,\; (r{+}1)\cdot N/P)$.
 
 \begin{table}[H]
 \centering
@@ -260,11 +265,13 @@ but is the necessary mechanism for multi-node deployments.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_mpi.png}
-  \caption{MPI distributed-memory layout. Each rank is a separate process with
-  a private address space; rows are assigned by \code{ceil}-division and the
-  global similarity matrix is assembled with \code{MPI\_Allgatherv}, while
-  MAE/RMSE use \code{MPI\_Reduce}.}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_04_mpi.png}
+  \caption{MPI distributed-memory layout. Each rank is a separate process with a
+  private copy of the matrices, computing the similarity rows it owns. A single
+  \code{MPI\_Allgatherv} then gives every rank the complete $N\times N$ matrix
+  (so predictions need no communication), and \code{MPI\_Reduce} sums the partial
+  test-set error to rank~0 for the global MAE/RMSE.}
+  \label{fig:mpi}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -290,21 +297,26 @@ Section~\ref{sec:cuda-results}.}
 \end{table}
 
 The similarity kernel launches $63 \times 63 \times 256 = 1{,}016{,}064$
-threads simultaneously.  Timing uses \code{cudaEventRecord} to separate
-kernel-only time from \code{cudaMemcpy} transfer overhead.
+threads simultaneously (Figure~\ref{fig:cuda}).  Timing uses \code{cudaEventRecord}
+to separate kernel-only time from \code{cudaMemcpy} transfer overhead.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_cuda.png}
-  \caption{CUDA GPU model. A 2D grid of thread blocks maps one thread to each
-  $(u,v)$ similarity pair; the host transfers data, launches kernels, and copies
-  results back. Benchmarked on an NVIDIA RTX 3050 (compute capability 8.6).}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_05_cuda.png}
+  \caption{CUDA GPU model. After a Host$\rightarrow$Device copy of the ratings,
+  three kernels run in sequence on a 2D grid of $16\times16$ thread blocks --- one
+  thread per $(u,v)$ pair / $(\text{user},\text{item})$ cell --- before the
+  predictions are copied back. The left column shows the GPU memory hierarchy
+  (registers $\rightarrow$ shared $\rightarrow$ global $\rightarrow$ host).
+  Benchmarked on an NVIDIA RTX 3050 (compute capability 8.6).}
+  \label{fig:cuda}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Hybrid MPI+OpenMP --- Two-Level Parallelism}
 
-Combines MPI (coarse-grain inter-node) and OpenMP (fine-grain intra-node).
+Combines MPI (coarse-grain inter-node) and OpenMP (fine-grain intra-node),
+as shown in Figure~\ref{fig:hybrid}.
 With $P$ MPI ranks and $T$ OpenMP threads per rank, the total worker count is
 $P \times T$ while sending only $P$ messages per collective call.
 
@@ -313,10 +325,13 @@ exclusively from the main thread, after OpenMP parallel regions complete.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_hybrid.png}
-  \caption{Hybrid two-level parallelism: MPI partitions user-rows across $P$
-  ranks (coarse grain), and within each rank OpenMP spawns $T$ threads over that
-  rank's rows (fine grain), for $P\times T$ total workers.}
+  \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_06_hybrid_mpi_openmp.png}
+  \caption{Hybrid two-level parallelism. Level~1 (MPI) partitions user-rows across
+  $P$ ranks on separate nodes; level~2 (OpenMP) spawns $T$ threads over each rank's
+  rows in shared memory, for $P\times T$ total workers. \code{MPI\_Allgatherv} /
+  \code{MPI\_Reduce} link the ranks, and \code{MPI\_THREAD\_FUNNELED} keeps all MPI
+  calls on the main thread.}
+  \label{fig:hybrid}
 \end{figure}
 
 \begin{table}[H]
@@ -410,10 +425,15 @@ four decimal places, validating the GPU kernels.
   E(p) = \frac{S(p)}{p}
   \qquad
   S_{\max}(p) = \frac{1}{f + (1-f)/p}
-  \quad (f \approx 0.04)
 \]
 
-At $p=8$: $S_{\max}(8) = 1/(0.04+0.96/8) \approx 6.25\times$.
+The \emph{algorithmic} serial fraction is tiny --- only data generation, user
+means, and evaluation run serially ($\approx 0.025$\,s of $8.4$\,s, $f \approx
+0.3\%$), giving an optimistic $S_{\max}(8) = 1/(0.003+0.997/8) \approx
+7.83\times$.  The achievable speedup is instead limited by hardware (reduced
+all-core turbo clocks and memory-bandwidth saturation); fitting Amdahl's Law to
+the measured OpenMP-8T speedup gives an \emph{effective} $f \approx 3.8\%$
+($S_{\max} \approx 26\times$) --- see Section~\ref{sec:amdahl}.
 
 \subsection{Serial Baseline}
 
@@ -575,7 +595,7 @@ device across all three kernels.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{../analysis_diagrams/charts/amdahls_law.png}
-  \caption{Amdahl's Law ($f \approx 4\%$, $S_{\max}\approx25\times$) vs.\ actual speedup.}
+  \caption{Amdahl's Law (effective $f \approx 3.8\%$, $S_{\max}\approx26\times$) vs.\ actual speedup.}
 \end{figure}
 
 \begin{figure}[H]
@@ -648,22 +668,30 @@ configuration pays all MPI overhead while gaining zero distribution benefit.
 multi-node scale.}
 
 \subsection{Amdahl's Law}
+\label{sec:amdahl}
+
+With an algorithmic serial fraction of only $f \approx 0.3\%$, the optimistic
+limit is $S_{\max}(8) \approx 7.83\times$.  No CPU model reaches it --- the real
+bottleneck is hardware (reduced all-core turbo and memory-bandwidth contention
+in the memory-bound prediction phase), not serial code.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{L{3cm} R{3cm} R{3cm} L{5.5cm}}
 \toprule
-\textbf{Technology} & \textbf{Predicted} & \textbf{Actual} & \textbf{Observation} \\
+\textbf{Technology} & \textbf{Limit ($f\approx0.3\%$)} & \textbf{Actual} & \textbf{Observation} \\
 \midrule
-OpenMP 8T   & 6.25$\times$ & 6.32$\times$ $\uparrow$ &
-  Slightly exceeds theory: dynamic scheduling reduces effective $f$ \\
-Pthreads 8T & 6.25$\times$ & 5.67$\times$ $\downarrow$ &
-  Below theory: static row split cannot balance the triangular load \\
-MPI 8P      & 6.25$\times$ & 5.11$\times$ $\downarrow$ &
-  Below theory: communication overhead not modelled by Amdahl \\
+OpenMP 8T   & 7.83$\times$ & 6.32$\times$ &
+  Closest to limit; dynamic scheduling balances the triangular load \\
+Pthreads 8T & 7.83$\times$ & 5.67$\times$ &
+  Further below: static row split cannot balance the triangular load \\
+MPI 8P      & 7.83$\times$ & 5.11$\times$ &
+  Below limit: \code{MPI\_Allgatherv} communication overhead \\
 \bottomrule
 \end{tabular}
-\caption{Amdahl's Law predictions vs.\ actual measured speedup at $p=8$.}
+\caption{Amdahl's Law limit vs.\ actual measured speedup at $p=8$. Fitting the
+model to OpenMP-8T gives an \emph{effective} $f \approx 3.8\%$ ($S_{\max}\approx
+26\times$), capturing the hardware overhead.}
 \end{table}
 
 % ══════════════════════════════════════════════════════════════════════════════

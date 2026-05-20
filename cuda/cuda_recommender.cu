@@ -590,6 +590,24 @@ static float evaluate_mae(void)
 }
 
 /*
+ * evaluate_rmse() — Root Mean Square Error on the held-out test set.
+ * Reported alongside MAE so the CUDA output matches the CPU versions and the
+ * benchmark's [Eval] parsing.  Because the GPU reproduces the identical
+ * predictions, this equals the CPU RMSE (within float rounding).
+ */
+static float evaluate_rmse(void)
+{
+    if (test_size == 0) return 0.0f;
+    double sq = 0.0;
+    for (int t = 0; t < test_size; t++) {
+        int u = test_set[t].user, i = test_set[t].item;
+        double d = h_predictions[u * N_ITEMS + i] - test_set[t].rating;
+        sq += d * d;
+    }
+    return (float)sqrt(sq / test_size);
+}
+
+/*
  * similarity_checksum() sums every element of h_sim_matrix.
  * This value must match the serial / OpenMP / Pthreads / MPI checksums
  * for the same N_USERS / N_ITEMS / SEED, confirming numerical correctness.
@@ -833,6 +851,8 @@ int main(int argc, char *argv[])
     /* ── Phase 5: Evaluation (CPU, serial) ───────────────────────────────── */
     printf("[Eval]   MAE on test set    : %.4f  (test size: %d)\n",
            evaluate_mae(), test_size);
+    printf("[Eval]   RMSE on test set   : %.4f  (test size: %d)\n",
+           evaluate_rmse(), test_size);
     printf("[Timing] Total (sim+pred)   : %.4f s\n", t_sim + t_pred);
 
     /* Sample output */

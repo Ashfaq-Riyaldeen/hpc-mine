@@ -74,7 +74,10 @@
       "Bash(mkdir -p png)",
       "Bash(\"/c/Program Files/draw.io/draw.io.exe\" --export --format png --scale 2 --border 10 --output png/diagram_02_openmp.png diagram_02_openmp.drawio)",
       "Bash(ls -la png/)",
-      "Bash('/c/Program Files/draw.io/draw.io.exe' --export --format png --scale 2 --border 10 --output png/__TRACKED_VAR__.png __TRACKED_VAR__.drawio)"
+      "Bash('/c/Program Files/draw.io/draw.io.exe' --export --format png --scale 2 --border 10 --output png/__TRACKED_VAR__.png __TRACKED_VAR__.drawio)",
+      "Bash(git checkout *)",
+      "Bash(echo \"pass1=$?\")",
+      "Bash(echo \"pass2=$?\")"
     ]
   }
 }

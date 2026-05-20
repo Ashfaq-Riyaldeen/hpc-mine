@@ -176,10 +176,46 @@ for CONFIG in "2 4" "4 2" "8 1" "1 8"; do
         "mpirun -np $P env OMP_NUM_THREADS=$T \"$ROOT/hybrid_rec\" $SIZE"
 done
 
+# ── 7. Scalability sweep across problem sizes (Analysis Report §4.7) ───────
+# Strong-scaling above varied the worker count at a fixed 1000x1000 problem.
+# Here we vary the PROBLEM SIZE at fixed best configs (Serial, OpenMP 8T,
+# MPI 8P, CUDA) to show how each model sustains its speedup as N grows.
+SCALE_CSV="$RES/scaling_summary.csv"
+echo "=== Scalability sweep across problem sizes ==="
+cat > "$SCALE_CSV" <<'EOF'
+Size,Serial_s,OpenMP8_s,OpenMP8_speedup,MPI8_s,MPI8_speedup,CUDA_s,CUDA_speedup
+EOF
+
+for SZ in "500 500" "1000 1000" "2000 2000"; do
+    label=$(echo "$SZ" | tr ' ' 'x')
+    echo "--- scaling size $label ---"
+    echo "=== Scaling size $label ===" >> "$RAW"
+
+    s_out=$(eval "\"$ROOT/serial_rec\" $SZ" 2>&1);                    echo "$s_out" >> "$RAW"
+    o_out=$(eval "OMP_NUM_THREADS=8 \"$ROOT/openmp_rec\" $SZ" 2>&1);  echo "$o_out" >> "$RAW"
+    m_out=$(eval "mpirun -np 8 \"$ROOT/mpi_rec\" $SZ" 2>&1);          echo "$m_out" >> "$RAW"
+    c_out=$(eval "\"$ROOT/cuda_rec\" $SZ" 2>&1);                      echo "$c_out" >> "$RAW"
+
+    s_t=$(get_time "Total (sim+pred)" "$s_out")
+    o_t=$(get_time "Total (sim+pred)" "$o_out")
+    m_t=$(get_time "Total (sim+pred)" "$m_out")
+    c_t=$(get_time "Total (sim+pred)" "$c_out")
+
+    osp="N/A"; msp="N/A"; csp="N/A"
+    if command -v bc &>/dev/null && [ -n "$s_t" ]; then
+        [ -n "$o_t" ] && osp=$(echo "scale=2; $s_t / $o_t" | bc)
+        [ -n "$m_t" ] && msp=$(echo "scale=2; $s_t / $m_t" | bc)
+        [ -n "$c_t" ] && csp=$(echo "scale=2; $s_t / $c_t" | bc)
+    fi
+    echo "$label,${s_t:-N/A},${o_t:-N/A},$osp,${m_t:-N/A},$msp,${c_t:-N/A},$csp" >> "$SCALE_CSV"
+done
+echo ""
+
 # ── Done ──────────────────────────────────────────────────────────────────
 echo "=========================================="
 echo "Results written to:"
-echo "  $RAW   (full raw output)"
-echo "  $CSV   (speedup table)"
-echo "  $MAE   (MAE correctness)"
+echo "  $RAW         (full raw output)"
+echo "  $CSV         (speedup table, 1000x1000 worker sweep)"
+echo "  $MAE         (MAE correctness)"
+echo "  $SCALE_CSV   (problem-size scalability sweep)"
 echo "=========================================="
