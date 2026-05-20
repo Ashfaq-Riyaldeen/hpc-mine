@@ -77,7 +77,8 @@
       "Bash('/c/Program Files/draw.io/draw.io.exe' --export --format png --scale 2 --border 10 --output png/__TRACKED_VAR__.png __TRACKED_VAR__.drawio)",
       "Bash(git checkout *)",
       "Bash(echo \"pass1=$?\")",
-      "Bash(echo \"pass2=$?\")"
+      "Bash(echo \"pass2=$?\")",
+      "Bash(grep -nE \"\\\\\\\\\\\\\\\\section\\\\{|\\\\\\\\\\\\\\\\subsection\\\\{\" analysis_report/analysis_report.tex)"
     ]
   }
 }

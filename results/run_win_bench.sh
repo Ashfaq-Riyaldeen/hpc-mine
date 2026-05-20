@@ -1,23 +1,35 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Windows benchmark runner — HPC Group 11   (INTERLEAVED, min-of-N)
-# Platform: Windows 11, MinGW-w64 gcc 13.2.0, MS-MPI 10.1, 4 cores / 8 threads
+# Windows benchmark runner — HPC Group 11   (INTERLEAVED, min-of-N)  [SECONDARY]
+#
+# NOTE: The CANONICAL benchmark results in the report come from
+#   results/run_benchmarks.sh  run on Linux (Pop!_OS) with the RTX 3050 GPU.
+# This is an OPTIONAL Windows CPU-only fallback runner. It writes to its OWN
+# output file (timing_raw_windows.txt) so it never overwrites the Linux data.
+#
+# Platform (this machine): Windows 11, MinGW-w64 gcc, MS-MPI,
+#   Intel Core i7-11800H (8 physical / 16 logical cores).
 # Problem: 1000 x 1000, SEED=42, TOP_K=20
 #
 # Methodology: every configuration is measured once per ROUND, and ROUNDS
 # rounds are run. The analysis takes the MINIMUM time per phase across rounds.
 # Interleaving configs within a round means each version experiences a similar
 # distribution of background OS load, making cross-version comparison fair on
-# a noisy consumer machine. CUDA is code-only (no GPU/toolkit).
+# a noisy consumer machine.
+#
+# CUDA is NOT run here (the GPU/CUDA benchmark is done on Linux via
+# run_benchmarks.sh); this runner covers Serial / OpenMP / Pthreads / MPI / Hybrid.
 # =============================================================================
 set -u
 N=1000; M=1000; ROUNDS=5
-OUT="results/timing_raw.txt"
+OUT="results/timing_raw_windows.txt"
 
-echo "HPC Group 11 - Windows Benchmark Run  $(date)"            >  "$OUT"
+echo "HPC Group 11 - Windows CPU-only Benchmark Run (SECONDARY)  $(date)"  >  "$OUT"
+echo "Canonical results: results/run_benchmarks.sh on Linux + RTX 3050 GPU." >> "$OUT"
 echo "Problem size: $N $M  |  SEED=42  |  TOP_K=20  |  ROUNDS=$ROUNDS (min per config)" >> "$OUT"
 echo "Method: interleaved configs per round; minimum time per phase reported." >> "$OUT"
-echo "Platform: Windows 11 | MinGW gcc 13.2.0 | MS-MPI 10.1 | 4 cores / 8 logical" >> "$OUT"
+echo "Platform: Windows 11 | MinGW-w64 gcc | MS-MPI | Intel i7-11800H (8 physical / 16 logical)" >> "$OUT"
+echo "CUDA: not run here (GPU benchmark is on Linux); CPU versions only." >> "$OUT"
 echo "==========================================" >> "$OUT"
 
 emit () { echo "" >> "$OUT"; echo "=== $1 [round $2] ===" >> "$OUT"; }

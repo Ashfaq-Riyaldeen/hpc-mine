@@ -53,7 +53,16 @@ gcc  -O2 -Wall -fopenmp  -o "$ROOT/openmp_rec"   "$ROOT/openmp/openmp_recommende
 gcc  -O2 -Wall           -o "$ROOT/pthreads_rec" "$ROOT/pthreads/pthreads_recommender.c" -lpthread -lm
 mpicc -O2 -Wall          -o "$ROOT/mpi_rec"      "$ROOT/mpi/mpi_recommender.c"                    -lm
 mpicc -O2 -Wall -fopenmp -o "$ROOT/hybrid_rec"   "$ROOT/hybrid/hybrid_recommender.c"              -lm
-nvcc -O2 -arch=sm_86     -o "$ROOT/cuda_rec"     "$ROOT/cuda/cuda_recommender.cu"                 -lm
+
+# CUDA is optional: only build it when the toolkit (nvcc) is present, so this
+# script still runs end-to-end on a CPU-only machine.
+HAVE_CUDA=0
+if command -v nvcc >/dev/null 2>&1; then
+    nvcc -O2 -arch=sm_86 -o "$ROOT/cuda_rec" "$ROOT/cuda/cuda_recommender.cu" -lm \
+        && HAVE_CUDA=1 || { echo "  (nvcc failed — skipping CUDA)"; HAVE_CUDA=0; }
+else
+    echo "  (nvcc not found — skipping CUDA build/run)"
+fi
 echo "Compile done."
 echo ""
 
@@ -163,9 +172,14 @@ for P in 1 2 4 8; do
         "mpirun -np $P \"$ROOT/mpi_rec\" $SIZE"
 done
 
-# ── 5. CUDA (uncomment when GPU is available) ─────────────────────────────
-run_and_record "CUDA" "GPU" \
-    "\"$ROOT/cuda_rec\" $SIZE"
+# ── 5. CUDA (only if the toolkit was found at compile time) ───────────────
+if [ "$HAVE_CUDA" = 1 ]; then
+    run_and_record "CUDA" "GPU" \
+        "\"$ROOT/cuda_rec\" $SIZE"
+else
+    echo "--- CUDA skipped (no nvcc) ---"
+    echo ""
+fi
 
 # ── 6. Hybrid ─────────────────────────────────────────────────────────────
 for CONFIG in "2 4" "4 2" "8 1" "1 8"; do
@@ -194,7 +208,10 @@ for SZ in "500 500" "1000 1000" "2000 2000"; do
     s_out=$(eval "\"$ROOT/serial_rec\" $SZ" 2>&1);                    echo "$s_out" >> "$RAW"
     o_out=$(eval "OMP_NUM_THREADS=8 \"$ROOT/openmp_rec\" $SZ" 2>&1);  echo "$o_out" >> "$RAW"
     m_out=$(eval "mpirun -np 8 \"$ROOT/mpi_rec\" $SZ" 2>&1);          echo "$m_out" >> "$RAW"
-    c_out=$(eval "\"$ROOT/cuda_rec\" $SZ" 2>&1);                      echo "$c_out" >> "$RAW"
+    c_out=""
+    if [ "$HAVE_CUDA" = 1 ]; then
+        c_out=$(eval "\"$ROOT/cuda_rec\" $SZ" 2>&1);                  echo "$c_out" >> "$RAW"
+    fi
 
     s_t=$(get_time "Total (sim+pred)" "$s_out")
     o_t=$(get_time "Total (sim+pred)" "$o_out")
