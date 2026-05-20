@@ -78,7 +78,8 @@
       "Bash(git checkout *)",
       "Bash(echo \"pass1=$?\")",
       "Bash(echo \"pass2=$?\")",
-      "Bash(grep -nE \"\\\\\\\\\\\\\\\\section\\\\{|\\\\\\\\\\\\\\\\subsection\\\\{\" analysis_report/analysis_report.tex)"
+      "Bash(grep -nE \"\\\\\\\\\\\\\\\\section\\\\{|\\\\\\\\\\\\\\\\subsection\\\\{\" analysis_report/analysis_report.tex)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error hpc_complete_learning_guide.tex)"
     ]
   }
 }

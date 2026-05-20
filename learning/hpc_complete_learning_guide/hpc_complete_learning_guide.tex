@@ -111,13 +111,15 @@ Sim checksum & Sum of all $N^2$ similarity values — cross-version sanity check
 \section*{Output Tags (Parsed by Benchmark Script)}
 
 \begin{verbatim}
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test: 29874
-[Timing] Similarity matrix  : 12.3456 s
-[Timing] Prediction phase   : 8.7654 s
-[Timing] Total (sim+pred)   : 21.1110 s
-[Check]  Sim-matrix checksum: 499876.543210
-[Eval]   MAE on test set    : 0.4523
+[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
+[Timing] Similarity matrix  : 1.3549 s
+[Timing] Prediction phase   : 7.0277 s
+[Timing] Total (sim+pred)   : 8.3826 s
+[Check]  Sim-matrix checksum: 942.387323
+[Eval]   MAE on test set    : 1.2574
+[Eval]   RMSE on test set   : 1.4579
 \end{verbatim}
+(Actual serial-baseline output, 1000x1000, on the RTX 3050 reference machine.)
 
 \section*{Amdahl's Law — The Fundamental Limit}
 
@@ -127,8 +129,12 @@ S_{\max}(p) = \frac{1}{f + (1-f)/p}
 \]
 
 $f$ = fraction of time that \emph{cannot} be parallelised (data generation,
-I/O).  For our project, $f \approx 2$--$5\%$, giving $S_{\max} \approx
-20$--$50\times$.
+evaluation).  Here the \emph{algorithmic} serial fraction is tiny
+($f \approx 0.3\%$), but on this 8-core laptop the achievable speedup is capped
+by memory bandwidth and reduced all-core clocks, giving an \emph{effective}
+$f \approx 3.8\%$ ($S_{\max} \approx 26\times$).  In practice the best CPU result
+is $\approx 6.3\times$ at 8 workers, while the GPU (CUDA) reaches
+$\approx 38\times$.
 
 \section*{How the Files Relate}
 
@@ -505,9 +511,9 @@ Hybrid & Distributed & MPI$\times$OMP & Large clusters & MPI only \\
 
 \vspace{1em}
 \begin{center}
-\textbf{Expected Speedup Order} (approximate, 8 workers or equivalent)\\[0.5em]
-\texttt{CUDA} $>$ \texttt{Hybrid} $\geq$ \texttt{MPI} $\approx$ \texttt{OpenMP}
-$>$ \texttt{Pthreads} $>$ \texttt{Serial}
+\textbf{Measured Speedup Order} (this project; 8 CPU workers, CUDA on RTX 3050)\\[0.5em]
+\texttt{CUDA} ($\times38$) $>$ \texttt{OpenMP} ($\times6.3$) $>$ \texttt{Pthreads} ($\times5.7$)
+$>$ \texttt{MPI} ($\times5.1$) $>$ \texttt{Hybrid\,8$\times$1} ($\times4.9$) $>$ \texttt{Serial}
 \end{center}
 
 \end{document}
