@@ -1,0 +1,32 @@
+# Compiled binaries / executables
+*_rec
+*.exe
+*.out
+*.o
+*.obj
+*.app
+
+# LaTeX build artifacts
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.toc
+*.synctex.gz
+*.lof
+*.lot
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+_build.log
+_p*.log
+_r*.log
+
+# Archives
+*.zip
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
