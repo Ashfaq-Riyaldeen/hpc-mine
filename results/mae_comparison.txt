@@ -1,24 +1,23 @@
 # MAE Correctness Comparison  (1000 x 1000, SEED=42)
 # All versions must match Serial MAE within +/-0.001
-# Sim-matrix checksum must also match exactly across all CPU versions.
 #
-Version           | MAE    | Matches Serial? | Sim Checksum
-------------------|--------|-----------------|------------------
-Serial            | 1.2574 | baseline        | 942.387323
-OpenMP  (1T)      | 1.2574 | YES             | 942.387323
-OpenMP  (2T)      | 1.2574 | YES             | 942.387323
-OpenMP  (4T)      | 1.2574 | YES             | 942.387323
-OpenMP  (8T)      | 1.2574 | YES             | 942.387323
-Pthreads (1T)     | 1.2574 | YES             | 942.387323
-Pthreads (2T)     | 1.2574 | YES             | 942.387323
-Pthreads (4T)     | 1.2574 | YES             | 942.387323
-Pthreads (8T)     | 1.2574 | YES             | 942.387323
-MPI     (1P)      | 1.2574 | YES             | 942.387323
-MPI     (2P)      | 1.2574 | YES             | 942.387323
-MPI     (4P)      | 1.2574 | YES             | 942.387323
-MPI     (8P)      | 1.2574 | YES             | 942.387323
-Hybrid  (2x4)     | 1.2574 | YES             | 942.387323
-Hybrid  (4x2)     | 1.2574 | YES             | 942.387323
-Hybrid  (8x1)     | 1.2574 | YES             | 942.387323
-Hybrid  (1x8)     | 1.2574 | YES             | 942.387323
-CUDA              | N/A    | N/A (no GPU)    | N/A
+Version         | MAE    | Matches Serial? | Sim Checksum
+----------------|--------|-----------------|------------------
+Serial          | 1.2574 | baseline        | 942.387323
+OpenMP          | 1.2574 | YES             | 942.387323
+OpenMP          | 1.2574 | YES             | 942.387323
+OpenMP          | 1.2574 | YES             | 942.387323
+OpenMP          | 1.2574 | YES             | 942.387323
+Pthreads        | 1.2574 | YES             | 942.387323
+Pthreads        | 1.2574 | YES             | 942.387323
+Pthreads        | 1.2574 | YES             | 942.387323
+Pthreads        | 1.2574 | YES             | 942.387323
+MPI             | 1.2574 | YES             | 942.387323
+MPI             | 1.2574 | YES             | 942.387323
+MPI             | 1.2574 | YES             | 942.387323
+MPI             | 1.2574 | YES             | 942.387323
+CUDA            | 1.2574 | YES             | 942.387323
+Hybrid_2x4      | 1.2574 | YES             | 942.387323
+Hybrid_4x2      | 1.2574 | YES             | 942.387323
+Hybrid_8x1      | 1.2574 | YES             | 942.387323
+Hybrid_1x8      | 1.2574 | YES             | 942.387323

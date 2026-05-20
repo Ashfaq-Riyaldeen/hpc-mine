@@ -53,7 +53,7 @@ gcc  -O2 -Wall -fopenmp  -o "$ROOT/openmp_rec"   "$ROOT/openmp/openmp_recommende
 gcc  -O2 -Wall           -o "$ROOT/pthreads_rec" "$ROOT/pthreads/pthreads_recommender.c" -lpthread -lm
 mpicc -O2 -Wall          -o "$ROOT/mpi_rec"      "$ROOT/mpi/mpi_recommender.c"                    -lm
 mpicc -O2 -Wall -fopenmp -o "$ROOT/hybrid_rec"   "$ROOT/hybrid/hybrid_recommender.c"              -lm
-# nvcc -O2 -arch=sm_75   -o "$ROOT/cuda_rec"     "$ROOT/cuda/cuda_recommender.cu"                 -lm
+nvcc -O2 -arch=sm_86     -o "$ROOT/cuda_rec"     "$ROOT/cuda/cuda_recommender.cu"                 -lm
 echo "Compile done."
 echo ""
 
@@ -99,7 +99,7 @@ run_and_record() {
     local sim  pred  total  mae  csum
     sim=$(get_time  "Similarity matrix" "$out")
     pred=$(get_time "Prediction phase"  "$out")
-    total=$(get_time "Total (sim\+pred)" "$out")
+    total=$(get_time "Total (sim+pred)" "$out")
     mae=$(get_mae      "$out")
     csum=$(get_checksum "$out")
 
@@ -127,14 +127,12 @@ run_and_record() {
     if [ "$label" = "Serial" ]; then
         match="baseline"
         SERIAL_MAE="$mae"
-    elif [ -n "$SERIAL_MAE" ] && [ -n "$mae" ] && command -v bc &>/dev/null; then
-        local diff
-        diff=$(echo "scale=4; define abs(x){if(x<0)return -x;return x;} abs($mae - $SERIAL_MAE)" | bc -l 2>/dev/null || echo "N/A")
-        if [ "$diff" != "N/A" ]; then
-            local ok
-            ok=$(echo "$diff <= 0.001" | bc 2>/dev/null)
-            [ "$ok" = "1" ] && match="YES" || match="NO - diff=$diff"
-        fi
+    elif [ -n "$SERIAL_MAE" ] && [ -n "$mae" ]; then
+        match=$(awk -v a="$mae" -v b="$SERIAL_MAE" 'BEGIN{
+            d = a - b; if (d < 0) d = -d;
+            if (d <= 0.001) printf "YES";
+            else            printf "NO - diff=%.4f", d;
+        }')
     fi
 
     printf "%-16s| %-7s| %-16s| %s\n" \
@@ -166,8 +164,8 @@ for P in 1 2 4 8; do
 done
 
 # ── 5. CUDA (uncomment when GPU is available) ─────────────────────────────
-# run_and_record "CUDA" "GPU" \
-#     "\"$ROOT/cuda_rec\" $SIZE"
+run_and_record "CUDA" "GPU" \
+    "\"$ROOT/cuda_rec\" $SIZE"
 
 # ── 6. Hybrid ─────────────────────────────────────────────────────────────
 for CONFIG in "2 4" "4 2" "8 1" "1 8"; do

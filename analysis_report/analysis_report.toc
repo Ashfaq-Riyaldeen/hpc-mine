@@ -1,6 +1,6 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {2}Algorithm Design and Parallel Programming Concepts}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Algorithm Pipeline (5 Phases)}{2}{subsection.2.1}%
+\contentsline {section}{\numberline {2}Algorithm Design and Parallel Programming Concepts}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Algorithm Pipeline (5 Phases)}{3}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}OpenMP --- Shared-Memory Fork-Join Parallelism}{5}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Pthreads --- Manual POSIX Thread Management}{7}{subsection.2.3}%
 \contentsline {subsection}{\numberline {2.4}MPI --- Distributed-Memory Parallelism}{9}{subsection.2.4}%
@@ -14,11 +14,12 @@
 \contentsline {subsection}{\numberline {4.4}Pthreads --- Varying Thread Count}{18}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}MPI --- Varying Process Count}{18}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Hybrid MPI+OpenMP --- Fixed 8 Total Workers}{18}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Performance Charts}{19}{subsection.4.7}%
-\contentsline {section}{\numberline {5}Performance Discussion}{22}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Head-to-Head Comparison at 8 Workers}{22}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}OpenMP vs.\ Pthreads}{22}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}MPI Scaling}{23}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Hybrid MPI+OpenMP --- Inversion on a Single Node}{23}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Amdahl's Law}{23}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Conclusions}{23}{section.6}%
+\contentsline {subsection}{\numberline {4.7}CUDA --- GPU Benchmark}{18}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}Performance Charts}{19}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Performance Discussion}{23}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Head-to-Head Comparison at 8 Workers}{23}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}OpenMP vs.\ Pthreads}{24}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}MPI Scaling}{24}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Hybrid MPI+OpenMP --- Inversion on a Single Node}{24}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Amdahl's Law}{24}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Conclusions}{24}{section.6}%

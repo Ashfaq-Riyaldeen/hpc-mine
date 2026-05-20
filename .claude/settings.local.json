@@ -58,7 +58,14 @@
       "Bash(pdflatex -interaction=nonstopmode parallel_concepts_diagrams.tex)",
       "Bash(python -)",
       "Bash(pdflatex -interaction=nonstopmode analysis_report.tex)",
-      "Bash(pdfinfo analysis_report.pdf)"
+      "Bash(pdfinfo analysis_report.pdf)",
+      "Bash(nvidia-smi --query-gpu=compute_cap --format=csv,noheader)",
+      "Bash(nvcc -O2 -arch=sm_86 -o cuda_rec cuda/cuda_recommender.cu -lm)",
+      "Bash(./cuda_rec *)",
+      "Bash(bc -l)",
+      "Bash(mpiexec --help)",
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error analysis_report.tex)",
+      "Read(//tmp/**)"
     ]
   }
 }
