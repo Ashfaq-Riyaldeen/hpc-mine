@@ -58,28 +58,30 @@ N_USERS = 1000
 N_ITEMS = 1000
 
 # ── Serial baseline ───────────────────────────────────────────────────────────
-SERIAL_SIM  = 1.1165     # [Timing] Similarity matrix  (seconds)
-SERIAL_PRED = 5.2862     # [Timing] Prediction phase   (seconds)
+# Windows 11, MinGW gcc 13.2.0, MS-MPI 10.1, 4 physical / 8 logical cores.
+# Interleaved benchmark, 5 rounds, minimum time per phase.
+SERIAL_SIM  = 2.8609     # [Timing] Similarity matrix  (seconds)
+SERIAL_PRED = 14.0248    # [Timing] Prediction phase   (seconds)
 SERIAL_TOT  = SERIAL_SIM + SERIAL_PRED
-SERIAL_MAE  = 1.2574     # [Eval]   MAE on test set
+SERIAL_MAE  = 1.2568     # [Eval]   MAE on test set
 
 # ── OpenMP (sim+pred total at each thread count) ──────────────────────────────
-#   workers:       1       2       4       8
-OPENMP_SIM  = [ 1.1470,  0.5768,  0.2855,  0.1474 ]
-OPENMP_PRED = [ 5.5064,  2.7558,  1.3791,  0.6973 ]
-OPENMP_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
+#   workers:       1        2        4        8
+OPENMP_SIM  = [ 2.6480,  1.5110,  0.8360,  0.5770 ]
+OPENMP_PRED = [ 14.2600,  7.1520,  4.7520,  3.2100 ]
+OPENMP_MAE  = [ 1.2568,  1.2568,  1.2568,  1.2568 ]
 
 # ── Pthreads (sim+pred total at each thread count) ───────────────────────────
-#   workers:       1       2       4       8
-PTHREADS_SIM  = [ 0.9404,  0.6929,  0.4066,  0.2177 ]
-PTHREADS_PRED = [ 5.5292,  2.7646,  1.3816,  0.7047 ]
-PTHREADS_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
+#   workers:       1        2        4        8
+PTHREADS_SIM  = [ 2.3724,  1.9584,  1.2321,  0.7555 ]
+PTHREADS_PRED = [ 13.2975,  7.3073,  4.8009,  3.3008 ]
+PTHREADS_MAE  = [ 1.2568,  1.2568,  1.2568,  1.2568 ]
 
 # ── MPI (sim+pred total at each process count) ───────────────────────────────
-#   workers:       1       2       4       8
-MPI_SIM  = [ 2.3949,  1.1931,  0.5972,  0.3007 ]
-MPI_PRED = [ 5.5561,  2.7599,  1.3848,  0.7083 ]
-MPI_MAE  = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
+#   workers:       1        2        4        8
+MPI_SIM  = [ 4.3052,  2.5929,  1.5038,  1.0400 ]
+MPI_PRED = [ 12.8534,  7.6822,  4.7190,  3.2503 ]
+MPI_MAE  = [ 1.2568,  1.2568,  1.2568,  1.2568 ]
 
 # ── CUDA (single GPU run) ────────────────────────────────────────────────────
 CUDA_SIM   = None        # CUDA not available on this system
@@ -89,9 +91,9 @@ CUDA_MAE   = None
 # ── Hybrid (P MPI ranks × T OpenMP threads, 8 total workers) ─────────────────
 # Config:           2×4     4×2     8×1     1×8
 HYBRID_LABELS  = ["2×4", "4×2", "8×1", "1×8"]
-HYBRID_SIM     = [ 0.7651,  0.3802,  0.2333,  1.5311 ]
-HYBRID_PRED    = [ 1.7681,  0.8893,  0.7008,  3.5192 ]
-HYBRID_MAE     = [ 1.2574,  1.2574,  1.2574,  1.2574 ]
+HYBRID_SIM     = [ 1.1329,  1.1269,  1.4040,  1.1743 ]
+HYBRID_PRED    = [ 3.1936,  3.4378,  3.9041,  3.2406 ]
+HYBRID_MAE     = [ 1.2568,  1.2568,  1.2568,  1.2568 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DERIVED QUANTITIES
@@ -460,9 +462,10 @@ def chart_hybrid():
 # CHART 7 — Amdahl's Law: Theoretical vs Actual
 # ─────────────────────────────────────────────────────────────────────────────
 def chart_amdahl():
-    # Estimate serial fraction from timing:
-    # f ≈ (Phase1 + Phase5) / Total ≈ 2-3%
-    f_serial = 0.03
+    # Effective serial fraction fitted from the measured speedups
+    # (p=4 -> 3.02x, p=8 -> 4.46x give f ~ 0.10-0.11). On a 4-physical-core
+    # machine this absorbs hyperthreading and memory-bandwidth overhead.
+    f_serial = 0.10
     p_range  = np.linspace(1, 8, 200)
     amdahl   = 1.0 / (f_serial + (1 - f_serial) / p_range)
 

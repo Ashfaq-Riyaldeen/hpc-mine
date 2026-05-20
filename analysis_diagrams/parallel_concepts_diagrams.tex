@@ -12,13 +12,17 @@
 \documentclass[12pt,a4paper]{article}
 
 \usepackage[margin=2.2cm]{geometry}
+\setlength{\headheight}{14pt}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, shapes.geometric, positioning, fit,
                 decorations.pathreplacing, matrix, calc, backgrounds,
                 patterns, shadows.blur}
+% Allow \\ line breaks inside every node (centered multi-line text).
+\tikzset{every node/.append style={align=center}}
 \usepackage{amsmath}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{colortbl}   % \rowcolor in comparison tables
 \usepackage{enumitem}
 \usepackage{fancyhdr}
 \usepackage{titlesec}

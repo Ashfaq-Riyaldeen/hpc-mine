@@ -108,9 +108,9 @@ static TestEntry *test_set;
 static int        test_size;
 
 /* ── 2-D index macros ────────────────────────────────────────────────────── */
-#define R(u,i)    ratings[(u)*N_ITEMS  + (i)]
-#define SIM(u,v)  sim_matrix[(u)*N_USERS + (v)]
-#define PRED(u,i) predictions[(u)*N_ITEMS + (i)]
+#define R(u,i)    ratings[(size_t)(u)*N_ITEMS  + (i)]
+#define SIM(u,v)  sim_matrix[(size_t)(u)*N_USERS + (v)]
+#define PRED(u,i) predictions[(size_t)(u)*N_ITEMS + (i)]
 
 /* Use MPI's monotonic wall-clock timer everywhere */
 static inline double now_sec(void) { return MPI_Wtime(); }
@@ -321,7 +321,7 @@ static void compute_all_similarities(int start_u, int end_u,
      * After this call sim_matrix is complete and identical on every rank.
      */
     MPI_Allgatherv(
-        &sim_matrix[start_u * N_USERS],
+        &sim_matrix[(size_t)start_u * N_USERS],
         (end_u - start_u) * N_USERS, MPI_FLOAT,
         sim_matrix, recvcounts, displs, MPI_FLOAT,
         MPI_COMM_WORLD
@@ -457,6 +457,33 @@ static float evaluate_mae(int start_u, int end_u)
 
     if (mpi_rank == 0 && global_cnt > 0)
         return (float)(global_err / global_cnt);
+    return 0.0f;
+}
+
+/* RMSE — same two-level reduction (OpenMP within rank, MPI_Reduce across
+ * ranks) accumulating squared error.  Collective: called by every rank. */
+static float evaluate_rmse(int start_u, int end_u)
+{
+    double local_sq  = 0.0;
+    int    local_cnt = 0;
+
+    #pragma omp parallel for reduction(+:local_sq, local_cnt) schedule(static)
+    for (int t = 0; t < test_size; t++) {
+        int u = test_set[t].user;
+        if (u < start_u || u >= end_u) continue;
+        double d = PRED(u, test_set[t].item) - test_set[t].rating;
+        local_sq += d * d;
+        local_cnt++;
+    }
+
+    double global_sq  = 0.0;
+    int    global_cnt = 0;
+
+    MPI_Reduce(&local_sq,  &global_sq,  1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&local_cnt, &global_cnt, 1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (mpi_rank == 0 && global_cnt > 0)
+        return (float)sqrt(global_sq / global_cnt);
     return 0.0f;
 }
 
@@ -612,10 +639,13 @@ int main(int argc, char *argv[])
                "  [MPI %d × OMP %d]\n", t_pred, mpi_size, omp_threads);
 
     /* ── Phase 5: MAE  (OpenMP reduction + MPI_Reduce) ─────────────────── */
-    float mae = evaluate_mae(start_u, end_u);
+    float mae  = evaluate_mae(start_u, end_u);
+    float rmse = evaluate_rmse(start_u, end_u);
     if (mpi_rank == 0) {
         printf("[Eval]   MAE on test set    : %.4f  (test size: %d)\n",
                mae, test_size);
+        printf("[Eval]   RMSE on test set   : %.4f  (test size: %d)\n",
+               rmse, test_size);
         printf("[Timing] Total (sim+pred)   : %.4f s\n", t_sim + t_pred);
     }
 

@@ -145,9 +145,9 @@ static int        test_size;   /* number of held-out entries */
  *   SIM(u, v) → sim_matrix[u * N_USERS + v] (similarity between users u and v)
  *   PRED(u,i) → predictions[u * N_ITEMS + i]
  * ═══════════════════════════════════════════════════════════════════════════ */
-#define R(u,i)    ratings[(u)*N_ITEMS  + (i)]
-#define SIM(u,v)  sim_matrix[(u)*N_USERS + (v)]
-#define PRED(u,i) predictions[(u)*N_ITEMS + (i)]
+#define R(u,i)    ratings[(size_t)(u)*N_ITEMS  + (i)]
+#define SIM(u,v)  sim_matrix[(size_t)(u)*N_USERS + (v)]
+#define PRED(u,i) predictions[(size_t)(u)*N_ITEMS + (i)]
 
 /* ═══════════════════════════════════════════════════════════════════════════
  * TIMING
@@ -172,10 +172,10 @@ static double now_sec(void)
  * ═══════════════════════════════════════════════════════════════════════════ */
 static void alloc_arrays(void)
 {
-    ratings     = (float *)calloc(N_USERS * N_ITEMS, sizeof(float));
-    user_mean   = (float *)calloc(N_USERS,            sizeof(float));
-    sim_matrix  = (float *)calloc(N_USERS * N_USERS,  sizeof(float));
-    predictions = (float *)calloc(N_USERS * N_ITEMS,  sizeof(float));
+    ratings     = (float *)calloc((size_t)N_USERS * N_ITEMS, sizeof(float));
+    user_mean   = (float *)calloc(N_USERS,                    sizeof(float));
+    sim_matrix  = (float *)calloc((size_t)N_USERS * N_USERS,  sizeof(float));
+    predictions = (float *)calloc((size_t)N_USERS * N_ITEMS,  sizeof(float));
 
     if (!ratings || !user_mean || !sim_matrix || !predictions) {
         fprintf(stderr, "Error: memory allocation failed.\n");
@@ -229,7 +229,7 @@ static void generate_data(void)
      * The expected number of test entries is N_USERS * N_ITEMS * (1-SPARSITY) * TEST_RATIO.
      * We add 1000 as a buffer to handle rand() variance.
      */
-    int capacity = (int)(N_USERS * N_ITEMS * (1.0f - SPARSITY)) + 1000;
+    int capacity = (int)((size_t)N_USERS * N_ITEMS * (1.0f - SPARSITY)) + 1000;
     test_set  = (TestEntry *)malloc(capacity * sizeof(TestEntry));
     test_size = 0;
 
@@ -524,6 +524,18 @@ static float evaluate_mae(void)
     return (float)(err / test_size);
 }
 
+/* Root Mean Square Error: penalises large errors more than MAE. */
+static float evaluate_rmse(void)
+{
+    if (test_size == 0) return 0.0f;
+    double sq = 0.0;
+    for (int t = 0; t < test_size; t++) {
+        double d = PRED(test_set[t].user, test_set[t].item) - test_set[t].rating;
+        sq += d * d;
+    }
+    return (float)sqrt(sq / test_size);
+}
+
 /*
  * similarity_checksum() — a fast sanity check across versions.
  *
@@ -602,6 +614,8 @@ int main(int argc, char *argv[])
     /* ── Phase 5: Evaluation ────────────────────────────────────────────── */
     printf("[Eval]   MAE on test set    : %.4f  (test size: %d)\n",
            evaluate_mae(), test_size);
+    printf("[Eval]   RMSE on test set   : %.4f  (test size: %d)\n",
+           evaluate_rmse(), test_size);
     printf("[Timing] Total (sim+pred)   : %.4f s\n", t_sim + t_pred);
 
     /* Print a small sample of predictions for a visual sanity check. */

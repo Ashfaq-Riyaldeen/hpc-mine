@@ -2,10 +2,12 @@
 
 % ── Core packages (all part of standard texlive-latex-recommended) ─────────────
 \usepackage[margin=2.5cm]{geometry}
+\setlength{\headheight}{14pt}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{caption}
@@ -68,7 +70,7 @@
 
 {\small Technologies: Serial (C) $\cdot$ OpenMP $\cdot$ Pthreads $\cdot$ MPI $\cdot$ Hybrid MPI+OpenMP\\[0.3em]
 Problem: 1\,000 users $\times$ 1\,000 items $\cdot$ SEED=42 $\cdot$ Sparsity=70\% $\cdot$ TOP-K=20\\[0.3em]
-Platform: Linux $\cdot$ GCC 15.2 $\cdot$ OpenMPI $\cdot$ 32 logical CPU cores\\[2em]
+Platform: Windows 11 $\cdot$ MinGW-w64 GCC 13.2.0 $\cdot$ MS-MPI 10.1 $\cdot$ 4 physical / 8 logical CPU cores\\[2em]
 May 2026}
 
 \end{titlepage}
@@ -101,11 +103,13 @@ GPU on benchmark machine), and Hybrid MPI+OpenMP.
 Users ($N$)            & 1\,000 \\
 Items ($M$)            & 1\,000 \\
 Sparsity               & 70\% \\
-Test split             & 10\%  \quad (29\,866 held-out ratings) \\
+Test split             & 10\%  \quad (29\,891 held-out ratings) \\
 TOP-K neighbours       & 20 \\
 Random seed            & 42 \\
-Benchmark thread counts & 1, 2, 4, 8 \\
+Benchmark thread/process counts & 1, 2, 4, 8 \\
+Repetitions            & 5 interleaved rounds; minimum time per phase reported \\
 Timing method          & \code{clock\_gettime} / \code{omp\_get\_wtime} / \code{MPI\_Wtime} \\
+Platform               & Windows 11, MinGW-w64 GCC 13.2.0, MS-MPI 10.1, 4 physical / 8 logical cores \\
 \bottomrule
 \end{tabular}
 \caption{Fixed benchmark parameters used across all versions.}
@@ -148,6 +152,22 @@ Timing method          & \code{clock\_gettime} / \code{omp\_get\_wtime} / \code{
 Both phases are \emph{embarrassingly parallel at the row level}, making them
 ideal targets for all five parallelisation strategies.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{../analysis_diagrams/charts/concept_overview.png}
+  \caption{How the parallel programming concepts map onto the recommender
+  pipeline. Phases 3 (similarity) and 4 (prediction) dominate the runtime and
+  are partitioned by user-row across every parallel model.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{../analysis_diagrams/charts/concept_partition.png}
+  \caption{Row-wise domain decomposition of the ratings/similarity matrices.
+  Each worker (OpenMP thread, Pthread, MPI rank, or CUDA thread) owns a disjoint
+  set of user rows~$u$ and writes only those rows --- the key to race-freedom.}
+\end{figure}
+
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{OpenMP --- Shared-Memory Fork-Join Parallelism}
 
@@ -166,8 +186,17 @@ shared work queue, eliminating wasted CPU time.
 and writes \code{SIM(u,v)} only for those rows.  No two threads write the same
 cell; no mutex is required.
 
-\textbf{Phase 5 (MAE):}  The \code{reduction(+:err)} clause gives each thread a
-private accumulator; OpenMP sums all copies at the barrier.
+\textbf{Phase 5 (MAE/RMSE):}  The \code{reduction(+:err)} clause gives each thread
+a private accumulator; OpenMP sums all copies at the barrier.  The same pattern
+(\code{reduction(+:sq)}) accumulates squared error for RMSE.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_openmp.png}
+  \caption{OpenMP fork-join model applied to Phases 3--4. A master thread forks
+  $T$ workers that pull dynamic row-chunks from a shared queue, then rejoin at an
+  implicit barrier.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Pthreads --- Manual POSIX Thread Management}
@@ -190,6 +219,14 @@ Phases 2, 3, and 4:
 separate times (once per phase), paying OS thread-creation overhead three
 times per run.  Static row assignment also cannot compensate for the triangular
 loop imbalance --- which explains the slightly lower efficiency vs.\ OpenMP.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_pthreads.png}
+  \caption{Manual POSIX-thread management. The \code{run\_parallel} harness
+  creates $T$ threads with static \code{ceil}-division row ranges and joins them
+  as a phase barrier, once per phase.}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{MPI --- Distributed-Memory Parallelism}
@@ -218,6 +255,15 @@ The \code{MPI\_Allgatherv} for the $N \times N$ similarity matrix transfers
 $\approx 4$\,MB at $N=1{,}000$.  This overhead limits single-node efficiency
 but is the necessary mechanism for multi-node deployments.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_mpi.png}
+  \caption{MPI distributed-memory layout. Each rank is a separate process with
+  a private address space; rows are assigned by \code{ceil}-division and the
+  global similarity matrix is assembled with \code{MPI\_Allgatherv}, while
+  MAE/RMSE use \code{MPI\_Reduce}.}
+\end{figure}
+
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{CUDA --- GPU Massively Parallel Computing}
 
@@ -242,6 +288,14 @@ The similarity kernel launches $63 \times 63 \times 256 = 1{,}016{,}064$
 threads simultaneously.  Timing uses \code{cudaEventRecord} to separate
 kernel-only time from \code{cudaMemcpy} transfer overhead.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_cuda.png}
+  \caption{CUDA GPU model. A 2D grid of thread blocks maps one thread to each
+  $(u,v)$ similarity pair; the host transfers data, launches kernels, and copies
+  results back. (Implemented but not benchmarked --- no GPU on the test machine.)}
+\end{figure}
+
 % ─────────────────────────────────────────────────────────────────────────────
 \subsection{Hybrid MPI+OpenMP --- Two-Level Parallelism}
 
@@ -251,6 +305,14 @@ $P \times T$ while sending only $P$ messages per collective call.
 
 \code{MPI\_Init\_thread(MPI\_THREAD\_FUNNELED)} ensures all MPI calls are made
 exclusively from the main thread, after OpenMP parallel regions complete.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{../analysis_diagrams/charts/concept_hybrid.png}
+  \caption{Hybrid two-level parallelism: MPI partitions user-rows across $P$
+  ranks (coarse grain), and within each rank OpenMP spawns $T$ threads over that
+  rank's rows (fine grain), for $P\times T$ total workers.}
+\end{figure}
 
 \begin{table}[H]
 \centering
@@ -271,50 +333,59 @@ Hybrid 1$\times$8 & 1 & 8 & Pure OpenMP wrapped with MPI overhead \\
 \section{Accuracy Analysis --- Parallel vs.\ Serial}
 % ══════════════════════════════════════════════════════════════════════════════
 
-All parallel implementations are validated with \textbf{Mean Absolute Error
-(MAE)} and a \textbf{similarity-matrix checksum}:
+All parallel implementations are validated against the serial baseline using
+two error metrics --- \textbf{Mean Absolute Error (MAE)} and \textbf{Root Mean
+Square Error (RMSE)} --- together with a \textbf{similarity-matrix checksum}:
 \[
-  \text{MAE} = \frac{1}{|T|} \sum_{(u,i) \in T} |\hat{r}_{ui} - r_{ui}|
-  \qquad (|T| = 29{,}866)
+  \text{MAE} = \frac{1}{|T|} \sum_{(u,i) \in T} |\hat{r}_{ui} - r_{ui}|,
+  \qquad
+  \text{RMSE} = \sqrt{\frac{1}{|T|} \sum_{(u,i) \in T} (\hat{r}_{ui} - r_{ui})^2}
+  \qquad (|T| = 29{,}891)
 \]
 
-\textbf{Why MAE and not RMSE?}  MAE treats all errors equally on the bounded
-1--5 rating scale.  RMSE would disproportionately penalise occasional large
-errors.
+\textbf{MAE vs.\ RMSE.}  Both are reported, as suggested by the project
+guideline.  MAE treats all errors equally on the bounded 1--5 rating scale,
+while RMSE (always $\ge$ MAE) disproportionately penalises occasional large
+errors --- here $\text{RMSE}=1.4573 > \text{MAE}=1.2568$ indicates a modest
+spread of larger misses, expected for a 70\%-sparse synthetic matrix.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{L{3cm} C{2cm} C{2cm} C{4.5cm} R{3cm}}
+\begin{tabular}{L{2.6cm} C{1.4cm} C{1.5cm} C{1.5cm} C{2.6cm} R{2.6cm}}
 \toprule
-\textbf{Version} & \textbf{Workers} & \textbf{MAE} &
+\textbf{Version} & \textbf{Workers} & \textbf{MAE} & \textbf{RMSE} &
 \textbf{Matches Serial?} & \textbf{Sim Checksum} \\
 \midrule
-Serial         & 1   & 1.2574 & baseline                & 942.387323 \\
-OpenMP         & 1T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 2T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 4T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 8T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 1T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 2T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 4T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 8T  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 1P  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 2P  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 4P  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 8P  & 1.2574 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Hybrid 2$\times$4 & 8 & 1.2574 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 4$\times$2 & 8 & 1.2574 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 8$\times$1 & 8 & 1.2574 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 1$\times$8 & 8 & 1.2574 & YES $(\Delta=0.0000)$ & 942.387323 \\
-CUDA           & GPU & N/A    & N/A (no GPU)            & N/A \\
+Serial         & 1   & 1.2568 & 1.4573 & baseline                & 1027.615290 \\
+OpenMP         & 1T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+OpenMP         & 2T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+OpenMP         & 4T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+OpenMP         & 8T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+Pthreads       & 1T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+Pthreads       & 2T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+Pthreads       & 4T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+Pthreads       & 8T  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+MPI            & 1P  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+MPI            & 2P  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+MPI            & 4P  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+MPI            & 8P  & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$   & 1027.615290 \\
+Hybrid 2$\times$4 & 8 & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$ & 1027.615290 \\
+Hybrid 4$\times$2 & 8 & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$ & 1027.615290 \\
+Hybrid 8$\times$1 & 8 & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$ & 1027.615290 \\
+Hybrid 1$\times$8 & 8 & 1.2568 & 1.4573 & YES $(\Delta=0.0000)$ & 1027.615290 \\
+CUDA           & GPU & N/A    & N/A    & N/A (no GPU)            & N/A \\
 \bottomrule
 \end{tabular}
-\caption{MAE correctness. All 17 CPU runs produce identical MAE and checksum.}
+\caption{Accuracy correctness. All 17 CPU runs produce identical MAE, RMSE, and
+checksum.}
 \end{table}
 
-All 17 CPU-based runs produce MAE = \textbf{1.2574} and checksum =
-\textbf{942.387323} --- confirming zero race conditions and correct
-partitioning across every implementation.
+All 17 CPU-based runs produce MAE = \textbf{1.2568}, RMSE = \textbf{1.4573}, and
+checksum = \textbf{1027.615290} --- confirming zero race conditions and correct
+partitioning across every implementation.  (Absolute values differ from a Linux
+build because MinGW's \code{rand()} draws a different pseudo-random stream for
+the same \code{SEED=42}; what matters is that all versions agree \emph{exactly}
+on this platform.)
 
 \begin{figure}[H]
   \centering

@@ -1,0 +1,386 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(analysis_report.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.s
+ty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.st
+y
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry
+.cfg))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\grap
+hics.cfg)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdft
+ex.def)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.s
+ty
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.s
+ty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.st
+y))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.st
+y)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.st
+y))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetke
+ys.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kv
+definekeys.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfes
+cape.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdft
+excmds.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwa
+rerr.sty)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.s
+ty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.
+sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\
+gettitlestring.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptio
+ns.sty)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\strin
+genc.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.d
+ef)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.de
+f) (C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.s
+ty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigi
+ntcalc.sty)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.
+def
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\re
+runfilecheck.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\u
+niquecounter.sty)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\colo
+r.cfg)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolo
+r.ltx))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.s
+ty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.
+sty))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/parskip\parskip.s
+ty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backe
+nd-pdftex.def) (analysis_report.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-
+pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epst
+opdf-base.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf
+-sys.cfg)) (analysis_report.out) (analysis_report.out) [1{C:/Users/A S H F A K/
+AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (analysis_report.toc)
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.77 \newpage
+              [1]
+Overfull \hbox (163.62756pt too wide) in paragraph at lines 97--113
+ [][] 
+
+Overfull \hbox (0.62624pt too wide) in paragraph at lines 126--126
+ []|\OT1/cmr/bx/n/12 Phase| 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[2]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[3]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[4 <../analysis_diagrams/charts/concept_overview.png (PNG copy)>]
+Overfull \hbox (66.43591pt too wide) in paragraph at lines 176--182
+[]\OT1/cmr/bx/n/12 Phase 3 (key de-sign choice): \OT1/cmr/m/n/12 The outer loop
+ uses \OT1/cmtt/m/n/10.95 #pragma omp parallel for schedule(dynamic,4)\OT1/cmr/
+m/n/12 .
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[5 <../analysis_diagrams/charts/concept_partition.png (PNG copy)>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[6]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[7 <../analysis_diagrams/charts/concept_openmp.png (PNG copy)>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[8]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[9 <../analysis_diagrams/charts/concept_pthreads.png (PNG copy)>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[10]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[11 <../analysis_diagrams/charts/concept_mpi.png (PNG copy)>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[12]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[13 <../analysis_diagrams/charts/concept_cuda.png (PNG copy)>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[14 <../analysis_diagrams/charts/concept_hybrid.png (PNG copy)>]
+Overfull \hbox (8.99829pt too wide) in paragraph at lines 354--354
+ []|\OT1/cmr/bx/n/12 Workers| 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[15]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[16]
+Overfull \hbox (43.54718pt too wide) in paragraph at lines 431--442
+ [][] 
+
+Overfull \hbox (43.54718pt too wide) in paragraph at lines 449--460
+ [][] 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[17 <../analysis_diagrams/charts/mae_comparison.png>]
+Overfull \hbox (43.54718pt too wide) in paragraph at lines 467--479
+ [][] 
+
+Overfull \hbox (90.30945pt too wide) in paragraph at lines 486--498
+ [][] 
+! Undefined control sequence.
+<argument> ...shed = ideal linear. $\blacklozenge 
+                                                  $ = best Hybrid (8$\times ...
+l.506 ...lacklozenge$ = best Hybrid (8$\times$1).}
+                                                  
+! Undefined control sequence.
+<recently read> \blacklozenge 
+                              
+l.506 ...lacklozenge$ = best Hybrid (8$\times$1).}
+                                                  
+! Undefined control sequence.
+<recently read> \blacklozenge 
+                              
+l.506 ...lacklozenge$ = best Hybrid (8$\times$1).}
+                                                  
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[18]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[19 <../analysis_diagrams/charts/speedup_comparison.png> <../analysis_diagrams/
+charts/execution_time_bar.png>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[20 <../analysis_diagrams/charts/efficiency_plot.png> <../analysis_diagrams/cha
+rts/sim_pred_breakdown.png>]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[21 <../analysis_diagrams/charts/hybrid_configs.png> <../analysis_diagrams/char
+ts/amdahls_law.png>]
+Overfull \hbox (3.09444pt too wide) in paragraph at lines 553--568
+ [][] 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[22 <../analysis_diagrams/charts/summary_dashboard.png>]
+Overfull \hbox (10.8165pt too wide) in paragraph at lines 579--581
+[]\OT1/cmr/bx/n/12 Runtime op-ti-mi-sa-tions: \OT1/cmr/m/n/12 GCC's OpenMP run-
+time ap-plies platform-specific schedul-
+
+Overfull \hbox (5.32082pt too wide) in paragraph at lines 609--620
+ [][] 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[23]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[24] (analysis_report.aux) )
+(see the transcript file for additional information)<C:/Users/A S H F A K/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/A 
+S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.p
+fb><C:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmitt10.pfb><C:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmmi10.pfb><C:/Users/A S H F A K/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/A S H F A K/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/A S H 
+F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C
+:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmr10.pfb><C:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/amsfonts/cm/cmr12.pfb><C:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/f
+onts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/A S H F A K/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/A S H F A K/App
+Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/A
+ S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.
+pfb><C:/Users/A S H F A K/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
+onts/cm/cmtt10.pfb>
+Output written on analysis_report.pdf (25 pages, 3218539 bytes).
+Transcript written on analysis_report.log.
+pdflatex: major issue: So far, you have not checked for MiKTeX updates.

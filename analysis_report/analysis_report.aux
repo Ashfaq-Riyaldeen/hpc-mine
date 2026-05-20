@@ -1,0 +1,57 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Fixed benchmark parameters used across all versions.}}{2}{table.caption.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Algorithm Design and Parallel Programming Concepts}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Algorithm Pipeline (5 Phases)}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Algorithm phases and computational complexity.}}{2}{table.caption.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces How the parallel programming concepts map onto the recommender pipeline. Phases 3 (similarity) and 4 (prediction) dominate the runtime and are partitioned by user-row across every parallel model.}}{4}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Row-wise domain decomposition of the ratings/similarity matrices. Each worker (OpenMP thread, Pthread, MPI rank, or CUDA thread) owns a disjoint set of user rows~$u$ and writes only those rows --- the key to race-freedom.}}{5}{figure.caption.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}OpenMP --- Shared-Memory Fork-Join Parallelism}{5}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces OpenMP fork-join model applied to Phases 3--4. A master thread forks $T$ workers that pull dynamic row-chunks from a shared queue, then rejoin at an implicit barrier.}}{7}{figure.caption.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Pthreads --- Manual POSIX Thread Management}{7}{subsection.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Manual POSIX-thread management. The \texttt  {\small  run\_parallel} harness creates $T$ threads with static \texttt  {\small  ceil}-division row ranges and joins them as a phase barrier, once per phase.}}{9}{figure.caption.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}MPI --- Distributed-Memory Parallelism}{9}{subsection.2.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces MPI communication strategy per phase.}}{10}{table.caption.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces MPI distributed-memory layout. Each rank is a separate process with a private address space; rows are assigned by \texttt  {\small  ceil}-division and the global similarity matrix is assembled with \texttt  {\small  MPI\_Allgatherv}, while MAE/RMSE use \texttt  {\small  MPI\_Reduce}.}}{11}{figure.caption.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}CUDA --- GPU Massively Parallel Computing}{11}{subsection.2.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces CUDA kernel configuration for $N=1{,}000$.}}{12}{table.caption.11}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces CUDA GPU model. A 2D grid of thread blocks maps one thread to each $(u,v)$ similarity pair; the host transfers data, launches kernels, and copies results back. (Implemented but not benchmarked --- no GPU on the test machine.)}}{13}{figure.caption.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Hybrid MPI+OpenMP --- Two-Level Parallelism}{13}{subsection.2.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Hybrid two-level parallelism: MPI partitions user-rows across $P$ ranks (coarse grain), and within each rank OpenMP spawns $T$ threads over that rank's rows (fine grain), for $P\times T$ total workers.}}{14}{figure.caption.13}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Hybrid configurations (all 8 total workers).}}{15}{table.caption.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Accuracy Analysis --- Parallel vs.\ Serial}{15}{section.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Accuracy correctness. All 17 CPU runs produce identical MAE, RMSE, and checksum.}}{16}{table.caption.15}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces MAE correctness. All bars lie within the $\pm 0.001$ tolerance band.}}{17}{figure.caption.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Timing Measurements and Performance Analysis}{17}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Performance Metric Definitions}{17}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Serial Baseline}{17}{subsection.4.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Serial baseline timing ($N=M=1{,}000$).}}{17}{table.caption.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}OpenMP --- Varying Thread Count}{17}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces OpenMP results. Speedup relative to serial baseline (6.4027 s).}}{17}{table.caption.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Pthreads --- Varying Thread Count}{18}{subsection.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Pthreads results.}}{18}{table.caption.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}MPI --- Varying Process Count}{18}{subsection.4.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces MPI results. MPI 1P (7.95 s) $>$ serial (6.40 s) due to process startup and \texttt  {\small  MPI\_Allgatherv} overhead at $P=1$ --- expected, not a bug.}}{18}{table.caption.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Hybrid MPI+OpenMP --- Fixed 8 Total Workers}{18}{subsection.4.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Hybrid results (8 total workers). Best config is Hybrid 8$\times $1 --- essentially pure MPI.}}{18}{table.caption.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Performance Charts}{19}{subsection.4.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Speedup vs.\ workers. Dashed = ideal linear. $\blacklozenge $ = best Hybrid (8$\times $1).}}{19}{figure.caption.22}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Wall-clock time --- best config per version. Solid = similarity phase; hatched = prediction.}}{19}{figure.caption.23}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Parallel efficiency $E(p)=S(p)/p$. Green zone ($>0.70$) = good utilisation.}}{20}{figure.caption.24}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Similarity + Prediction time breakdown across all versions and configurations.}}{20}{figure.caption.25}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Hybrid MPI+OpenMP configuration analysis. Left: time. Right: speedup vs.\ OpenMP-8T and MPI-8P.}}{21}{figure.caption.26}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Amdahl's Law ($f \approx 3\%$, $S_{\max }\approx 33\times $) vs.\ actual speedup.}}{21}{figure.caption.27}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces Summary dashboard: (a) speedup, (b) efficiency, (c) execution time, (d) MAE.}}{22}{figure.caption.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Performance Discussion}{22}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Head-to-Head Comparison at 8 Workers}{22}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Head-to-head at 8 workers. All MAE values are identical.}}{22}{table.caption.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}OpenMP vs.\ Pthreads}{22}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}MPI Scaling}{23}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Hybrid MPI+OpenMP --- Inversion on a Single Node}{23}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Amdahl's Law}{23}{subsection.5.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Amdahl's Law predictions vs.\ actual measured speedup at $p=8$.}}{23}{table.caption.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusions}{23}{section.6}\protected@file@percent }
+\gdef \@abspage@last{25}

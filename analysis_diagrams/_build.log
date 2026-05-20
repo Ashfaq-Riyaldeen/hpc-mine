@@ -1,0 +1,357 @@
+Rc files read:
+  NONE
+Latexmk: This is Latexmk, John Collins, 15 June 2025. Version 4.87.
+No existing .aux file, so I'll make a simple one, and require run of *latex.
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Category 'other':
+  Rerun of 'pdflatex' forced or previously required:
+    Reason or flag: 'Initial setup'
+
+------------
+Run number 1 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex  -interaction=nonstopmode -halt-on-error -recorder  "parallel_concepts_diagrams.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(parallel_concepts_diagrams.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.s
+ty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.st
+y
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry
+.cfg))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer
+\tikz.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pg
+f.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgf
+rcs.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfutil-common.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfutil-latex.def)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfrcs.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revisio
+n.tex)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pg
+fcore.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\grap
+hics.cfg)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdft
+ex.def)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\p
+gfsys.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgfsys.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfkeys.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfkeyslibraryfiltered.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgf.cfg)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgfsys-pdftex.def
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgfsys-common-pdf.def)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgfsyssoftpath.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer
+\pgfsysprotocol.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\colo
+r.cfg)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolo
+r.ltx))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcore.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+h.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hutil.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hparser.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.basic.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.trigonometric.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.random.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.comparison.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.base.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.round.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.misc.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfunctions.integerarithmetics.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hcalc.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+hfloat.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint
+.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorepoints.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorepathconstruct.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorepathusage.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorescopes.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoregraphicstate.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoretransformations.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorequick.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoreobjects.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorepathprocessing.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorearrows.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoreshade.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoreimage.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoreexternal.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorelayers.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcoretransparency.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorepatterns.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\
+pgfcorerdf.code.tex)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgf
+moduleshapes.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgf
+moduleplot.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility
+\pgfcomp-version-0-65.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility
+\pgfcomp-version-1-18.sty))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgf
+for.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgf
+keys.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gfkeys.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.
+sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmat
+h.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\p
+gffor.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz\tikz.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\p
+gflibraryplothandlers.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgf
+modulematrix.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarytopaths.code.tex)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\p
+gflibraryarrows.meta.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibraryshapes.geometric.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/s
+hapes\pgflibraryshapes.geometric.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarypositioning.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibraryfit.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarydecorations.pathreplacing.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarydecorations.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgf
+moduledecorations.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/d
+ecorations\pgflibrarydecorations.pathreplacing.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarymatrix.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarycalc.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarybackgrounds.code.tex)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibrarypatterns.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\p
+gflibrarypatterns.code.tex))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/pgf-blur\tikzlibr
+aryshadows.blur.code.tex  v1.02, 2012/12/09
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibraryshadows.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlay
+er/tikz/libraries\tikzlibraryfadings.code.tex
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\p
+gflibraryfadings.code.tex))))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.s
+ty
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.s
+ty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.st
+y))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.st
+y)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.st
+y))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/mdframed\mdframed
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptio
+ns.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetke
+ys.sty))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse
+\xparse.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.st
+y
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backe
+nd-pdftex.def)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox
+.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/zref\zref-abspage
+.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/zref\zref-base.st
+y
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwa
+rerr.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kv
+definekeys.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdft
+excmds.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcm
+ds.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.s
+ty)))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/needspace\needspa
+ce.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/mdframed\md-frame
+-0.mdf))
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/tools\multicol.st
+y)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.s
+ty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.
+sty)) (parallel_concepts_diagrams.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-
+pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epst
+opdf-base.sty
+(C:\Users\A S H F A K\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf
+-sys.cfg))
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[1{C:/Users/A S H F A K/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[2]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[3]
+
+LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 448.
+
+
+Overfull \hbox (14.40309pt too wide) in paragraph at lines 445--459
+\OT1/cmr/m/n/12 putes its row range via ceil-ing di-vi-sion: \OT1/cmtt/m/n/12 c
+hunk = (N[]USERS + nthreads - 1) / nthreads\OT1/cmr/m/n/12 .
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[4]
+
+! LaTeX Error: Not allowed in LR mode.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.511 }
+       
+!  ==> Fatal error occurred, no output PDF file produced!
+Transcript written on parallel_concepts_diagrams.log.
+pdflatex: major issue: So far, you have not checked for MiKTeX updates.
+Latexmk: Getting log file 'parallel_concepts_diagrams.log'
+Latexmk: Examining 'parallel_concepts_diagrams.fls'
+Latexmk: Examining 'parallel_concepts_diagrams.log'
+Latexmk: Using bibtex to make bibliography file(s).
+Latexmk: Errors, so I did not complete making targets
+Collected error summary (may duplicate other messages):
+  pdflatex: Command for 'pdflatex' gave return code 1
+      Refer to 'parallel_concepts_diagrams.log' and/or above output for details
+
+Latexmk: Sometimes, the -f option can be used to get latexmk
+  to try to force complete processing.
+  But normally, you will need to correct the file(s) that caused the
+  error, and then rerun latexmk.
+  In some cases, it is best to clean out generated files before rerunning
+  latexmk after you've corrected the files.
+latexmk: major issue: So far, you have not checked for MiKTeX updates.

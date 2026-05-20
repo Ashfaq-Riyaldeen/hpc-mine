@@ -92,9 +92,9 @@ static TestEntry *test_set;
 static int        test_size;
 
 /* ── 2-D indexing macros ─────────────────────────────────────────────────── */
-#define R(u,i)    ratings[(u)*N_ITEMS  + (i)]
-#define SIM(u,v)  sim_matrix[(u)*N_USERS + (v)]
-#define PRED(u,i) predictions[(u)*N_ITEMS + (i)]
+#define R(u,i)    ratings[(size_t)(u)*N_ITEMS  + (i)]
+#define SIM(u,v)  sim_matrix[(size_t)(u)*N_USERS + (v)]
+#define PRED(u,i) predictions[(size_t)(u)*N_ITEMS + (i)]
 
 /*
  * MPI_Wtime() is the MPI standard wall-clock timer.
@@ -125,10 +125,10 @@ static void get_range(int rank, int size, int *start, int *end)
 /* ── Memory allocation / deallocation ───────────────────────────────────── */
 static void alloc_arrays(void)
 {
-    ratings     = (float *)calloc(N_USERS * N_ITEMS, sizeof(float));
-    user_mean   = (float *)calloc(N_USERS,            sizeof(float));
-    sim_matrix  = (float *)calloc(N_USERS * N_USERS,  sizeof(float));
-    predictions = (float *)calloc(N_USERS * N_ITEMS,  sizeof(float));
+    ratings     = (float *)calloc((size_t)N_USERS * N_ITEMS, sizeof(float));
+    user_mean   = (float *)calloc(N_USERS,                    sizeof(float));
+    sim_matrix  = (float *)calloc((size_t)N_USERS * N_USERS,  sizeof(float));
+    predictions = (float *)calloc((size_t)N_USERS * N_ITEMS,  sizeof(float));
 
     if (!ratings || !user_mean || !sim_matrix || !predictions) {
         fprintf(stderr, "Rank %d: memory allocation failed.\n", mpi_rank);
@@ -167,7 +167,7 @@ static void generate_data(void)
 {
     srand(SEED);
 
-    int capacity = (int)(N_USERS * N_ITEMS * (1.0f - SPARSITY)) + 1000;
+    int capacity = (int)((size_t)N_USERS * N_ITEMS * (1.0f - SPARSITY)) + 1000;
     test_set  = (TestEntry *)malloc(capacity * sizeof(TestEntry));
     test_size = 0;
 
@@ -320,7 +320,7 @@ static void compute_all_similarities(int start_u, int end_u,
      * without further communication.
      */
     MPI_Allgatherv(
-        &sim_matrix[start_u * N_USERS], /* sendbuf: this rank's row block     */
+        &sim_matrix[(size_t)start_u * N_USERS], /* sendbuf: this rank's row block */
         (end_u - start_u) * N_USERS,    /* sendcount: row_count × N_USERS     */
         MPI_FLOAT,
         sim_matrix,                      /* recvbuf: full matrix               */
@@ -442,6 +442,32 @@ static float evaluate_mae(int start_u, int end_u)
     /* Only rank 0 has valid global_err after MPI_Reduce */
     if (mpi_rank == 0 && global_cnt > 0)
         return (float)(global_err / global_cnt);
+    return 0.0f;
+}
+
+/* RMSE — identical partition + MPI_Reduce, but accumulates squared error.
+ * Collective: must be called by every rank. */
+static float evaluate_rmse(int start_u, int end_u)
+{
+    double local_sq  = 0.0;
+    int    local_cnt = 0;
+
+    for (int t = 0; t < test_size; t++) {
+        int u = test_set[t].user;
+        if (u < start_u || u >= end_u) continue;
+        double d = PRED(u, test_set[t].item) - test_set[t].rating;
+        local_sq += d * d;
+        local_cnt++;
+    }
+
+    double global_sq  = 0.0;
+    int    global_cnt = 0;
+
+    MPI_Reduce(&local_sq,  &global_sq,  1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&local_cnt, &global_cnt, 1, MPI_INT,    MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (mpi_rank == 0 && global_cnt > 0)
+        return (float)sqrt(global_sq / global_cnt);
     return 0.0f;
 }
 
@@ -589,10 +615,13 @@ int main(int argc, char *argv[])
                t_pred, mpi_size);
 
     /* ── Phase 5: Evaluation (distributed Reduce) ──────────────────────── */
-    float mae = evaluate_mae(start_u, end_u);
+    float mae  = evaluate_mae(start_u, end_u);
+    float rmse = evaluate_rmse(start_u, end_u);
     if (mpi_rank == 0) {
         printf("[Eval]   MAE on test set    : %.4f  (test size: %d)\n",
                mae, test_size);
+        printf("[Eval]   RMSE on test set   : %.4f  (test size: %d)\n",
+               rmse, test_size);
         printf("[Timing] Total (sim+pred)   : %.4f s\n", t_sim + t_pred);
     }
 
