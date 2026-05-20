@@ -1,147 +1,79 @@
 <mxfile host="app.diagrams.net" version="21.1.2">
-  <diagram id="page5" name="CUDA">
-    <mxGraphModel dx="1200" dy="700" grid="0" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+  <diagram id="page5" name="5. CUDA">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="660" math="0" shadow="0">
       <root>
-        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
 
         <!-- Title -->
-        <mxCell id="ttl" value="CUDA — GPU Massively Parallel Computing" style="text;html=1;align=center;fontStyle=1;fontSize=15;fontColor=#7600a3;" vertex="1" parent="1">
-          <mxGeometry x="150" y="12" width="700" height="30" as="geometry" />
+        <mxCell id="ttl" value="CUDA — GPU Massively-Parallel Computing" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#7d2fa6;" vertex="1" parent="1">
+          <mxGeometry x="150" y="14" width="600" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" value="Thousands of lightweight threads — one thread per (u,v) pair or per (user,item) cell" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="38" width="600" height="20" as="geometry" />
         </mxCell>
 
-        <!-- ── Memory hierarchy (left column) ── -->
-        <mxCell id="hmem" value="HOST MEMORY (CPU RAM)&lt;br&gt;h_ratings · h_sim · h_predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="55" width="240" height="50" as="geometry" />
+        <!-- ===== Memory hierarchy legend (left) ===== -->
+        <mxCell id="mhl" value="GPU Memory Hierarchy&#10;(fast → slow)" style="text;html=1;align=left;verticalAlign=middle;fontStyle=1;fontSize=11;fontColor=#7d2fa6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="66" width="210" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="gmem" value="GLOBAL MEMORY (GPU DRAM, ~500 cycles)&lt;br&gt;d_ratings · d_user_mean · d_sim · d_pred" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="175" width="240" height="50" as="geometry" />
+        <mxCell id="reg" value="Registers (per thread, &lt;1 cycle)&#10;scalars · top_sim[20] · top_rat[20]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7d2fa6;strokeColor=#54007a;fontColor=#ffffff;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="104" width="210" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="smem" value="SHARED MEM (per-block, ~1 cycle)&lt;br&gt;Not used — embarrassingly parallel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#7600a3;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="285" width="240" height="46" as="geometry" />
+        <mxCell id="shm" value="Shared memory (per block, ~1 cycle)&#10;not used — kernels are independent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a25fc4;strokeColor=#54007a;fontColor=#ffffff;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="158" width="210" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="reg" value="REGISTERS (per-thread, &lt;1 cycle)&lt;br&gt;scalars + top_sim[20] + top_rat[20]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="385" width="240" height="46" as="geometry" />
+        <mxCell id="gbl" value="Global / DRAM (~500 cycles)&#10;d_ratings · d_user_mean · d_sim · d_pred" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cBA3dd;strokeColor=#54007a;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="212" width="210" height="48" as="geometry" />
         </mxCell>
-
-        <!-- Memory hierarchy label -->
-        <mxCell id="mhl" value="GPU Memory Hierarchy" style="text;html=1;fontStyle=1;fontSize=10;fontColor=#7600a3;" vertex="1" parent="1">
-          <mxGeometry x="20" y="440" width="240" height="18" as="geometry" />
+        <mxCell id="hst" value="Host / CPU RAM (PCIe ~12 GB/s)&#10;h_ratings · h_sim · h_predictions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="266" width="210" height="48" as="geometry" />
         </mxCell>
-
-        <!-- ── ARROWS: Host ↔ GPU memory ── -->
-        <!-- H→D transfer -->
-        <mxCell id="a_h2d" value="cudaMemcpy Host→Device" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#7600a3;fontSize=9;fontColor=#7600a3;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="140" y="105" as="sourcePoint" />
-            <mxPoint x="140" y="175" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <!-- D→H transfer -->
-        <mxCell id="a_d2h" value="cudaMemcpy Device→Host" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9333b3;dashed=1;fontSize=9;fontColor=#9333b3;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="100" y="175" as="sourcePoint" />
-            <mxPoint x="100" y="105" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <!-- GPU DRAM → SM label -->
-        <mxCell id="a_gm_sm" value="" style="endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#9333b3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="140" y="225" as="sourcePoint" />
-            <mxPoint x="140" y="285" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <!-- SM → Registers -->
-        <mxCell id="a_sm_reg" value="" style="endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#7600a3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="140" y="331" as="sourcePoint" />
-            <mxPoint x="140" y="385" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="coal" value="Threads in a warp (32) execute the same instruction (SIMT). Adjacent threads read adjacent memory → coalesced access." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=9;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="324" width="210" height="84" as="geometry" />
         </mxCell>
 
-        <!-- ── GRID container ── -->
-        <mxCell id="grid" value="CUDA GRID — 63×63 blocks (⌈1000/16⌉²)" style="swimlane;startSize=28;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="288" y="55" width="780" height="230" as="geometry" />
-        </mxCell>
-        <!-- Blocks -->
-        <mxCell id="b00" value="Block(0,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="12" y="38" width="105" height="42" as="geometry" />
-        </mxCell>
-        <mxCell id="b10" value="Block(1,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="128" y="38" width="105" height="42" as="geometry" />
-        </mxCell>
-        <mxCell id="b20" value="Block(2,0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7600a3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="244" y="38" width="105" height="42" as="geometry" />
-        </mxCell>
-        <mxCell id="bdots" value="… ×63" style="text;html=1;fontSize=14;fontColor=#7600a3;fontStyle=1;" vertex="1" parent="grid">
-          <mxGeometry x="365" y="48" width="70" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="b01" value="Block(0,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="12" y="92" width="105" height="42" as="geometry" />
-        </mxCell>
-        <mxCell id="b11" value="Block(1,1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9333b3;strokeColor=#4d007a;fontColor=#ffffff;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="128" y="92" width="105" height="42" as="geometry" />
-        </mxCell>
-        <mxCell id="bvdots" value="⋮ ×63 rows" style="text;html=1;fontSize=13;fontColor=#7600a3;fontStyle=1;" vertex="1" parent="grid">
-          <mxGeometry x="12" y="144" width="220" height="22" as="geometry" />
-        </mxCell>
-        <!-- Thread detail inside block -->
-        <mxCell id="bzoom" value="One Block = 16×16 = 256 threads&lt;br&gt;u = blockIdx.x×16 + threadIdx.x&lt;br&gt;v = blockIdx.y×16 + threadIdx.y" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="450" y="38" width="310" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="tgrid" value="T(0,0) T(1,0) … ×16&lt;br&gt;T(0,1) T(1,1) …&lt;br&gt;⋮  ×16 rows" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="grid">
-          <mxGeometry x="450" y="110" width="310" height="56" as="geometry" />
+        <!-- ===== Execution flow (right) ===== -->
+        <mxCell id="host1" value="HOST (CPU) — Phase 1: generate data (same SEED as serial)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="290" y="66" width="580" height="36" as="geometry" />
         </mxCell>
 
-        <!-- Arrow from GRID to GPU DRAM (kernels read/write) -->
-        <mxCell id="a_grid_gm" value="read / write" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#7600a3;fontSize=9;fontColor=#7600a3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="288" y="200" as="sourcePoint" />
-            <mxPoint x="260" y="200" as="targetPoint" />
-          </mxGeometry>
+        <!-- GPU container -->
+        <mxCell id="gpu" value="GPU DEVICE" style="swimlane;startSize=24;whiteSpace=wrap;html=1;fillColor=#f7f0fb;strokeColor=#7d2fa6;fontSize=11;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="290" y="150" width="580" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="g_grid" value="GRID — ⌈1000/16⌉² = 63×63 thread blocks, scheduled across the GPU's SMs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d3f0;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" vertex="1" parent="gpu">
+          <mxGeometry x="16" y="34" width="548" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="g_block" value="BLOCK = 16×16 = 256 threads   ·   thread (u,v) = blockIdx·blockDim + threadIdx" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4b8e6;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" vertex="1" parent="gpu">
+          <mxGeometry x="16" y="76" width="548" height="34" as="geometry" />
         </mxCell>
 
-        <!-- ── Three Kernels (sequential execution) ── -->
-        <mxCell id="kl" value="Kernel Execution Sequence" style="text;html=1;fontStyle=1;fontSize=11;fontColor=#7600a3;" vertex="1" parent="1">
-          <mxGeometry x="288" y="302" width="280" height="20" as="geometry" />
+        <!-- 3 kernels -->
+        <mxCell id="k1" value="① kernel_user_means&#10;&#10;1-D grid&#10;1 thread = 1 user" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;spacing=4;" vertex="1" parent="gpu">
+          <mxGeometry x="16" y="126" width="168" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="k2" value="② kernel_similarity&#10;&#10;2-D grid&#10;1 thread = 1 (u,v) pair&#10;upper triangle; writes&#10;SIM(u,v) and SIM(v,u)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4b8e6;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;spacing=4;" vertex="1" parent="gpu">
+          <mxGeometry x="206" y="126" width="168" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="k3" value="③ kernel_predictions&#10;&#10;2-D grid&#10;1 thread = 1 (user,item)&#10;in-register TOP-K=20&#10;min-heap selection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a25fc4;strokeColor=#54007a;fontColor=#ffffff;fontSize=10;verticalAlign=middle;spacing=4;" vertex="1" parent="gpu">
+          <mxGeometry x="396" y="126" width="168" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="k12" value="sync" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#7d2fa6;fontSize=9;fontColor=#7d2fa6;" edge="1" source="k1" target="k2" parent="gpu"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="k23" value="sync" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#7d2fa6;fontSize=9;fontColor=#7d2fa6;" edge="1" source="k2" target="k3" parent="gpu"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Host eval -->
+        <mxCell id="host2" value="HOST (CPU) — Phase 5: copy predictions back, compute MAE / RMSE on test set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="290" y="486" width="580" height="36" as="geometry" />
         </mxCell>
 
-        <mxCell id="k1" value="&lt;b&gt;① kernel_user_means&lt;/b&gt;&lt;br&gt;1D grid · 1 thread = 1 user&lt;br&gt;&lt;&lt;&lt;(N+255)/256, 256&gt;&gt;&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="288" y="328" width="220" height="72" as="geometry" />
-        </mxCell>
-        <mxCell id="k2" value="&lt;b&gt;② kernel_similarity&lt;/b&gt;&lt;br&gt;2D grid · 1 thread = 1 (u,v) pair&lt;br&gt;Upper triangle only; writes SIM(u,v)+SIM(v,u)&lt;br&gt;dim3(⌈N/16⌉,⌈N/16⌉), dim3(16,16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5b8e3;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="538" y="320" width="260" height="88" as="geometry" />
-        </mxCell>
-        <mxCell id="k3" value="&lt;b&gt;③ kernel_predictions&lt;/b&gt;&lt;br&gt;2D grid · 1 thread = 1 (user, item)&lt;br&gt;In-register TOP-K min-heap&lt;br&gt;top_sim[20] · top_rat[20] in registers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c49fd8;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="828" y="320" width="240" height="88" as="geometry" />
-        </mxCell>
+        <!-- transfer arrows (short, vertical) -->
+        <mxCell id="h2d" value="cudaMemcpy  Host → Device  (ratings)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#7d2fa6;fontSize=9;fontColor=#7d2fa6;verticalAlign=bottom;" edge="1" source="host1" target="gpu" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d2h" value="cudaMemcpy  Device → Host  (predictions)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#7d2fa6;dashed=1;fontSize=9;fontColor=#7d2fa6;verticalAlign=bottom;" edge="1" source="gpu" target="host2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
 
-        <!-- Sequential kernel arrows -->
-        <mxCell id="a_k1_k2" value="cudaDeviceSynchronize" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#7600a3;fontSize=9;fontColor=#7600a3;align=center;" edge="1" source="k1" target="k2" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="a_k2_k3" value="cudaDeviceSynchronize" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#7600a3;fontSize=9;fontColor=#7600a3;align=center;" edge="1" source="k2" target="k3" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows from host memory down to kernel flow start -->
-        <mxCell id="a_hm_k1" value="Launch" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#7600a3;dashed=1;fontSize=9;fontColor=#7600a3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="140" y="105" as="sourcePoint" />
-            <mxPoint x="398" y="328" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Arrow from k3 result back to host memory -->
-        <mxCell id="a_k3_hm" value="cudaMemcpy D→H" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#9333b3;dashed=1;fontSize=9;fontColor=#9333b3;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="950" y="408" as="sourcePoint" />
-            <mxPoint x="200" y="105" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Timing note -->
-        <mxCell id="tm" value="Timing: cudaEventRecord() / cudaEventSynchronize() — kernel launches are ASYNC; CPU returns immediately; event waits for GPU completion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8fa;strokeColor=#7600a3;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="288" y="428" width="780" height="32" as="geometry" />
+        <!-- Footer -->
+        <mxCell id="ft" value="Kernel timing: cudaEventRecord / cudaEventSynchronize (launches are async — the CPU must wait for the GPU to finish before timing)." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="290" y="528" width="580" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

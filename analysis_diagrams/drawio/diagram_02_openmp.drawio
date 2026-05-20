@@ -1,145 +1,89 @@
 <mxfile host="app.diagrams.net" version="21.1.2">
-  <diagram id="page2" name="OpenMP">
-    <mxGraphModel dx="1200" dy="700" grid="0" pageWidth="1100" pageHeight="680" math="0" shadow="0">
+  <diagram id="page2" name="2. OpenMP">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="600" math="0" shadow="0">
       <root>
-        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
 
         <!-- Title -->
-        <mxCell id="ttl" value="OpenMP — Shared-Memory Fork-Join Parallelism" style="text;html=1;align=center;fontStyle=1;fontSize=15;fontColor=#1a9641;" vertex="1" parent="1">
-          <mxGeometry x="150" y="15" width="720" height="30" as="geometry" />
+        <mxCell id="ttl" value="OpenMP — Shared-Memory Fork / Join Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#2d7a2d;" vertex="1" parent="1">
+          <mxGeometry x="150" y="18" width="600" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" value="#pragma omp parallel for — one shared address space, work split across a team of threads" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="42" width="600" height="20" as="geometry" />
         </mxCell>
 
         <!-- Master left -->
-        <mxCell id="ml" value="&lt;b&gt;Master Thread&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="20" y="108" width="130" height="40" as="geometry" />
+        <mxCell id="ml" value="Master&#10;Thread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d7a2d;strokeColor=#1e5320;fontColor=#ffffff;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="158" width="90" height="44" as="geometry" />
         </mxCell>
-
-        <!-- FORK diamond -->
-        <mxCell id="fk" value="&lt;b&gt;FORK&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="178" y="96" width="80" height="64" as="geometry" />
+        <!-- FORK -->
+        <mxCell id="fk" value="FORK" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="155" y="152" width="74" height="56" as="geometry" />
         </mxCell>
 
         <!-- Thread bars -->
-        <mxCell id="t0" value="Thread 0 — users 0–249      [schedule(dynamic,4) chunk]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="288" y="60" width="560" height="36" as="geometry" />
+        <mxCell id="t0" value="Thread 0  ·  user rows 0–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="100" width="360" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="t1" value="Thread 1 — users 250–499    [schedule(dynamic,4) chunk]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2daa55;strokeColor=#1a9641;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="288" y="106" width="560" height="36" as="geometry" />
+        <mxCell id="t1" value="Thread 1  ·  user rows 250–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe6cb;strokeColor=#82b366;fontSize=11;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="142" width="360" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="t2" value="Thread 2 — users 500–749    [schedule(dynamic,4) chunk]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#52c270;strokeColor=#1a9641;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="288" y="152" width="560" height="36" as="geometry" />
+        <mxCell id="t2" value="Thread 2  ·  user rows 500–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfddb9;strokeColor=#82b366;fontSize=11;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="184" width="360" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="t3" value="Thread 3 — users 750–999    [schedule(dynamic,4) chunk]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a0ddad;strokeColor=#1a9641;fontColor=#333333;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="288" y="198" width="560" height="36" as="geometry" />
-        </mxCell>
-
-        <!-- JOIN diamond -->
-        <mxCell id="jn" value="&lt;b&gt;JOIN&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="876" y="96" width="80" height="64" as="geometry" />
+        <mxCell id="t3" value="Thread 3  ·  user rows 750–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#aed4a6;strokeColor=#82b366;fontSize=11;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="226" width="360" height="34" as="geometry" />
         </mxCell>
 
+        <!-- JOIN -->
+        <mxCell id="jn" value="JOIN" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="670" y="152" width="74" height="56" as="geometry" />
+        </mxCell>
         <!-- Master right -->
-        <mxCell id="mr" value="&lt;b&gt;Master Thread&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="984" y="108" width="90" height="40" as="geometry" />
+        <mxCell id="mr" value="Master&#10;Thread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d7a2d;strokeColor=#1e5320;fontColor=#ffffff;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="780" y="158" width="90" height="44" as="geometry" />
         </mxCell>
 
-        <!-- Phase label above threads -->
-        <mxCell id="plbl" value="Phase 3: Pearson Similarity   |   Phase 4: Predictions   (both use #pragma omp parallel for)" style="text;html=1;align=center;fontStyle=1;fontSize=10;fontColor=#1a9641;" vertex="1" parent="1">
-          <mxGeometry x="288" y="40" width="560" height="18" as="geometry" />
+        <!-- Fork/Join arrows -->
+        <mxCell id="a_ml_fk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#2d7a2d;" edge="1" source="ml" target="fk" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_fk_t0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="fk" target="t0" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_fk_t1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="fk" target="t1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_fk_t2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="fk" target="t2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_fk_t3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="fk" target="t3" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_t0_jn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="t0" target="jn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_t1_jn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="t1" target="jn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_t2_jn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="t2" target="jn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_t3_jn" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="t3" target="jn" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="a_jn_mr" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#2d7a2d;" edge="1" source="jn" target="mr" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Barrier note under join -->
+        <mxCell id="bar" value="Implicit barrier:&#10;all threads finish&#10;before master resumes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="660" y="228" width="160" height="48" as="geometry" />
         </mxCell>
 
-        <!-- ── ARROWS ── -->
-        <!-- Master → FORK -->
-        <mxCell id="a_ml_fk" value="" style="endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#1a9641;" edge="1" source="ml" target="fk" parent="1">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Shared memory band -->
+        <mxCell id="sm" value="SHARED MEMORY (one address space)   —   ratings[ ]   ·   user_mean[ ]   ·   sim_matrix[ ]   ·   predictions[ ]   (no data copying)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=2;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="30" y="300" width="840" height="34" as="geometry" />
         </mxCell>
 
-        <!-- FORK → Thread 0 (fan up) -->
-        <mxCell id="a_fk_t0" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="fk" target="t0" parent="1">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Concept boxes -->
+        <mxCell id="ch" value="Key OpenMP techniques used" style="text;html=1;align=left;fontStyle=1;fontSize=11;fontColor=#2d7a2d;" vertex="1" parent="1">
+          <mxGeometry x="30" y="350" width="300" height="20" as="geometry" />
         </mxCell>
-        <!-- FORK → Thread 1 -->
-        <mxCell id="a_fk_t1" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="fk" target="t1" parent="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="c1" value="schedule(dynamic,4) — Phase 3&#10;Triangular loop is unbalanced (row 0 ≈ 999 calls, last row ≈ 0). Threads pull chunks on demand to stay busy." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="374" width="270" height="84" as="geometry" />
         </mxCell>
-        <!-- FORK → Thread 2 -->
-        <mxCell id="a_fk_t2" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="fk" target="t2" parent="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="c2" value="Race-free writes&#10;Each thread owns disjoint rows. SIM(u,v) and its mirror SIM(v,u) are written by the same thread — no locks needed." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="315" y="374" width="270" height="84" as="geometry" />
         </mxCell>
-        <!-- FORK → Thread 3 (fan down) -->
-        <mxCell id="a_fk_t3" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="fk" target="t3" parent="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="c3" value="Private buffer + reduction&#10;Phase 4: each thread malloc's its own nbrs[]. Phase 5: reduction(+:err) gives private partial sums merged at the barrier." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="374" width="270" height="84" as="geometry" />
         </mxCell>
 
-        <!-- Thread 0 → JOIN (fan in) -->
-        <mxCell id="a_t0_jn" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" source="t0" target="jn" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Thread 1 → JOIN -->
-        <mxCell id="a_t1_jn" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;" edge="1" source="t1" target="jn" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Thread 2 → JOIN -->
-        <mxCell id="a_t2_jn" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.65;entryDx=0;entryDy=0;" edge="1" source="t2" target="jn" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <!-- Thread 3 → JOIN (fan in) -->
-        <mxCell id="a_t3_jn" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" source="t3" target="jn" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- JOIN → Master right -->
-        <mxCell id="a_jn_mr" value="" style="endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#1a9641;" edge="1" source="jn" target="mr" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-
-        <!-- Implicit barrier callout -->
-        <mxCell id="bar" value="Implicit barrier — all threads finish before master continues" style="shape=callout;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;direction=west;" vertex="1" parent="1">
-          <mxGeometry x="878" y="180" width="190" height="44" as="geometry" />
-        </mxCell>
-
-        <!-- Key concept boxes -->
-        <mxCell id="c1" value="&lt;b&gt;Dynamic Scheduling&lt;/b&gt;&lt;br&gt;Triangular loop: Thread 0 = 999 calls,&lt;br&gt;Thread 3 = 249 calls. Dynamic balances load." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="278" width="290" height="68" as="geometry" />
-        </mxCell>
-        <mxCell id="c2" value="&lt;b&gt;Race-Free Writes&lt;/b&gt;&lt;br&gt;Each thread owns unique outer rows.&lt;br&gt;SIM(u,v) and SIM(v,u) written by same thread." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="330" y="278" width="290" height="68" as="geometry" />
-        </mxCell>
-        <mxCell id="c3" value="&lt;b&gt;Thread-Private nbrs Buffer&lt;/b&gt;&lt;br&gt;malloc inside parallel region (Phase 4).&lt;br&gt;No shared state — no locks needed." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="640" y="278" width="290" height="68" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows from concept boxes up to thread region -->
-        <mxCell id="ac1" value="" style="dashed=1;endArrow=open;endFill=0;strokeColor=#999999;strokeWidth=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="165" y="278" as="sourcePoint" />
-            <mxPoint x="165" y="244" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="ac2" value="" style="dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;strokeWidth=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="475" y="278" as="sourcePoint" />
-            <mxPoint x="475" y="244" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="ac3" value="" style="dashed=1;endArrow=open;endFill=0;strokeColor=#d6b656;strokeWidth=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="785" y="278" as="sourcePoint" />
-            <mxPoint x="785" y="244" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Shared memory note -->
-        <mxCell id="sm" value="Shared Memory — all threads access: ratings[ ]  ·  user_mean[ ]  ·  sim_matrix[ ]  ·  predictions[ ]    (no copying required)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=2;" vertex="1" parent="1">
-          <mxGeometry x="20" y="368" width="940" height="32" as="geometry" />
-        </mxCell>
-
-        <!-- Reduction note -->
-        <mxCell id="red" value="Phase 5: reduction(+:err) — per-thread private copies, summed at barrier → global MAE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="415" width="560" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="tm" value="Timing: omp_get_wtime()  (wall-clock, not per-thread CPU sum)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="600" y="415" width="360" height="30" as="geometry" />
+        <!-- Footer note -->
+        <mxCell id="ft" value="Timing: omp_get_wtime() (wall-clock).   Thread count set by OMP_NUM_THREADS.   Phases 2–5 are parallel; Phase 1 (RNG) stays serial." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="840" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

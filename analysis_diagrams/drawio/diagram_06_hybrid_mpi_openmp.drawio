@@ -1,179 +1,71 @@
 <mxfile host="app.diagrams.net" version="21.1.2">
-  <diagram id="page6" name="Hybrid MPI+OpenMP">
-    <mxGraphModel dx="1200" dy="700" grid="0" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+  <diagram id="page6" name="6. Hybrid MPI+OpenMP">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="620" math="0" shadow="0">
       <root>
-        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
 
         <!-- Title -->
-        <mxCell id="ttl" value="Hybrid MPI + OpenMP — Two-Level Parallelism" style="text;html=1;align=center;fontStyle=1;fontSize=15;fontColor=#d45f00;" vertex="1" parent="1">
-          <mxGeometry x="150" y="10" width="750" height="30" as="geometry" />
+        <mxCell id="ttl" value="Hybrid MPI + OpenMP — Two-Level Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#1f6f54;" vertex="1" parent="1">
+          <mxGeometry x="150" y="16" width="600" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="sub" value="Level 1 (MPI): coarse-grain row distribution across nodes   |   Level 2 (OpenMP): fine-grain threading within each node   |   Total = P × T workers" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
-          <mxGeometry x="60" y="40" width="950" height="18" as="geometry" />
+        <mxCell id="sub" value="MPI distributes rows across nodes (coarse grain); OpenMP threads share memory inside each node (fine grain)" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="120" y="40" width="660" height="20" as="geometry" />
         </mxCell>
 
-        <!-- HPC Cluster -->
-        <mxCell id="cluster" value="HPC CLUSTER" style="swimlane;startSize=28;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d45f00;fontSize=12;fontStyle=1;fontColor=#d45f00;" vertex="1" parent="1">
-          <mxGeometry x="20" y="66" width="1060" height="320" as="geometry" />
+        <!-- Cluster -->
+        <mxCell id="cl" value="CLUSTER" style="swimlane;startSize=26;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="74" width="820" height="212" as="geometry" />
         </mxCell>
 
         <!-- Node 0 -->
-        <mxCell id="n0" value="Node 0 — MPI Rank 0 — Users 0–499" style="swimlane;startSize=34;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" vertex="1" parent="cluster">
-          <mxGeometry x="22" y="44" width="458" height="252" as="geometry" />
+        <mxCell id="n0" value="Node 0  —  MPI Rank 0  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="cl">
+          <mxGeometry x="18" y="36" width="384" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="n0t0" value="OMP Thread 0&lt;br&gt;rows 0–124" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=10;" vertex="1" parent="n0">
-          <mxGeometry x="12" y="44" width="98" height="64" as="geometry" />
+        <mxCell id="n0m" value="Shared memory · MPI rows 0–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=9;verticalAlign=middle;" vertex="1" parent="n0">
+          <mxGeometry x="12" y="28" width="360" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="n0t1" value="OMP Thread 1&lt;br&gt;rows 125–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2daa55;strokeColor=#005723;fontColor=#ffffff;fontSize=10;" vertex="1" parent="n0">
-          <mxGeometry x="120" y="44" width="98" height="64" as="geometry" />
-        </mxCell>
-        <mxCell id="n0t2" value="OMP Thread 2&lt;br&gt;rows 250–374" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#52c270;strokeColor=#005723;fontColor=#ffffff;fontSize=10;" vertex="1" parent="n0">
-          <mxGeometry x="228" y="44" width="98" height="64" as="geometry" />
-        </mxCell>
-        <mxCell id="n0t3" value="OMP Thread 3&lt;br&gt;rows 375–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#a0ddad;strokeColor=#005723;fontColor=#333333;fontSize=10;" vertex="1" parent="n0">
-          <mxGeometry x="336" y="44" width="98" height="64" as="geometry" />
-        </mxCell>
-
-        <!-- OMP barrier within Node 0 -->
-        <mxCell id="n0bar" value="OMP barrier (implicit)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;" vertex="1" parent="n0">
-          <mxGeometry x="12" y="120" width="420" height="24" as="geometry" />
-        </mxCell>
-        <mxCell id="n0ram" value="Shared RAM: ratings[ ] · user_mean[ ] · sim_matrix[ ] · predictions[ ]" style="text;html=1;fontSize=9;fontColor=#333333;align=center;" vertex="1" parent="n0">
-          <mxGeometry x="12" y="152" width="420" height="18" as="geometry" />
-        </mxCell>
-        <mxCell id="n0mpi" value="MPI_Allgatherv  (from main thread only — MPI_THREAD_FUNNELED)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="n0">
-          <mxGeometry x="12" y="178" width="420" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="n0note" value="#pragma omp parallel for schedule(dynamic,4)  within rank's row range" style="text;html=1;fontSize=9;fontColor=#d45f00;align=center;fontStyle=2;" vertex="1" parent="n0">
-          <mxGeometry x="12" y="212" width="420" height="18" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows within Node 0: threads → OMP barrier → MPI -->
-        <mxCell id="an0t_bar" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#1a9641;" edge="1" parent="n0">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="222" y="108" as="sourcePoint" />
-            <mxPoint x="222" y="120" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="an0bar_mpi" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#b85450;" edge="1" parent="n0">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="222" y="144" as="sourcePoint" />
-            <mxPoint x="222" y="178" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Network box -->
-        <mxCell id="net" value="InfiniBand&lt;br&gt;MPI_Allgatherv&lt;br&gt;MPI_Reduce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d7191c;strokeColor=#9e0000;fontColor=#ffffff;fontSize=10;" vertex="1" parent="cluster">
-          <mxGeometry x="500" y="128" width="110" height="80" as="geometry" />
-        </mxCell>
+        <mxCell id="n0t0" value="OMP&#10;T0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n0"><mxGeometry x="12" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n0t1" value="OMP&#10;T1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe6cb;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n0"><mxGeometry x="100" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n0t2" value="OMP&#10;T2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfddb9;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n0"><mxGeometry x="188" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n0t3" value="OMP&#10;T3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#aed4a6;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n0"><mxGeometry x="276" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n0lbl" value="#pragma omp parallel for (shared memory, no messages inside the node)" style="text;html=1;align=center;fontSize=9;fontColor=#2d7a2d;" vertex="1" parent="n0"><mxGeometry x="12" y="128" width="360" height="24" as="geometry" /></mxCell>
 
         <!-- Node 1 -->
-        <mxCell id="n1" value="Node 1 — MPI Rank 1 — Users 500–999" style="swimlane;startSize=34;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d45f00;fontSize=11;fontStyle=1;" vertex="1" parent="cluster">
-          <mxGeometry x="628" y="44" width="410" height="252" as="geometry" />
+        <mxCell id="n1" value="Node 1  —  MPI Rank 1  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="cl">
+          <mxGeometry x="418" y="36" width="384" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="n1t0" value="OMP Thread 0&lt;br&gt;rows 500–624" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d45f00;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="n1">
-          <mxGeometry x="12" y="44" width="88" height="64" as="geometry" />
+        <mxCell id="n1m" value="Shared memory · MPI rows 500–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=9;verticalAlign=middle;" vertex="1" parent="n1">
+          <mxGeometry x="12" y="28" width="360" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="n1t1" value="OMP Thread 1&lt;br&gt;rows 625–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e07a28;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="n1">
-          <mxGeometry x="110" y="44" width="88" height="64" as="geometry" />
+        <mxCell id="n1t0" value="OMP&#10;T0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n1"><mxGeometry x="12" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n1t1" value="OMP&#10;T1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cfe6cb;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n1"><mxGeometry x="100" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n1t2" value="OMP&#10;T2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bfddb9;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n1"><mxGeometry x="188" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n1t3" value="OMP&#10;T3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#aed4a6;strokeColor=#82b366;fontSize=9;verticalAlign=middle;" vertex="1" parent="n1"><mxGeometry x="276" y="64" width="80" height="58" as="geometry" /></mxCell>
+        <mxCell id="n1lbl" value="#pragma omp parallel for (shared memory, no messages inside the node)" style="text;html=1;align=center;fontSize=9;fontColor=#2d7a2d;" vertex="1" parent="n1"><mxGeometry x="12" y="128" width="360" height="24" as="geometry" /></mxCell>
+
+        <!-- MPI link between nodes -->
+        <mxCell id="mpilink" value="MPI&#10;Allgatherv&#10;Reduce" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#b85450;fontSize=9;fontColor=#b85450;fontStyle=1;" edge="1" source="n0" target="n1" parent="cl"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Level legend -->
+        <mxCell id="lvl1" value="LEVEL 1 — MPI across nodes (coarse): P ranks own disjoint row blocks; Allgatherv assembles the matrix, Reduce sums the error." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;verticalAlign=middle;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="820" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="n1t2" value="OMP Thread 2&lt;br&gt;rows 750–874" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a060;strokeColor=#8c3d00;fontColor=#333333;fontSize=10;" vertex="1" parent="n1">
-          <mxGeometry x="208" y="44" width="88" height="64" as="geometry" />
-        </mxCell>
-        <mxCell id="n1t3" value="OMP Thread 3&lt;br&gt;rows 875–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad0a8;strokeColor=#8c3d00;fontColor=#333333;fontSize=10;" vertex="1" parent="n1">
-          <mxGeometry x="306" y="44" width="88" height="64" as="geometry" />
-        </mxCell>
-        <mxCell id="n1bar" value="OMP barrier (implicit)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" vertex="1" parent="n1">
-          <mxGeometry x="12" y="120" width="374" height="24" as="geometry" />
-        </mxCell>
-        <mxCell id="n1ram" value="Shared RAM: ratings[ ] · user_mean[ ] · sim_matrix[ ] · predictions[ ]" style="text;html=1;fontSize=9;fontColor=#333333;align=center;" vertex="1" parent="n1">
-          <mxGeometry x="12" y="152" width="374" height="18" as="geometry" />
-        </mxCell>
-        <mxCell id="n1mpi" value="MPI_Allgatherv  (from main thread only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="n1">
-          <mxGeometry x="12" y="178" width="374" height="28" as="geometry" />
+        <mxCell id="lvl2" value="LEVEL 2 — OpenMP within a node (fine): T threads split that rank's rows over shared memory, with a private nbrs[] buffer each." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=middle;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="820" height="34" as="geometry" />
         </mxCell>
 
-        <!-- Arrows within Node 1 -->
-        <mxCell id="an1t_bar" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d45f00;" edge="1" parent="n1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="199" y="108" as="sourcePoint" />
-            <mxPoint x="199" y="120" as="targetPoint" />
-          </mxGeometry>
+        <!-- Concept boxes -->
+        <mxCell id="c1" value="P × T total workers&#10;e.g. 2 ranks × 4 threads = 8 workers, while sending only P (not P×T) messages per collective." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="390" width="390" height="78" as="geometry" />
         </mxCell>
-        <mxCell id="an1bar_mpi" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#b85450;" edge="1" parent="n1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="199" y="144" as="sourcePoint" />
-            <mxPoint x="199" y="178" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="c2" value="MPI_THREAD_FUNNELED&#10;Only the main thread calls MPI (outside OpenMP regions), so a lightweight thread-safety level is enough." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="470" y="390" width="390" height="78" as="geometry" />
         </mxCell>
 
-        <!-- ── ARROWS: Node 0 ↔ Network ↔ Node 1 ── -->
-        <mxCell id="a_n0_net" value="MPI_Allgatherv" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d7191c;fontSize=9;fontColor=#d7191c;" edge="1" parent="cluster">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="480" y="168" as="sourcePoint" />
-            <mxPoint x="500" y="168" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="a_net_n1" value="full array" style="startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d7191c;fontSize=9;fontColor=#d7191c;" edge="1" parent="cluster">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="610" y="168" as="sourcePoint" />
-            <mxPoint x="628" y="168" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- ── Configurations ── -->
-        <mxCell id="ct" value="Benchmarked Configurations  (all = 8 total workers  P × T = 8)" style="text;html=1;fontStyle=1;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="20" y="408" width="680" height="22" as="geometry" />
-        </mxCell>
-        <mxCell id="cfg1" value="&lt;b&gt;2×4&lt;/b&gt;&lt;br&gt;2 MPI × 4 OMP&lt;br&gt;Less network traffic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d45f00;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="434" width="168" height="62" as="geometry" />
-        </mxCell>
-        <mxCell id="cfg2" value="&lt;b&gt;4×2&lt;/b&gt;&lt;br&gt;4 MPI × 2 OMP&lt;br&gt;Balanced" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e07a28;strokeColor=#8c3d00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="198" y="434" width="168" height="62" as="geometry" />
-        </mxCell>
-        <mxCell id="cfg3" value="&lt;b&gt;8×1&lt;/b&gt;&lt;br&gt;8 MPI × 1 OMP&lt;br&gt;≈ Pure MPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a060;strokeColor=#8c3d00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="376" y="434" width="168" height="62" as="geometry" />
-        </mxCell>
-        <mxCell id="cfg4" value="&lt;b&gt;1×8&lt;/b&gt;&lt;br&gt;1 MPI × 8 OMP&lt;br&gt;≈ Pure OpenMP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad0a8;strokeColor=#8c3d00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="554" y="434" width="168" height="62" as="geometry" />
-        </mxCell>
-
-        <!-- Config sequential arrows (trade-off direction) -->
-        <mxCell id="a_cfg12" value="" style="endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#8c3d00;" edge="1" source="cfg1" target="cfg2" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="a_cfg23" value="" style="endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#8c3d00;" edge="1" source="cfg2" target="cfg3" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="a_cfg34" value="" style="endArrow=open;endFill=0;strokeWidth=1.5;strokeColor=#8c3d00;" edge="1" source="cfg3" target="cfg4" parent="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="tradelbl" value="← more shared-mem threads  |  more MPI ranks →" style="text;html=1;fontSize=9;fontColor=#8c3d00;align=center;" vertex="1" parent="1">
-          <mxGeometry x="20" y="500" width="702" height="16" as="geometry" />
-        </mxCell>
-
-        <!-- Two-level reduction -->
-        <mxCell id="red" value="Two-Level MAE Reduction:   ① OMP reduction(+:err) within rank   →   ② MPI_Reduce(MPI_SUM) across ranks   →   Rank 0 prints global MAE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="528" width="900" height="34" as="geometry" />
-        </mxCell>
-
-        <!-- Arrows from nodes to reduction -->
-        <mxCell id="a_n0_red" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="251" y="386" as="sourcePoint" />
-            <mxPoint x="251" y="528" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="a_n1_red" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="833" y="386" as="sourcePoint" />
-            <mxPoint x="690" y="528" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Thread safety note -->
-        <mxCell id="ts" value="MPI_Init_thread(MPI_THREAD_FUNNELED) — MPI calls ONLY from main thread, never inside #pragma omp parallel block" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="20" y="574" width="900" height="30" as="geometry" />
+        <!-- Footer -->
+        <mxCell id="ft" value="Launch: mpirun -np 2 env OMP_NUM_THREADS=4 ./hybrid_rec   ·   matches real clusters: many multi-core nodes on a network" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="478" width="820" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

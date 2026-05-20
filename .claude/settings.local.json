@@ -65,7 +65,16 @@
       "Bash(bc -l)",
       "Bash(mpiexec --help)",
       "Bash(pdflatex -interaction=nonstopmode -halt-on-error analysis_report.tex)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(git config *)",
+      "Bash(git commit *)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(python -c 'import xml.dom.minidom,sys; xml.dom.minidom.parse\\('\\\\''__TRACKED_VAR__'\\\\''\\)')",
+      "Bash(mkdir -p png)",
+      "Bash(\"/c/Program Files/draw.io/draw.io.exe\" --export --format png --scale 2 --border 10 --output png/diagram_02_openmp.png diagram_02_openmp.drawio)",
+      "Bash(ls -la png/)",
+      "Bash('/c/Program Files/draw.io/draw.io.exe' --export --format png --scale 2 --border 10 --output png/__TRACKED_VAR__.png __TRACKED_VAR__.drawio)"
     ]
   }
 }

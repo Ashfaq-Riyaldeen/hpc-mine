@@ -51,6 +51,10 @@ All measurements were obtained on a Linux machine with **32 logical CPU cores** 
 
 ### 2.1 Algorithm Pipeline (5 Phases)
 
+![Algorithm pipeline diagram](../analysis_diagrams/drawio/png/diagram_01_algorithm_pipeline.png)
+
+*Figure 1: The five-phase pipeline shared by every implementation. Identical algorithm and data (SEED=42) — only the runtime changes. Phase 3 is the O(N²·M) bottleneck.*
+
 The system executes in five sequential phases. Phase 4 (prediction) dominates at ~82% of serial runtime; Phase 3 (similarity) accounts for ~18%.
 
 | Phase | Name              | Description                                                | Complexity      |
@@ -87,7 +91,9 @@ Both phases are embarrassingly parallel at the row level — each user's computa
 
 ### 2.2 OpenMP — Shared-Memory Fork-Join Parallelism
 
-![OpenMP parallel flow diagram](../analysis_diagrams/drawio/diagram_02_openmp.drawio)
+![OpenMP parallel flow diagram](../analysis_diagrams/drawio/png/diagram_02_openmp.png)
+
+*Figure 2: OpenMP fork/join model — the master thread forks a team of threads over shared memory, then joins at an implicit barrier.*
 
 **Concept:** OpenMP exploits shared-memory parallelism using compiler directives. A single master thread forks into T worker threads, all sharing the same process address space, then joins back at an implicit barrier.
 
@@ -103,6 +109,10 @@ The outer loop over user pairs is distributed with `#pragma omp parallel for sch
 ---
 
 ### 2.3 Pthreads — Manual POSIX Thread Management
+
+![Pthreads thread lifecycle diagram](../analysis_diagrams/drawio/png/diagram_03_pthreads.png)
+
+*Figure 3: Pthreads create/partition/join cycle, repeated per parallel phase. `pthread_join` is the only synchronisation barrier.*
 
 **Concept:** POSIX Threads provide explicit, low-level manual thread management. Unlike OpenMP (compiler-generated orchestration), Pthreads requires the programmer to explicitly create threads, assign work, and synchronise with `pthread_join`.
 
@@ -120,6 +130,10 @@ A `run_parallel(fn, nthreads)` harness is called at the start of each of Phases 
 ---
 
 ### 2.4 MPI — Distributed-Memory Parallelism
+
+![MPI distributed-memory diagram](../analysis_diagrams/drawio/png/diagram_04_mpi.png)
+
+*Figure 4: MPI ranks as independent processes with private memory. `MPI_Allgatherv` assembles the full matrix; `MPI_Reduce` sums the error to rank 0.*
 
 **Concept:** MPI implements distributed-memory parallelism where each rank is a completely independent process with its own private address space. Data sharing requires explicit message passing.
 
@@ -142,6 +156,10 @@ The N = 1,000 users are divided evenly across P ranks. Rank r owns rows `[r×(N/
 
 ### 2.5 CUDA — GPU Massively Parallel Computing
 
+![CUDA GPU diagram](../analysis_diagrams/drawio/png/diagram_05_cuda.png)
+
+*Figure 5: CUDA grid/block/thread hierarchy and GPU memory hierarchy. Three sequential kernels run between Host→Device and Device→Host transfers.*
+
 > **Note:** CUDA source code (`cuda/cuda_recommender.cu`) is fully implemented but could not be benchmarked as no GPU is available on the test machine.
 
 **Concept:** CUDA exploits the massively parallel architecture of NVIDIA GPUs, launching thousands of threads organised into a two-level grid/block hierarchy.
@@ -161,6 +179,10 @@ For N = 1,000: the similarity kernel launches **63 × 63 × 256 = 1,016,064 thre
 ---
 
 ### 2.6 Hybrid MPI+OpenMP — Two-Level Parallelism
+
+![Hybrid MPI+OpenMP diagram](../analysis_diagrams/drawio/png/diagram_06_hybrid_mpi_openmp.png)
+
+*Figure 6: Two-level parallelism — MPI distributes rows across nodes (coarse grain); OpenMP threads share memory within each node (fine grain).*
 
 **Concept:** Combines MPI for coarse-grain inter-node distribution and OpenMP for fine-grain intra-node threading, matching modern HPC cluster architecture where each node has multiple cores connected to other nodes via high-speed interconnect.
 
@@ -236,7 +258,7 @@ This confirms:
 
 ![MAE Correctness Chart](../analysis_diagrams/charts/mae_comparison.png)
 
-*Figure 1: MAE correctness across all parallel versions vs. serial baseline. All bars lie within the ±0.001 tolerance band (green shading).*
+*Figure 7: MAE correctness across all parallel versions vs. serial baseline. All bars lie within the ±0.001 tolerance band (green shading).*
 
 ---
 
@@ -338,43 +360,43 @@ Speedup relative to serial baseline (6.4027 s). OpenMP 1T is slightly slower tha
 
 ![Speedup Comparison](../analysis_diagrams/charts/speedup_comparison.png)
 
-*Figure 2: Speedup vs. number of workers for OpenMP, Pthreads, and MPI. Dashed line = ideal linear speedup. Diamond = best Hybrid result (8×1).*
+*Figure 8: Speedup vs. number of workers for OpenMP, Pthreads, and MPI. Dashed line = ideal linear speedup. Diamond = best Hybrid result (8×1).*
 
 ---
 
 ![Execution Time Bar](../analysis_diagrams/charts/execution_time_bar.png)
 
-*Figure 3: Wall-clock execution time — best configuration per version. Solid = similarity phase; hatched = prediction phase.*
+*Figure 9: Wall-clock execution time — best configuration per version. Solid = similarity phase; hatched = prediction phase.*
 
 ---
 
 ![Efficiency Plot](../analysis_diagrams/charts/efficiency_plot.png)
 
-*Figure 4: Parallel efficiency E(p) = S(p)/p. Values in the green zone (>0.70) indicate good worker utilisation.*
+*Figure 10: Parallel efficiency E(p) = S(p)/p. Values in the green zone (>0.70) indicate good worker utilisation.*
 
 ---
 
 ![Sim+Pred Breakdown](../analysis_diagrams/charts/sim_pred_breakdown.png)
 
-*Figure 5: Similarity + Prediction time breakdown across all versions and configurations.*
+*Figure 11: Similarity + Prediction time breakdown across all versions and configurations.*
 
 ---
 
 ![Hybrid Configs](../analysis_diagrams/charts/hybrid_configs.png)
 
-*Figure 6: Hybrid MPI+OpenMP configuration analysis. Left: wall-clock time per config. Right: speedup with OpenMP-8T and MPI-8P reference lines.*
+*Figure 12: Hybrid MPI+OpenMP configuration analysis. Left: wall-clock time per config. Right: speedup with OpenMP-8T and MPI-8P reference lines.*
 
 ---
 
 ![Amdahl's Law](../analysis_diagrams/charts/amdahls_law.png)
 
-*Figure 7: Amdahl's Law theoretical limit (f ≈ 3% serial fraction, S_max ≈ 33×) vs. actual measured speedup.*
+*Figure 13: Amdahl's Law theoretical limit (f ≈ 3% serial fraction, S_max ≈ 33×) vs. actual measured speedup.*
 
 ---
 
 ![Summary Dashboard](../analysis_diagrams/charts/summary_dashboard.png)
 
-*Figure 8: Summary dashboard — (a) speedup, (b) efficiency, (c) execution time, (d) MAE correctness.*
+*Figure 14: Summary dashboard — (a) speedup, (b) efficiency, (c) execution time, (d) MAE correctness.*
 
 ---
 

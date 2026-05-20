@@ -1,171 +1,79 @@
 <mxfile host="app.diagrams.net" version="21.1.2">
-  <diagram id="page3" name="Pthreads">
-    <mxGraphModel dx="1200" dy="700" grid="0" pageWidth="1100" pageHeight="680" math="0" shadow="0">
+  <diagram id="page3" name="3. Pthreads">
+    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="610" math="0" shadow="0">
       <root>
-        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
 
         <!-- Title -->
-        <mxCell id="ttl" value="Pthreads — Manual POSIX Thread Management" style="text;html=1;align=center;fontStyle=1;fontSize=15;fontColor=#b8860b;" vertex="1" parent="1">
-          <mxGeometry x="150" y="12" width="700" height="30" as="geometry" />
+        <mxCell id="ttl" value="POSIX Threads — Explicit Thread Management" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#b06a00;" vertex="1" parent="1">
+          <mxGeometry x="150" y="18" width="600" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" value="Same shared memory as OpenMP, but the program creates, partitions and joins every thread by hand" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="150" y="42" width="600" height="20" as="geometry" />
         </mxCell>
 
-        <!-- Main thread bar (top, sequential) -->
-        <mxCell id="mt" value="MAIN THREAD — sequential control flow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="30" y="50" width="1040" height="30" as="geometry" />
+        <!-- Main thread -->
+        <mxCell id="mn" value="main()  —  run_parallel(fn) per phase" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="320" y="78" width="260" height="40" as="geometry" />
         </mxCell>
 
-        <!-- Phase 2 container -->
-        <mxCell id="p2c" value="Phase 2: User Means" style="swimlane;startSize=26;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="70" y="112" width="284" height="218" as="geometry" />
-        </mxCell>
-        <mxCell id="p2t0" value="Thread 0 · rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p2c">
-          <mxGeometry x="12" y="34" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p2t1" value="Thread 1 · rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c99d30;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p2c">
-          <mxGeometry x="12" y="70" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p2t2" value="Thread 2 · rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9b558;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="p2c">
-          <mxGeometry x="12" y="106" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p2t3" value="Thread 3 · rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#edcf85;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="p2c">
-          <mxGeometry x="12" y="142" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p2j" value="pthread_join × T  ←  BARRIER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;fontStyle=1;" vertex="1" parent="p2c">
-          <mxGeometry x="12" y="182" width="258" height="24" as="geometry" />
+        <!-- create / join labels -->
+        <mxCell id="crl" value="pthread_create() ×N" style="text;html=1;align=center;fontSize=10;fontColor=#b06a00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="138" width="180" height="18" as="geometry" />
         </mxCell>
 
-        <!-- Phase 3 container -->
-        <mxCell id="p3c" value="Phase 3: Similarity Matrix" style="swimlane;startSize=26;whiteSpace=wrap;html=1;fillColor=#fff0f0;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="398" y="112" width="294" height="218" as="geometry" />
+        <!-- Threads -->
+        <mxCell id="t0" value="Thread 0&#10;work_range → rows 0–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="170" width="180" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="p3t0" value="Thread 0 · rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#b85450;strokeColor=#6b0014;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p3c">
-          <mxGeometry x="12" y="34" width="268" height="28" as="geometry" />
+        <mxCell id="t1" value="Thread 1&#10;work_range → rows 250–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b3;strokeColor=#d6b656;fontSize=10;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="290" y="170" width="180" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="p3t1" value="Thread 1 · rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#c87070;strokeColor=#6b0014;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p3c">
-          <mxGeometry x="12" y="70" width="268" height="28" as="geometry" />
+        <mxCell id="t2" value="Thread 2&#10;work_range → rows 500–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd699;strokeColor=#d6b656;fontSize=10;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="500" y="170" width="180" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="p3t2" value="Thread 2 · rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#df9a9a;strokeColor=#6b0014;fontColor=#333333;fontSize=10;" vertex="1" parent="p3c">
-          <mxGeometry x="12" y="106" width="268" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p3t3" value="Thread 3 · rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f2c2c2;strokeColor=#6b0014;fontColor=#333333;fontSize=10;" vertex="1" parent="p3c">
-          <mxGeometry x="12" y="142" width="268" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p3j" value="pthread_join × T  ←  BARRIER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b85450;strokeColor=#6b0014;fontColor=#ffffff;fontSize=10;fontStyle=1;" vertex="1" parent="p3c">
-          <mxGeometry x="12" y="182" width="268" height="24" as="geometry" />
+        <mxCell id="t3" value="Thread 3&#10;work_range → rows 750–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcc80;strokeColor=#d6b656;fontSize=10;arcSize=10;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="710" y="170" width="180" height="50" as="geometry" />
         </mxCell>
 
-        <!-- Phase 4 container -->
-        <mxCell id="p4c" value="Phase 4: Predictions" style="swimlane;startSize=26;whiteSpace=wrap;html=1;fillColor=#f0fff4;strokeColor=#82b366;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="746" y="112" width="284" height="218" as="geometry" />
+        <!-- create arrows -->
+        <mxCell id="c0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="mn" target="t0" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c1e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="mn" target="t1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="mn" target="t2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="mn" target="t3" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- join into barrier bar -->
+        <mxCell id="barrier" value="pthread_join on all threads  →  PHASE BARRIER (next phase cannot start until every thread returns)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="252" width="810" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="p4t0" value="Thread 0 · rows 0–249" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p4c">
-          <mxGeometry x="12" y="34" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p4t1" value="Thread 1 · rows 250–499" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3aaa5d;strokeColor=#005723;fontColor=#ffffff;fontSize=10;" vertex="1" parent="p4c">
-          <mxGeometry x="12" y="70" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p4t2" value="Thread 2 · rows 500–749" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#70c48a;strokeColor=#005723;fontColor=#333333;fontSize=10;" vertex="1" parent="p4c">
-          <mxGeometry x="12" y="106" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p4t3" value="Thread 3 · rows 750–999" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#a8ddb8;strokeColor=#005723;fontColor=#333333;fontSize=10;" vertex="1" parent="p4c">
-          <mxGeometry x="12" y="142" width="258" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="p4j" value="pthread_join × T  ←  BARRIER" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a9641;strokeColor=#005723;fontColor=#ffffff;fontSize=10;fontStyle=1;" vertex="1" parent="p4c">
-          <mxGeometry x="12" y="182" width="258" height="24" as="geometry" />
+        <mxCell id="j0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.1;entryY=0;" edge="1" source="t0" target="barrier" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="j1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.37;entryY=0;" edge="1" source="t1" target="barrier" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="j2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.63;entryY=0;" edge="1" source="t2" target="barrier" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="j3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d6b656;exitX=0.5;exitY=1;entryX=0.9;entryY=0;" edge="1" source="t3" target="barrier" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- repeated per phase note -->
+        <mxCell id="rep" value="↻ create / join cycle repeats for each parallel phase:  Phase 2 user means  →  Phase 3 similarity  →  Phase 4 predictions" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#b06a00;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="80" y="294" width="810" height="20" as="geometry" />
         </mxCell>
 
-        <!-- ── ARROWS ── -->
-
-        <!-- Main thread → Phase 2 (pthread_create) -->
-        <mxCell id="cr1" value="pthread_create ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b8860b;fontColor=#b8860b;fontSize=9;fontStyle=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="212" y="80" as="sourcePoint" />
-            <mxPoint x="212" y="112" as="targetPoint" />
-          </mxGeometry>
+        <!-- Concept boxes -->
+        <mxCell id="ch" value="Key Pthreads techniques used" style="text;html=1;align=left;fontStyle=1;fontSize=11;fontColor=#b06a00;" vertex="1" parent="1">
+          <mxGeometry x="30" y="330" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" value="Manual partitioning&#10;work_range() gives each thread a contiguous [start,end) row slice via ceiling division — covers all N rows, no overlap." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="30" y="354" width="270" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="ThreadArgs struct&#10;Each thread is passed only {tid, nthreads} and derives its own work — thread functions stay self-contained." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="315" y="354" width="270" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="Lock-free by design&#10;Disjoint row ranges + private nbrs[] per thread mean no mutex anywhere. join() is the only synchronisation point." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;align=left;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="600" y="354" width="270" height="86" as="geometry" />
         </mxCell>
 
-        <!-- Phase 2 barrier → Main thread -->
-        <mxCell id="jn1" value="pthread_join ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b8860b;fontColor=#b8860b;fontSize=9;fontStyle=1;dashed=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="330" y="330" as="sourcePoint" />
-            <mxPoint x="330" y="80" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Main thread → Phase 3 (pthread_create) -->
-        <mxCell id="cr2" value="pthread_create ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;fontColor=#b85450;fontSize=9;fontStyle=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="545" y="80" as="sourcePoint" />
-            <mxPoint x="545" y="112" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Phase 3 barrier → Main thread -->
-        <mxCell id="jn2" value="pthread_join ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;fontColor=#b85450;fontSize=9;fontStyle=1;dashed=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="678" y="330" as="sourcePoint" />
-            <mxPoint x="678" y="80" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Main thread → Phase 4 (pthread_create) -->
-        <mxCell id="cr3" value="pthread_create ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#1a9641;fontColor=#1a9641;fontSize=9;fontStyle=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="888" y="80" as="sourcePoint" />
-            <mxPoint x="888" y="112" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Phase 4 barrier → Main thread -->
-        <mxCell id="jn3" value="pthread_join ×T" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#1a9641;fontColor=#1a9641;fontSize=9;fontStyle=1;dashed=1;align=center;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1010" y="330" as="sourcePoint" />
-            <mxPoint x="1010" y="80" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Sequential flow arrow: Phase2 → Phase3 (along main thread) -->
-        <mxCell id="seq1" value="" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b8860b;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="354" y="65" as="sourcePoint" />
-            <mxPoint x="398" y="65" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Sequential flow arrow: Phase3 → Phase4 -->
-        <mxCell id="seq2" value="" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b8860b;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="692" y="65" as="sourcePoint" />
-            <mxPoint x="746" y="65" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-
-        <!-- Work range bar -->
-        <mxCell id="wl" value="Work Distribution — chunk = ⌈N_USERS / T⌉  (ceiling division)" style="text;html=1;fontStyle=1;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
-          <mxGeometry x="30" y="350" width="480" height="18" as="geometry" />
-        </mxCell>
-        <mxCell id="wr0" value="Thread 0 · 0–249" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b8860b;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="30" y="372" width="256" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="wr1" value="Thread 1 · 250–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c99d30;strokeColor=#7d5c00;fontColor=#ffffff;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="292" y="372" width="256" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="wr2" value="Thread 2 · 500–749" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9b558;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="554" y="372" width="256" height="36" as="geometry" />
-        </mxCell>
-        <mxCell id="wr3" value="Thread 3 · 750–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#edcf85;strokeColor=#7d5c00;fontColor=#333333;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="816" y="372" width="254" height="36" as="geometry" />
-        </mxCell>
-
-        <!-- Key notes -->
-        <mxCell id="n1" value="&lt;b&gt;ThreadArgs struct&lt;/b&gt;&lt;br&gt;tid + nthreads → each thread computes own [start, end)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="30" y="426" width="310" height="46" as="geometry" />
-        </mxCell>
-        <mxCell id="n2" value="&lt;b&gt;pthread_join = phase barrier&lt;/b&gt;&lt;br&gt;Next phase never starts until all threads finish current phase" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff0f0;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="358" y="426" width="340" height="46" as="geometry" />
-        </mxCell>
-        <mxCell id="n3" value="&lt;b&gt;Private nbrs buffer (Phase 4)&lt;/b&gt;&lt;br&gt;malloc inside thread → free on exit. No shared state, no locks." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fff4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="716" y="426" width="354" height="46" as="geometry" />
+        <!-- Footer -->
+        <mxCell id="ft" value="vs OpenMP: identical result and shared-memory model, but the developer writes the create / partition / join logic explicitly instead of one #pragma." style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="30" y="452" width="840" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
