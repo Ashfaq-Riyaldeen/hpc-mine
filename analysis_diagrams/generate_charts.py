@@ -117,12 +117,23 @@ if ("CUDA", "GPU") in _R:
 else:
     CUDA_SIM = CUDA_PRED = CUDA_MAE = None
 
-# ── Hybrid (P MPI ranks × T OpenMP threads, 8 total workers) ─────────────────
+# ── Hybrid MPI+OpenMP (P MPI ranks × T OpenMP threads, 8 total workers) ─────
 HYBRID_LABELS = ["2×4", "4×2", "8×1", "1×8"]
 _HYB_KEYS     = ["Hybrid_2x4", "Hybrid_4x2", "Hybrid_8x1", "Hybrid_1x8"]
 HYBRID_SIM    = [_R[(k, "8")]["sim"]  for k in _HYB_KEYS]
 HYBRID_PRED   = [_R[(k, "8")]["pred"] for k in _HYB_KEYS]
 HYBRID_MAE    = [_MAE] * 4
+
+# ── Hybrid MPI+Pthreads (same four P×T layouts, 8 total workers) ────────────
+# Loaded only if the benchmark has been re-run with the new variant; falls
+# back to None so older speedup_table.csv files still render the other charts.
+_HYBPT_KEYS = ["HybridPT_2x4", "HybridPT_4x2", "HybridPT_8x1", "HybridPT_1x8"]
+if all((k, "8") in _R for k in _HYBPT_KEYS):
+    HYBRID_PT_SIM  = [_R[(k, "8")]["sim"]  for k in _HYBPT_KEYS]
+    HYBRID_PT_PRED = [_R[(k, "8")]["pred"] for k in _HYBPT_KEYS]
+    HYBRID_PT_MAE  = [_MAE] * 4
+else:
+    HYBRID_PT_SIM = HYBRID_PT_PRED = HYBRID_PT_MAE = None
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DERIVED QUANTITIES
@@ -136,6 +147,8 @@ OPENMP_TOT   = total(OPENMP_SIM,   OPENMP_PRED)
 PTHREADS_TOT = total(PTHREADS_SIM, PTHREADS_PRED)
 MPI_TOT      = total(MPI_SIM,      MPI_PRED)
 HYBRID_TOT   = total(HYBRID_SIM,   HYBRID_PRED)
+HYBRID_PT_TOT = (total(HYBRID_PT_SIM, HYBRID_PT_PRED)
+                 if HYBRID_PT_SIM else None)
 
 def speedups(tot_list):
     return [SERIAL_TOT / t for t in tot_list]
@@ -158,13 +171,14 @@ CUDA_SU  = SERIAL_TOT / CUDA_TOT if CUDA_TOT else None
 # STYLE SETTINGS
 # ─────────────────────────────────────────────────────────────────────────────
 COLORS = {
-    "serial":   "#2c7bb6",
-    "openmp":   "#1a9641",
-    "pthreads": "#b8860b",
-    "mpi":      "#d7191c",
-    "cuda":     "#7600a3",
-    "hybrid":   "#d45f00",
-    "ideal":    "#aaaaaa",
+    "serial":     "#2c7bb6",
+    "openmp":     "#1a9641",
+    "pthreads":   "#b8860b",
+    "mpi":        "#d7191c",
+    "cuda":       "#7600a3",
+    "hybrid":     "#d45f00",   # MPI+OpenMP hybrid
+    "hybrid_pt":  "#8b3a00",   # MPI+Pthreads hybrid (darker shade)
+    "ideal":      "#aaaaaa",
 }
 MARKERS = {
     "openmp":   "o",
@@ -214,7 +228,14 @@ def chart_speedup():
     # Hybrid best config marker
     best_hyb_su = SERIAL_TOT / min(HYBRID_TOT)
     ax.scatter([8], [best_hyb_su], marker="D", s=100, color=COLORS["hybrid"],
-               zorder=5, label=f"Hybrid best (×{best_hyb_su:.1f})")
+               zorder=5, label=f"Hybrid OMP best (×{best_hyb_su:.1f})")
+
+    # Hybrid MPI+Pthreads best config marker
+    if HYBRID_PT_TOT:
+        best_hyb_pt_su = SERIAL_TOT / min(HYBRID_PT_TOT)
+        ax.scatter([8], [best_hyb_pt_su], marker="P", s=110,
+                   color=COLORS["hybrid_pt"], zorder=5,
+                   label=f"Hybrid PT best (×{best_hyb_pt_su:.1f})")
 
     ax.set_xlabel("Number of Workers (threads / processes)")
     ax.set_ylabel("Speedup  $S(p) = T_{\\mathrm{serial}} / T_{\\mathrm{parallel}}$")
@@ -326,15 +347,18 @@ def chart_sim_pred_breakdown():
         [f"PTH\n{w}T" for w in WORKERS] +
         [f"MPI\n{w}P" for w in WORKERS] +
         (["CUDA"] if CUDA_SIM else []) +
-        [f"Hyb\n{l}" for l in HYBRID_LABELS]
+        [f"HybO\n{l}" for l in HYBRID_LABELS] +
+        ([f"HybP\n{l}" for l in HYBRID_LABELS] if HYBRID_PT_SIM else [])
     )
     sims = (
         [SERIAL_SIM] + OPENMP_SIM + PTHREADS_SIM + MPI_SIM +
-        ([CUDA_SIM] if CUDA_SIM else []) + HYBRID_SIM
+        ([CUDA_SIM] if CUDA_SIM else []) + HYBRID_SIM +
+        (HYBRID_PT_SIM if HYBRID_PT_SIM else [])
     )
     preds = (
         [SERIAL_PRED] + OPENMP_PRED + PTHREADS_PRED + MPI_PRED +
-        ([CUDA_PRED] if CUDA_SIM else []) + HYBRID_PRED
+        ([CUDA_PRED] if CUDA_SIM else []) + HYBRID_PRED +
+        (HYBRID_PT_PRED if HYBRID_PT_SIM else [])
     )
 
     x  = np.arange(len(versions))
@@ -350,7 +374,8 @@ def chart_sim_pred_breakdown():
         group_colors(4, COLORS["pthreads"]) +
         group_colors(4, COLORS["mpi"]) +
         ([COLORS["cuda"]] if CUDA_SIM else []) +
-        group_colors(4, COLORS["hybrid"])
+        group_colors(4, COLORS["hybrid"]) +
+        (group_colors(4, COLORS["hybrid_pt"]) if HYBRID_PT_SIM else [])
     )
 
     fig, ax = plt.subplots(figsize=(14, 5.5))
@@ -365,20 +390,29 @@ def chart_sim_pred_breakdown():
     ax.set_ylabel("Time (seconds)")
     ax.set_title("Similarity + Prediction Time Breakdown Across All Versions and Configurations")
 
-    # Group separators
-    separators = [0.5, 4.5, 8.5, 12.5]
+    # Group separators + labels — derived from actual group sizes so this
+    # stays correct whether CUDA and/or Hybrid_PT are present or absent.
+    group_sizes = [
+        ("Serial",   1),
+        ("OpenMP",   4),
+        ("Pthreads", 4),
+        ("MPI",      4),
+    ]
     if CUDA_SIM:
-        separators += [13.5]
-    for sep in separators:
-        ax.axvline(sep, color="gray", linewidth=0.8, linestyle=":")
+        group_sizes.append(("CUDA", 1))
+    group_sizes.append(("Hybrid OMP", 4))
+    if HYBRID_PT_SIM:
+        group_sizes.append(("Hybrid PT", 4))
 
-    # Group labels
-    group_x     = [2.0, 6.0, 10.0, 14.0 if not CUDA_SIM else 14.5]
-    group_names = ["OpenMP", "Pthreads", "MPI",
-                   "Hybrid" if not CUDA_SIM else "CUDA / Hybrid"]
-    for gx, gn in zip(group_x, group_names):
-        ax.text(gx, -2.0, gn, ha="center", fontsize=9,
-                fontweight="bold", color="gray")
+    cursor = 0
+    for i, (name, sz) in enumerate(group_sizes):
+        if i > 0:
+            ax.axvline(cursor - 0.5, color="gray",
+                       linewidth=0.8, linestyle=":")
+        if sz > 1 or name in ("CUDA",):
+            ax.text(cursor + (sz - 1) / 2.0, -2.0, name,
+                    ha="center", fontsize=9, fontweight="bold", color="gray")
+        cursor += sz
 
     # Legend patches
     p1 = mpatches.Patch(color="dimgray", alpha=0.9, label="Similarity phase")
@@ -441,49 +475,80 @@ def chart_mae():
 # CHART 6 — Hybrid Configuration Comparison
 # ─────────────────────────────────────────────────────────────────────────────
 def chart_hybrid():
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
 
-    # Left: timing bars
-    ax = axes[0]
+    has_pt = HYBRID_PT_TOT is not None
+    cfg_labels = [f"P={l[0]}×T={l[2]}" for l in HYBRID_LABELS]
     x  = np.arange(len(HYBRID_LABELS))
-    w  = 0.55
-    hcols = [COLORS["hybrid"]] * 4
-    ax.bar(x, HYBRID_SIM,  w, color=hcols, alpha=0.9,
-           label="Similarity", edgecolor="white")
-    ax.bar(x, HYBRID_PRED, w, bottom=HYBRID_SIM, color=hcols, alpha=0.45,
-           label="Prediction", hatch="///", edgecolor="white")
+    w  = 0.38 if has_pt else 0.55
+
+    # Left: stacked sim+pred bars for each hybrid (side-by-side if both exist)
+    ax = axes[0]
+    off_o = -w/2 if has_pt else 0
+    off_p =  w/2 if has_pt else 0
+
+    ax.bar(x + off_o, HYBRID_SIM,  w, color=COLORS["hybrid"], alpha=0.9,
+           label="OMP Sim", edgecolor="white")
+    ax.bar(x + off_o, HYBRID_PRED, w, bottom=HYBRID_SIM,
+           color=COLORS["hybrid"], alpha=0.45, hatch="///",
+           label="OMP Pred", edgecolor="white")
     for i, (s, p) in enumerate(zip(HYBRID_SIM, HYBRID_PRED)):
-        ax.text(x[i], s + p + 0.05, f"{s+p:.2f}s",
-                ha="center", fontsize=9, fontweight="bold",
+        ax.text(x[i] + off_o, s + p + 0.05, f"{s+p:.2f}",
+                ha="center", fontsize=8, fontweight="bold",
                 color=COLORS["hybrid"])
+
+    if has_pt:
+        ax.bar(x + off_p, HYBRID_PT_SIM,  w, color=COLORS["hybrid_pt"],
+               alpha=0.9, label="PT Sim", edgecolor="white")
+        ax.bar(x + off_p, HYBRID_PT_PRED, w, bottom=HYBRID_PT_SIM,
+               color=COLORS["hybrid_pt"], alpha=0.45, hatch="\\\\\\",
+               label="PT Pred", edgecolor="white")
+        for i, (s, p) in enumerate(zip(HYBRID_PT_SIM, HYBRID_PT_PRED)):
+            ax.text(x[i] + off_p, s + p + 0.05, f"{s+p:.2f}",
+                    ha="center", fontsize=8, fontweight="bold",
+                    color=COLORS["hybrid_pt"])
+
     ax.set_xticks(x)
-    ax.set_xticklabels([f"P={l[0]}×T={l[2]}" for l in HYBRID_LABELS])
+    ax.set_xticklabels(cfg_labels)
     ax.set_ylabel("Time (seconds)")
     ax.set_title("Hybrid: Time per P×T Configuration\n(all = 8 total workers)")
-    ax.legend()
+    ax.legend(fontsize=8, ncol=2)
 
-    # Right: speedup bars
+    # Right: speedup bars (one or two series per config)
     ax2 = axes[1]
     hyb_su = [SERIAL_TOT / t for t in HYBRID_TOT]
-    bars = ax2.bar(x, hyb_su, w, color=hcols, alpha=0.85, edgecolor="white")
+    bars = ax2.bar(x + off_o, hyb_su, w, color=COLORS["hybrid"],
+                   alpha=0.85, edgecolor="white", label="MPI+OpenMP")
     for bar, su in zip(bars, hyb_su):
         ax2.text(bar.get_x() + bar.get_width() / 2,
                  su + 0.05, f"×{su:.2f}",
-                 ha="center", fontsize=9, fontweight="bold",
+                 ha="center", fontsize=8, fontweight="bold",
                  color=COLORS["hybrid"])
-    # Reference lines
+
+    if has_pt:
+        hyb_pt_su = [SERIAL_TOT / t for t in HYBRID_PT_TOT]
+        bars_pt = ax2.bar(x + off_p, hyb_pt_su, w, color=COLORS["hybrid_pt"],
+                          alpha=0.85, edgecolor="white", label="MPI+Pthreads")
+        for bar, su in zip(bars_pt, hyb_pt_su):
+            ax2.text(bar.get_x() + bar.get_width() / 2,
+                     su + 0.05, f"×{su:.2f}",
+                     ha="center", fontsize=8, fontweight="bold",
+                     color=COLORS["hybrid_pt"])
+
     ax2.axhline(OMP_SU[-1],  color=COLORS["openmp"],   linestyle="--",
                 linewidth=1.5, label=f"OpenMP 8T (×{OMP_SU[-1]:.1f})")
     ax2.axhline(MPI_SU[-1],  color=COLORS["mpi"],      linestyle="-.",
                 linewidth=1.5, label=f"MPI 8P (×{MPI_SU[-1]:.1f})")
     ax2.set_xticks(x)
-    ax2.set_xticklabels([f"P={l[0]}×T={l[2]}" for l in HYBRID_LABELS])
+    ax2.set_xticklabels(cfg_labels)
     ax2.set_ylabel("Speedup")
     ax2.set_title("Hybrid: Speedup per P×T Configuration")
-    ax2.legend(fontsize=9)
+    ax2.legend(fontsize=8)
 
-    fig.suptitle("Hybrid MPI+OpenMP — Configuration Analysis (8 total workers)",
-                 fontweight="bold")
+    title = ("Hybrid MPI+OpenMP vs. MPI+Pthreads — "
+             "Configuration Analysis (8 total workers)") if has_pt \
+            else "Hybrid MPI+OpenMP — Configuration Analysis (8 total workers)"
+    fig.suptitle(title, fontweight="bold")
     fig.tight_layout()
     save(fig, "hybrid_configs.png")
 

@@ -184,6 +184,55 @@ These four configurations explore the trade-off between network communication ov
 
 ---
 
+## Diagram 7 — Hybrid MPI + Pthreads (Two-Level Parallelism, POSIX inner)
+**File:** `diagram_07_mpi_pthreads.drawio`
+
+### Description
+The second hybrid variant replaces the OpenMP inner layer with raw POSIX threads. The outer MPI structure is unchanged (same rank-based row partitioning, same `MPI_Allgatherv` / `MPI_Reduce` collectives, same `MPI_THREAD_FUNNELED` contract), but the in-node parallelism is now done with explicit `pthread_create` / `pthread_join` instead of `#pragma omp parallel for`.
+
+**How parallel programming concepts were applied:**
+
+**Two-Level Decomposition:**
+- **Level 1 (MPI — coarse grain):** $P$ MPI ranks partition users across nodes via `get_range(rank, size, ...)`, identical to the OpenMP hybrid (e.g., 2 ranks → Rank 0: users 0–499, Rank 1: users 500–999).
+- **Level 2 (Pthreads — fine grain):** Within each rank, the `run_parallel(fn, threads, args, start, end)` harness spawns $T$ pthreads. Each thread receives a `ThreadArgs` struct carrying its `tid`, `nthreads`, and the *rank's* row window (`rank_start`, `rank_end`), then derives its own slice via `work_range(rank_end - rank_start, tid, nthreads, ...)`. This re-uses the same static ceiling-division partition as the pure-pthreads version, but rebased to the rank's local range so the total worker count is exactly $P \times T$.
+
+**Thread Safety — MPI_THREAD_FUNNELED:**
+`MPI_Init_thread(MPI_THREAD_FUNNELED)` is used, identical to the OpenMP hybrid. Pthreads spawned inside `run_parallel` never call MPI; all collective calls (`MPI_Allgatherv` after Phases 2 and 3, `MPI_Reduce` after Phase 5) happen on the main thread *after* `pthread_join` completes.
+
+**Phase 3 — Similarity (Inner Pthreads, Outer MPI):**
+```c
+// Per-phase pthread fan-out / join (no persistent thread pool, unlike OMP)
+run_parallel(thread_similarities, threads, args, start_u, end_u);
+// After pthread_join barrier, main thread communicates:
+MPI_Allgatherv(&sim_matrix[start_u * N_USERS], ...);
+```
+Each pthread fills its slice of `SIM(u, v)` for $u$ in its sub-range of the rank's local window and all columns $v$. The fill pattern matches the OpenMP hybrid exactly so the resulting per-rank block layout is bit-identical and the similarity checksum stays at $942.387323$.
+
+**Phase 4 — Predictions:**
+Each pthread allocates its own private `SimPair *nbrs` buffer inside the thread function and frees it before returning (same race-free pattern as pure pthreads), then runs the TOP-K weighted average over its slice. No MPI call is needed because every rank already holds the complete $N \times N$ similarity matrix after the Phase 3 `MPI_Allgatherv`.
+
+**Phase 5 — Per-Rank Sequential + MPI_Reduce:**
+The test-set filter loop runs sequentially per rank (only ≈30k entries, threading overhead would dominate), then `MPI_Reduce(MPI_SUM)` collects local error sums into rank 0 for the global MAE/RMSE.
+
+**Difference vs. MPI+OpenMP:**
+- *Thread lifecycle:* pthreads are created and joined three separate times (Phases 2, 3, 4) — there is no persistent thread pool to reuse, so OS thread-creation overhead is paid per phase.
+- *Load balancing:* the inner partition is static ceiling-division (like pure pthreads), so the triangular work imbalance in Phase 3 cannot be smoothed out the way `schedule(dynamic, 4)` does for the OpenMP hybrid. This is the main mechanical reason the two hybrids differ in measured runtime at the same $P \times T$.
+- *Build:* `mpicc -O2 -Wall -o hybrid_pt_rec hybrid_pthreads_recommender.c -lpthread -lm` (no `-fopenmp`).
+- *Launch:* `mpirun -np 2 ./hybrid_pt_rec 1000 1000 4` (threads passed as the 3rd CLI arg, matching the pure-pthreads convention, rather than via `OMP_NUM_THREADS`).
+
+**Four Benchmarked Configurations (all 8 total workers):**
+
+| Config | MPI Ranks (P) | PT Threads (T) | Characteristic |
+|--------|---------------|----------------|----------------|
+| 2×4 | 2 | 4 | Fewer MPI messages, more shared-mem parallelism |
+| 4×2 | 4 | 2 | Balanced — moderate network + moderate threading |
+| 8×1 | 8 | 1 | Equivalent to pure MPI (no inner threading) |
+| 1×8 | 1 | 8 | Equivalent to pure pthreads (no MPI distribution) |
+
+These mirror the OpenMP-hybrid configurations exactly so the two variants can be compared head-to-head at the same total worker count.
+
+---
+
 ## How to Open Diagrams
 
 1. Go to **app.diagrams.net** (free, no login required)
@@ -200,4 +249,5 @@ These four configurations explore the trade-off between network communication ov
 | `diagram_03_pthreads.drawio` | Pthreads Lifecycle | Manual thread creation, join-as-barrier |
 | `diagram_04_mpi.drawio` | MPI Rank Swimlanes | Distributed memory, Allgatherv, Reduce |
 | `diagram_05_cuda.drawio` | CUDA Grid/Block/Thread | GPU hierarchy, memory hierarchy, 3 kernels |
-| `diagram_06_hybrid_mpi_openmp.drawio` | Hybrid Two-Level | MPI + OpenMP combined, FUNNELED safety |
+| `diagram_06_hybrid_mpi_openmp.drawio` | Hybrid Two-Level (OMP inner) | MPI + OpenMP combined, FUNNELED safety |
+| `diagram_07_mpi_pthreads.drawio` | Hybrid Two-Level (PT inner) | MPI + Pthreads combined, FUNNELED safety |

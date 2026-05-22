@@ -1,4 +1,4 @@
-HPC Group 11 — Benchmark Run  Wed May 20 05:12:39 PM +0530 2026
+HPC Group 11 — Benchmark Run  Fri May 22 23:49:27 +0530 2026
 Problem size: 1000 1000  |  SEED=42  |  TOP_K=20
 ==========================================
 === Serial (1 workers) ===
@@ -6,14 +6,14 @@ Problem size: 1000 1000  |  SEED=42  |  TOP_K=20
     Users: 1000 | Items: 1000 | Top-K: 20
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0220 s
-[Timing] User mean compute  : 0.0032 s
-[Timing] Similarity matrix  : 1.3549 s
+[Timing] Data generation    : 0.0304 s
+[Timing] User mean compute  : 0.0052 s
+[Timing] Similarity matrix  : 1.7173 s
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 7.0277 s
+[Timing] Prediction phase   : 7.7956 s
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 8.3826 s
+[Timing] Total (sim+pred)   : 9.5130 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -28,14 +28,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 1
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0226 s
-[Timing] User mean compute  : 0.0033 s  [parallel, 1 threads]
-[Timing] Similarity matrix  : 1.6102 s  [parallel, 1 threads]
+[Timing] Data generation    : 0.0289 s
+[Timing] User mean compute  : 0.0036 s  [parallel, 1 threads]
+[Timing] Similarity matrix  : 1.6830 s  [parallel, 1 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 7.2447 s  [parallel, 1 threads]
+[Timing] Prediction phase   : 7.5929 s  [parallel, 1 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 8.8549 s
+[Timing] Total (sim+pred)   : 9.2759 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -50,14 +50,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 2
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0215 s
-[Timing] User mean compute  : 0.0016 s  [parallel, 2 threads]
-[Timing] Similarity matrix  : 0.8114 s  [parallel, 2 threads]
+[Timing] Data generation    : 0.0259 s
+[Timing] User mean compute  : 0.0018 s  [parallel, 2 threads]
+[Timing] Similarity matrix  : 0.9272 s  [parallel, 2 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 3.6679 s  [parallel, 2 threads]
+[Timing] Prediction phase   : 4.3496 s  [parallel, 2 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 4.4792 s
+[Timing] Total (sim+pred)   : 5.2768 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -72,14 +72,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 4
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0224 s
-[Timing] User mean compute  : 0.0009 s  [parallel, 4 threads]
-[Timing] Similarity matrix  : 0.4457 s  [parallel, 4 threads]
+[Timing] Data generation    : 0.0270 s
+[Timing] User mean compute  : 0.0012 s  [parallel, 4 threads]
+[Timing] Similarity matrix  : 0.5536 s  [parallel, 4 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 2.0704 s  [parallel, 4 threads]
+[Timing] Prediction phase   : 2.5194 s  [parallel, 4 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 2.5161 s
+[Timing] Total (sim+pred)   : 3.0729 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -94,14 +94,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 8
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0243 s
-[Timing] User mean compute  : 0.0005 s  [parallel, 8 threads]
-[Timing] Similarity matrix  : 0.2369 s  [parallel, 8 threads]
+[Timing] Data generation    : 0.0362 s
+[Timing] User mean compute  : 0.0017 s  [parallel, 8 threads]
+[Timing] Similarity matrix  : 0.3837 s  [parallel, 8 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 1.0903 s  [parallel, 8 threads]
+[Timing] Prediction phase   : 2.6992 s  [parallel, 8 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 1.3272 s
+[Timing] Total (sim+pred)   : 3.0830 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -116,14 +116,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 1
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0226 s
-[Timing] User mean compute  : 0.0032 s  [pthreads, 1 threads]
-[Timing] Similarity matrix  : 1.3333 s  [pthreads, 1 threads]
+[Timing] Data generation    : 0.0385 s
+[Timing] User mean compute  : 0.0062 s  [pthreads, 1 threads]
+[Timing] Similarity matrix  : 1.6445 s  [pthreads, 1 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 7.3272 s  [pthreads, 1 threads]
+[Timing] Prediction phase   : 7.9062 s  [pthreads, 1 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 8.6605 s
+[Timing] Total (sim+pred)   : 9.5507 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -138,14 +138,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 2
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0231 s
-[Timing] User mean compute  : 0.0017 s  [pthreads, 2 threads]
-[Timing] Similarity matrix  : 0.9816 s  [pthreads, 2 threads]
+[Timing] Data generation    : 0.0260 s
+[Timing] User mean compute  : 0.0020 s  [pthreads, 2 threads]
+[Timing] Similarity matrix  : 1.2058 s  [pthreads, 2 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 3.7720 s  [pthreads, 2 threads]
+[Timing] Prediction phase   : 4.8107 s  [pthreads, 2 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 4.7536 s
+[Timing] Total (sim+pred)   : 6.0165 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -160,14 +160,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 4
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0224 s
-[Timing] User mean compute  : 0.0010 s  [pthreads, 4 threads]
-[Timing] Similarity matrix  : 0.5999 s  [pthreads, 4 threads]
+[Timing] Data generation    : 0.0285 s
+[Timing] User mean compute  : 0.0020 s  [pthreads, 4 threads]
+[Timing] Similarity matrix  : 0.9301 s  [pthreads, 4 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 2.0688 s  [pthreads, 4 threads]
+[Timing] Prediction phase   : 3.3038 s  [pthreads, 4 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 2.6687 s
+[Timing] Total (sim+pred)   : 4.2339 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -182,14 +182,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Threads: 8
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0224 s
-[Timing] User mean compute  : 0.0007 s  [pthreads, 8 threads]
-[Timing] Similarity matrix  : 0.3519 s  [pthreads, 8 threads]
+[Timing] Data generation    : 0.0320 s
+[Timing] User mean compute  : 0.0023 s  [pthreads, 8 threads]
+[Timing] Similarity matrix  : 0.5881 s  [pthreads, 8 threads]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 1.1275 s  [pthreads, 8 threads]
+[Timing] Prediction phase   : 2.4827 s  [pthreads, 8 threads]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 1.4794 s
+[Timing] Total (sim+pred)   : 3.0708 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -204,14 +204,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 1
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0219 s
-[Timing] User mean compute  : 0.0031 s  [MPI, 1 processes]
-[Timing] Similarity matrix  : 3.1994 s  [MPI, 1 processes]
+[Timing] Data generation    : 0.0248 s
+[Timing] User mean compute  : 0.0037 s  [MPI, 1 processes]
+[Timing] Similarity matrix  : 3.3637 s  [MPI, 1 processes]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 7.4317 s  [MPI, 1 processes]
+[Timing] Prediction phase   : 7.4192 s  [MPI, 1 processes]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 10.6311 s
+[Timing] Total (sim+pred)   : 10.7829 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -226,14 +226,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 2
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0210 s
-[Timing] User mean compute  : 0.0015 s  [MPI, 2 processes]
-[Timing] Similarity matrix  : 1.6090 s  [MPI, 2 processes]
+[Timing] Data generation    : 0.0234 s
+[Timing] User mean compute  : 0.0071 s  [MPI, 2 processes]
+[Timing] Similarity matrix  : 1.8619 s  [MPI, 2 processes]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 3.8648 s  [MPI, 2 processes]
+[Timing] Prediction phase   : 4.8353 s  [MPI, 2 processes]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 5.4739 s
+[Timing] Total (sim+pred)   : 6.6972 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -248,14 +248,14 @@ User 4      2.95     3.05     5.00     2.97     3.13
     Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 4
 
 [Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0218 s
-[Timing] User mean compute  : 0.0008 s  [MPI, 4 processes]
-[Timing] Similarity matrix  : 0.9031 s  [MPI, 4 processes]
+[Timing] Data generation    : 0.0371 s
+[Timing] User mean compute  : 0.0015 s  [MPI, 4 processes]
+[Timing] Similarity matrix  : 1.5265 s  [MPI, 4 processes]
 [Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 2.1281 s  [MPI, 4 processes]
+[Timing] Prediction phase   : 3.5440 s  [MPI, 4 processes]
 [Eval]   MAE on test set    : 1.2574  (test size: 29866)
 [Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 3.0311 s
+[Timing] Total (sim+pred)   : 5.0705 s
 
 --- Sample Predictions (first 5 users, 5 items) ---
 User\Item  Item0    Item1    Item2    Item3    Item4  
@@ -266,139 +266,3 @@ User 3      2.69     3.60     3.31     2.79     2.74
 User 4      2.95     3.05     5.00     2.97     3.13  
 
 === MPI (8 workers) ===
-=== Pearson Correlation Recommender – MPI Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20 | Processes: 8
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0446 s
-[Timing] User mean compute  : 0.0006 s  [MPI, 8 processes]
-[Timing] Similarity matrix  : 0.4846 s  [MPI, 8 processes]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 1.1550 s  [MPI, 8 processes]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 1.6395 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-
-=== CUDA (GPU workers) ===
-=== Pearson Correlation Recommender – CUDA Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20
-    GPU: NVIDIA GeForce RTX 3050 Laptop GPU  |  SMs: 16  |  Compute: 8.6
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0212 s
-[Timing] H→D ratings        : 0.0009 s
-[Timing] User mean compute  : 0.0002 s  [GPU kernel]
-[Timing] Similarity matrix  : 0.0862 s  [GPU kernel]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 0.1343 s  [GPU kernel]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Timing] Total (sim+pred)   : 0.2205 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-
-=== Hybrid_2x4 (8 workers) ===
-=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20
-    MPI Processes: 2 | OpenMP Threads/Process: 4 | Total workers: 8
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0221 s
-[Timing] User mean compute  : 0.0011 s  [MPI 2 × OMP 4]
-[Timing] Similarity matrix  : 1.2032 s  [MPI 2 × OMP 4]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 2.7766 s  [MPI 2 × OMP 4]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 3.9798 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-
-=== Hybrid_4x2 (8 workers) ===
-=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20
-    MPI Processes: 4 | OpenMP Threads/Process: 2 | Total workers: 8
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0223 s
-[Timing] User mean compute  : 0.0047 s  [MPI 4 × OMP 2]
-[Timing] Similarity matrix  : 0.6169 s  [MPI 4 × OMP 2]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 1.1631 s  [MPI 4 × OMP 2]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 1.7800 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-
-=== Hybrid_8x1 (8 workers) ===
-=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20
-    MPI Processes: 8 | OpenMP Threads/Process: 1 | Total workers: 8
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0353 s
-[Timing] User mean compute  : 0.0006 s  [MPI 8 × OMP 1]
-[Timing] Similarity matrix  : 0.5149 s  [MPI 8 × OMP 1]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 1.1904 s  [MPI 8 × OMP 1]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 1.7053 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-
-=== Hybrid_1x8 (8 workers) ===
-=== Pearson Correlation Recommender – Hybrid MPI+OpenMP Version ===
-    Users: 1000 | Items: 1000 | Top-K: 20
-    MPI Processes: 1 | OpenMP Threads/Process: 8 | Total workers: 8
-
-[Data]   Users: 1000 | Items: 1000 | Sparsity: 70% | Test ratings: 29866
-[Timing] Data generation    : 0.0218 s
-[Timing] User mean compute  : 0.0026 s  [MPI 1 × OMP 8]
-[Timing] Similarity matrix  : 2.4520 s  [MPI 1 × OMP 8]
-[Check]  Sim-matrix checksum: 942.387323
-[Timing] Prediction phase   : 5.4913 s  [MPI 1 × OMP 8]
-[Eval]   MAE on test set    : 1.2574  (test size: 29866)
-[Eval]   RMSE on test set   : 1.4579  (test size: 29866)
-[Timing] Total (sim+pred)   : 7.9433 s
-
---- Sample Predictions (first 5 users, 5 items) ---
-User\Item  Item0    Item1    Item2    Item3    Item4  
-User 0      2.81     2.89     3.21     2.93     2.74  
-User 1      3.05     3.00     2.74     2.00     2.98  
-User 2      3.37     3.23     3.24     5.00     2.80  
-User 3      2.69     3.60     3.31     2.79     2.74  
-User 4      2.95     3.05     5.00     2.97     3.13  
-

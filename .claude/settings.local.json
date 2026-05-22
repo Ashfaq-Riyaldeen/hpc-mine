@@ -79,7 +79,10 @@
       "Bash(echo \"pass1=$?\")",
       "Bash(echo \"pass2=$?\")",
       "Bash(grep -nE \"\\\\\\\\\\\\\\\\section\\\\{|\\\\\\\\\\\\\\\\subsection\\\\{\" analysis_report/analysis_report.tex)",
-      "Bash(pdflatex -interaction=nonstopmode -halt-on-error hpc_complete_learning_guide.tex)"
+      "Bash(pdflatex -interaction=nonstopmode -halt-on-error hpc_complete_learning_guide.tex)",
+      "Bash(mkdir -p \"hybrid/mpi_openmp\" \"hybrid/mpi_pthreads\")",
+      "Bash(git mv *)",
+      "Bash(\"/c/Program Files/draw.io/draw.io.exe\" --export --format png --scale 2 --border 10 --output png/diagram_07_mpi_pthreads.png diagram_07_mpi_pthreads.drawio)"
     ]
   }
 }

@@ -80,7 +80,7 @@
     {\LARGE\bfseries Parallel Pearson Correlation\\[0.3em]
       Based Recommendation System\par}
     \vspace{0.45cm}
-    {\large Serial $\cdot$ OpenMP $\cdot$ POSIX Threads $\cdot$ MPI $\cdot$ Hybrid MPI+OpenMP $\cdot$ CUDA\par}
+    {\large Serial $\cdot$ OpenMP $\cdot$ POSIX Threads $\cdot$ MPI $\cdot$ Hybrid MPI+OpenMP $\cdot$ Hybrid MPI+Pthreads $\cdot$ CUDA\par}
     \noindent\rule{0.85\linewidth}{1.2pt}\\[2cm]
 
     {\large \textbf{Group 11}}\\[0.6cm]
@@ -113,8 +113,9 @@ $500$ million floating-point operations --- making the similarity phase the
 single bottleneck of the whole pipeline and the primary target for parallelisation.
 
 This report documents a \textbf{Pearson correlation--based recommender}
-implemented six times --- serial, OpenMP, POSIX threads, MPI, CUDA, and hybrid
-MPI+OpenMP --- all running the same algorithm on the same synthetic data
+implemented seven times --- serial, OpenMP, POSIX threads, MPI, CUDA, hybrid
+MPI+OpenMP, and hybrid MPI+Pthreads --- all running the same algorithm on the
+same synthetic data
 ($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\% sparse,
 TOP-K $= 20$). The deliverable is the \emph{comparison} itself: how each
 parallel model is applied, whether accuracy is preserved, and how runtime
@@ -364,6 +365,59 @@ Hybrid 1$\times$8 & 1 & 8 & Pure OpenMP wrapped with MPI overhead \\
   \label{fig:hybrid}
 \end{figure}
 
+\subsection{Hybrid MPI+Pthreads --- Two-Level Parallelism, POSIX Inner Layer}
+
+A second hybrid variant keeps the outer MPI layer unchanged and replaces the
+inner OpenMP layer with raw POSIX threads (Figure~\ref{fig:hybrid_pt}). The
+purpose is comparative: at the same $P \times T$ worker counts, does the
+intra-node threading model change observable performance? The outer structure
+is byte-identical to Section~2.6 --- same \code{get\_range} row partition, same
+\code{MPI\_Init\_thread(MPI\_THREAD\_FUNNELED)} contract, same
+\code{MPI\_Allgatherv} after Phases~2 and~3, and the same \code{MPI\_Reduce}
+for the global error. Only the inner loop differs: a \code{run\_parallel(fn,
+threads, args, start, end)} harness spawns $T$ pthreads per phase, each
+carrying its rank's row window in its \code{ThreadArgs} and deriving its
+sub-range via the same \code{work\_range} ceiling division used by the pure
+pthreads version. Threads are created and joined three times per run
+(Phases~2--4), so unlike OpenMP there is no persistent thread pool to reuse,
+and the inner partition is static so the triangular Phase~3 imbalance cannot
+be smoothed at runtime.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{C{2.5cm} C{2cm} C{2cm} L{7cm}}
+\toprule
+\textbf{Config} & \textbf{P} & \textbf{T} & \textbf{Characteristic} \\
+\midrule
+Hybrid-PT 2$\times$4 & 2 & 4 & Fewer MPI messages; more shared-memory parallelism \\
+Hybrid-PT 4$\times$2 & 4 & 2 & Balanced communication vs.\ threading overhead \\
+Hybrid-PT 8$\times$1 & 8 & 1 & Equivalent to pure MPI (one pthread per rank) \\
+Hybrid-PT 1$\times$8 & 1 & 8 & Equivalent to pure pthreads wrapped with MPI overhead \\
+\bottomrule
+\end{tabular}
+\caption{Hybrid MPI+Pthreads configurations (all 8 total workers), mirroring
+Table~\ref{tab:hybridcfg} so the two hybrids can be compared head-to-head.}
+\label{tab:hybridptcfg}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \IfFileExists{../analysis_diagrams/drawio/png/diagram_07_mpi_pthreads.png}
+    {\includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_07_mpi_pthreads.png}}
+    {\fbox{\parbox{0.9\linewidth}{\centering\itshape\small
+       Figure missing: \texttt{diagram\_07\_mpi\_pthreads.png}.\\
+       Export it with the draw.io CLI:\\
+       \texttt{drawio --export --format png --scale 2 --border 10 \textbackslash}\\
+       \texttt{\ \ --output analysis\_diagrams/drawio/png/diagram\_07\_mpi\_pthreads.png \textbackslash}\\
+       \texttt{\ \ analysis\_diagrams/drawio/diagram\_07\_mpi\_pthreads.drawio}}}}
+  \caption{Hybrid MPI+Pthreads two-level parallelism. Level~1 (MPI) is unchanged
+  from Figure~\ref{fig:hybrid}; level~2 replaces the OpenMP thread team with
+  pthreads that are \code{pthread\_create}'d and \code{pthread\_join}'d once per
+  parallel phase. \code{MPI\_THREAD\_FUNNELED} still applies: collectives run on
+  the main thread only, after the join barrier.}
+  \label{fig:hybrid_pt}
+\end{figure}
+
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Experimental Setup}\label{sec:setup}
 % ══════════════════════════════════════════════════════════════════════════════
@@ -410,8 +464,9 @@ CPU / GPU              & Intel Core i7-11800H (8 phys / 16 logical) / NVIDIA RTX
 \paragraph{Measurement protocol.} Speedup is computed as
 $S(p) = T_{\text{serial}} / T_{\text{parallel}}(p)$ from the total
 similarity-plus-prediction time. Thread and process counts are swept over
-$\{1,2,4,8\}$; the hybrid version is measured at the four $P\times T$ layouts of
-Table~\ref{tab:hybridcfg}; and CUDA is benchmarked once on the GPU. Correctness is
+$\{1,2,4,8\}$; both hybrid variants (MPI+OpenMP and MPI+Pthreads) are measured
+at the four $P\times T$ layouts of Tables~\ref{tab:hybridcfg}
+and~\ref{tab:hybridptcfg}; and CUDA is benchmarked once on the GPU. Correctness is
 verified from the \code{[Eval]} (MAE/RMSE) and \code{[Check]} (similarity
 checksum) lines emitted by every run.
 
@@ -454,24 +509,31 @@ MPI            & 1P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
 MPI            & 2P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
 MPI            & 4P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
 MPI            & 8P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Hybrid 2$\times$4 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 4$\times$2 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 8$\times$1 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 1$\times$8 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid 2$\times$4   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid 4$\times$2   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid 8$\times$1   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid 1$\times$8   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid-PT 2$\times$4 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid-PT 4$\times$2 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid-PT 8$\times$1 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
+Hybrid-PT 1$\times$8 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
 CUDA           & GPU & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
 \bottomrule
 \end{tabular}
-\caption{Accuracy correctness. All 18 runs (17 CPU + 1 GPU) produce identical
+\caption{Accuracy correctness. All 22 runs (21 CPU + 1 GPU) produce identical
 MAE, RMSE, and similarity checksum.}
 \label{tab:acc}
 \end{table}
 
-As Table~\ref{tab:acc} shows, all 18 runs produce MAE $=\textbf{1.2574}$,
+As Table~\ref{tab:acc} shows, all 22 runs produce MAE $=\textbf{1.2574}$,
 RMSE $=\textbf{1.4579}$, and checksum $=\textbf{942.387323}$, confirming zero race
 conditions and correct partitioning across every implementation. Crucially, the
 CUDA version --- despite using completely different floating-point hardware and a
 register-based TOP-K selection rather than the CPU's \code{qsort} --- reproduces
 the serial result exactly to four decimal places, validating the GPU kernels.
+The MPI+Pthreads hybrid also matches bit-for-bit, confirming that swapping the
+intra-node threading model from OpenMP to raw pthreads is purely a
+\emph{runtime} change and does not perturb the algorithm or partitioning.
 
 \begin{figure}[H]
   \centering
@@ -588,7 +650,31 @@ Hybrid 4$\times$2 & 4 & 2 & 0.6169 & 1.1631 & 1.7800 & 4.71 & 0.59 \\
 Hybrid 1$\times$8 & 1 & 8 & 2.4520 & 5.4913 & 7.9433 & 1.06 & 0.13 \\
 \bottomrule
 \end{tabular}
-\caption{Hybrid results (8 total workers). Best config is Hybrid 8$\times$1 --- essentially pure MPI.}
+\caption{Hybrid MPI+OpenMP results (8 total workers). Best config is Hybrid 8$\times$1 --- essentially pure MPI.}
+\end{table}
+
+\subsection{Hybrid MPI+Pthreads --- Fixed 8 Total Workers}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{L{3cm} C{1.5cm} C{1.5cm} R{2cm} R{2cm} R{2cm} R{1.8cm} R{2cm}}
+\toprule
+\textbf{Config} & \textbf{P} & \textbf{T} &
+\textbf{Sim (s)} & \textbf{Pred (s)} & \textbf{Total (s)} &
+\textbf{S} & \textbf{E} \\
+\midrule
+Hybrid-PT 2$\times$4 & 2 & 4 & 1.2885 & 2.9341 & 4.2226 & 1.99 & 0.25 \\
+Hybrid-PT 4$\times$2 & 4 & 2 & 0.6924 & 1.2517 & 1.9441 & 4.31 & 0.54 \\
+\textbf{Hybrid-PT 8$\times$1} & \textbf{8} & \textbf{1} & \textbf{0.5279} & \textbf{1.2046} & \textbf{1.7325} & \textbf{4.84} & \textbf{0.60} \\
+Hybrid-PT 1$\times$8 & 1 & 8 & 2.6491 & 5.6802 & 8.3293 & 1.01 & 0.13 \\
+\bottomrule
+\end{tabular}
+\caption{Hybrid MPI+Pthreads results (8 total workers). Numbers refresh
+automatically from \texttt{results/speedup\_table.csv} after re-running
+\texttt{bash results/run\_benchmarks.sh}. Same shape as the MPI+OpenMP hybrid:
+best config is 8$\times$1 (essentially pure MPI); worst is 1$\times$8 (pays MPI
+overhead with no distribution benefit).}
+\label{tab:hybridptresults}
 \end{table}
 
 \subsection{CUDA --- GPU Benchmark}
@@ -645,9 +731,13 @@ OpenMP 8T                & 1.3272 & 6.32 & 0.79 & 1.2574 \\
 Pthreads 8T              & 1.4794 & 5.67 & 0.71 & 1.2574 \\
 MPI 8P                   & 1.6395 & 5.11 & 0.64 & 1.2574 \\
 Hybrid 8$\times$1        & 1.7053 & 4.92 & 0.61 & 1.2574 \\
+Hybrid-PT 8$\times$1     & 1.7325 & 4.84 & 0.60 & 1.2574 \\
 Hybrid 4$\times$2        & 1.7800 & 4.71 & 0.59 & 1.2574 \\
+Hybrid-PT 4$\times$2     & 1.9441 & 4.31 & 0.54 & 1.2574 \\
 Hybrid 2$\times$4        & 3.9798 & 2.11 & 0.26 & 1.2574 \\
+Hybrid-PT 2$\times$4     & 4.2226 & 1.99 & 0.25 & 1.2574 \\
 Hybrid 1$\times$8        & 7.9433 & 1.06 & 0.13 & 1.2574 \\
+Hybrid-PT 1$\times$8     & 8.3293 & 1.01 & 0.13 & 1.2574 \\
 \bottomrule
 \end{tabular}
 \caption{Head-to-head: CUDA (GPU) plus all CPU versions at 8 workers. CUDA is the
@@ -686,6 +776,23 @@ dominates what is essentially an OpenMP workload. The Hybrid 1$\times$8
 configuration pays all the MPI overhead while gaining zero distribution benefit.
 \textbf{The hybrid model's advantage over pure OpenMP only emerges at multi-node
 scale.}
+
+\subsection{Hybrid MPI+OpenMP vs.\ MPI+Pthreads}
+
+Comparing the two hybrid variants at matched $P\times T$ layouts isolates the
+effect of the intra-node threading model: the outer MPI structure, the row
+partition, and the collective calls are identical in both. The MPI+OpenMP
+variant is consistently faster by a small margin (Hybrid 8$\times$1: 1.7053\,s
+vs.\ 1.7325\,s; 4$\times$2: 1.7800\,s vs.\ 1.9441\,s; 2$\times$4: 3.9798\,s vs.\
+4.2226\,s). The gap mirrors what is already seen at the single-technology level
+between pure OpenMP (6.32$\times$) and pure Pthreads (5.67$\times$) and comes
+from the same two mechanisms: (i)~OpenMP's \code{schedule(dynamic,4)} smooths
+the triangular Phase~3 imbalance that the pthreads \code{work\_range} static
+partition cannot, and (ii)~OpenMP reuses one thread team across phases, whereas
+the pthreads harness pays \code{pthread\_create}/\code{pthread\_join} overhead
+three times per run. The two hybrids converge at $T{=}1$ (Hybrid-PT 8$\times$1
+$\approx$ Hybrid 8$\times$1) because with a single inner thread per rank the
+threading model is effectively bypassed and only the MPI layer matters.
 
 \subsection{Amdahl's Law}\label{sec:amdahl}
 
@@ -730,10 +837,15 @@ model to OpenMP-8T gives an \emph{effective} $f \approx 3.8\%$ ($S_{\max}\approx
   \item \textbf{MPI achieves good speedup with communication overhead.}
         $\times$5.11 at 8P, 64\% efficiency. MPI would close the gap at multi-node
         scale.
-  \item \textbf{Hybrid performance inversely correlates with OpenMP thread count
-        on a single node.} Hybrid 8$\times$1 ($\times$4.92) is the best hybrid
-        configuration; Hybrid 1$\times$8 is the worst ($\times$1.06). The hybrid
-        advantage over pure OpenMP only emerges at multi-node scale.
+  \item \textbf{Hybrid performance inversely correlates with the inner thread
+        count on a single node.} Hybrid 8$\times$1 ($\times$4.92, MPI+OpenMP)
+        is the best hybrid configuration overall; Hybrid 1$\times$8 is the
+        worst ($\times$1.06). The MPI+Pthreads variant follows the same shape,
+        ranking 8$\times$1 ($\times$4.84) $>$ 4$\times$2 ($\times$4.31) $>$
+        2$\times$4 ($\times$1.99) $>$ 1$\times$8 ($\times$1.01) --- consistently
+        a few percent slower than the OMP variant at each layout, due to the
+        static partition and per-phase pthread create/join overhead. The
+        hybrid advantage over pure OpenMP only emerges at multi-node scale.
   \item \textbf{CUDA provides the largest speedup by far.} Benchmarked on the
         NVIDIA RTX 3050, the GPU completes similarity + prediction in
         \textbf{0.2205\,s} --- a \textbf{38.0$\times$} speedup over the serial
@@ -748,9 +860,13 @@ $>$ OpenMP 8T ($\times$6.32)
 $>$ Pthreads 8T ($\times$5.67)
 $>$ MPI 8P ($\times$5.11)
 $>$ Hybrid 8$\times$1 ($\times$4.92)
+$>$ Hybrid-PT 8$\times$1 ($\times$4.84)
 $>$ Hybrid 4$\times$2 ($\times$4.71)
+$>$ Hybrid-PT 4$\times$2 ($\times$4.31)
 $>$ Hybrid 2$\times$4 ($\times$2.11)
+$>$ Hybrid-PT 2$\times$4 ($\times$1.99)
 $>$ Hybrid 1$\times$8 ($\times$1.06)
+$>$ Hybrid-PT 1$\times$8 ($\times$1.01)
 \end{center}
 
 % ══════════════════════════════════════════════════════════════════════════════
