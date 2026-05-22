@@ -47,7 +47,7 @@
 % ── Header / Footer ─────────────────────────────────────────────────────────
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{\small Parallel Pearson Recommender}
+\lhead{\small High Performance Computing}
 \rhead{\small Group 11}
 \cfoot{\small\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -94,34 +94,6 @@
 \end{titlepage}
 
 \clearpage
-\hypersetup{pageanchor=true}
-\thispagestyle{plain}
-
-\begin{center}
-  {\Large\bfseries Abstract}
-\end{center}
-\vspace{0.5em}
-We implement and evaluate six versions of a user-based collaborative-filtering
-recommender built on Pearson-correlation similarity: a serial baseline, two
-shared-memory parallelisations (OpenMP and POSIX threads), a distributed-memory
-MPI version, a hybrid MPI+OpenMP version, and a CUDA GPU version. All six run
-the \emph{identical} algorithm on \emph{identical} data
-($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\% sparse,
-TOP-K $=20$), so that only the runtime differs and accuracy can be compared
-directly. Every version reproduces the serial baseline exactly ---
-MAE $=1.2574$, RMSE $=1.4579$, similarity checksum $=942.387323$ ---
-confirming race-free partitioning. We then measure similarity- and
-prediction-phase wall-clock time as the thread count, process count, and hybrid
-rank/thread layout vary from $1$ to $8$ workers. CUDA is fastest at
-$38\times$ over serial; OpenMP is the best CPU version at $6.32\times$ on
-eight threads.
-
-\vspace{1.2em}
-\noindent\textbf{Platform.} Pop!\_OS 24.04 LTS $\cdot$ GCC 13.3.0 $\cdot$ Open MPI
-4.1.6 $\cdot$ CUDA 12.0 $\cdot$ Intel Core i7-11800H (8 physical / 16 logical
-cores) $\cdot$ NVIDIA GeForce RTX 3050 Laptop GPU.
-
-\clearpage
 \tableofcontents
 \clearpage
 \pagenumbering{arabic}
@@ -130,24 +102,31 @@ cores) $\cdot$ NVIDIA GeForce RTX 3050 Laptop GPU.
 \section{Introduction and Motivation}\label{sec:intro}
 % ══════════════════════════════════════════════════════════════════════════════
 
-User-based collaborative filtering is a classic recommendation technique: to
-predict how a user would rate an unseen item, it borrows the opinions of the
-users most similar to them. The cost is dominated by computing pairwise
-similarity over the rating matrix. For $N = M = 1{,}000$ users and items, the
-upper triangle alone contains $499{,}500$ Pearson pair computations totalling
-roughly $500$ million floating-point operations --- the single bottleneck of the
-whole pipeline.
+Pearson correlation measures how linearly related two users' rating patterns are,
+making it the natural similarity metric for user-based collaborative filtering.
+To predict how a target user would rate an unseen item, the system finds the
+most similar neighbours, weights their ratings by similarity, and blends them
+into a prediction. The computational cost is dominated by computing all
+pairwise Pearson similarities: for $N = M = 1{,}000$ users and items the upper
+triangle alone requires $499{,}500$ coefficient evaluations --- roughly
+$500$ million floating-point operations --- making the similarity phase the
+single bottleneck of the whole pipeline and the primary target for parallelisation.
 
-This report documents the implementation and performance evaluation of a
-\textbf{Pearson correlation--based collaborative-filtering recommender},
-implemented six times: a serial baseline and five parallel versions (OpenMP,
-POSIX threads, MPI, CUDA, and hybrid MPI+OpenMP). The deliverable is the
-\emph{comparison} itself. Because all six implement the same algorithm on the
-same data, they must produce the same predictions; the only thing that changes
-is how the work is distributed across cores, processes, or GPU threads. The
-study therefore asks three questions: how each parallel programming model is
-applied to the recommender, whether the parallel versions preserve the serial
-accuracy, and how runtime scales as the worker count is varied.
+This report documents a \textbf{Pearson correlation--based recommender}
+implemented six times --- serial, OpenMP, POSIX threads, MPI, CUDA, and hybrid
+MPI+OpenMP --- all running the same algorithm on the same synthetic data
+($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\% sparse,
+TOP-K $= 20$). The deliverable is the \emph{comparison} itself: how each
+parallel model is applied, whether accuracy is preserved, and how runtime
+scales from 1 to 8 workers. Every parallel version reproduces the serial result
+exactly (MAE $=1.2574$, RMSE $=1.4579$, similarity checksum $=942.387323$),
+confirming race-free partitioning. CUDA is fastest at $38\times$ over serial;
+OpenMP leads the CPU versions at $6.32\times$ on eight threads.
+
+\vspace{0.6em}
+\noindent\textbf{Platform.} Pop!\_OS 24.04 LTS $\cdot$ GCC 13.3.0 $\cdot$ Open MPI
+4.1.6 $\cdot$ CUDA 12.0 $\cdot$ Intel Core i7-11800H (8 physical / 16 logical
+cores) $\cdot$ NVIDIA GeForce RTX 3050 Laptop GPU.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Algorithm Design and Parallel Programming Concepts}\label{sec:design}
