@@ -647,50 +647,6 @@ GPU's thousands of cores. Host\,$\leftrightarrow$\,device transfer cost is
 negligible (sub-millisecond) since the ratings matrix stays resident on the
 device across all three kernels.
 
-\subsection{Performance Charts}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/speedup_comparison.png}
-  \caption{Speedup vs.\ workers. Dashed = ideal linear. $\blacklozenge$ = best Hybrid (8$\times$1).}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/execution_time_bar.png}
-  \caption{Wall-clock time --- best config per version. Solid = similarity phase; hatched = prediction.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/efficiency_plot.png}
-  \caption{Parallel efficiency $E(p)=S(p)/p$. Green zone ($>0.70$) = good utilisation.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/sim_pred_breakdown.png}
-  \caption{Similarity + Prediction time breakdown across all versions and configurations.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/hybrid_configs.png}
-  \caption{Hybrid MPI+OpenMP configuration analysis. Left: time. Right: speedup vs.\ OpenMP-8T and MPI-8P.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/amdahls_law.png}
-  \caption{Amdahl's Law (effective $f \approx 3.8\%$, $S_{\max}\approx26\times$) vs.\ actual speedup.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{../analysis_diagrams/charts/summary_dashboard.png}
-  \caption{Summary dashboard: (a) speedup, (b) efficiency, (c) execution time, (d) MAE.}
-\end{figure}
-
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Performance Discussion}\label{sec:discussion}
 % ══════════════════════════════════════════════════════════════════════════════
