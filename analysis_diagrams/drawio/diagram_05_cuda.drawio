@@ -1,22 +1,22 @@
 <mxfile host="65bd71144e">
     <diagram id="page5" name="5. CUDA">
-        <mxGraphModel dx="1404" dy="344" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="660" math="0" shadow="0">
+        <mxGraphModel dx="780" dy="191" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="660" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ttl" value="CUDA — GPU Massively-Parallel Computing" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#7d2fa6;" parent="1" vertex="1">
+                <mxCell id="ttl" value="CUDA - GPU Massively-Parallel Computing" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#7d2fa6;" parent="1" vertex="1">
                     <mxGeometry x="150" y="14" width="600" height="26" as="geometry"/>
                 </mxCell>
-                <mxCell id="sub" value="Thousands of lightweight threads — one thread per (u,v) pair or per (user,item) cell" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+                <mxCell id="sub" value="Thousands of lightweight threads: one thread per (u,v) pair or per (user,item) cell" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
                     <mxGeometry x="150" y="38" width="600" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="host1" value="HOST (CPU) — Phase 1: generate data (same SEED as serial)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=11;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="host1" value="HOST (CPU) - Phase 1: generate data (same SEED as serial)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede0f4;strokeColor=#7d2fa6;fontSize=11;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="160" y="66" width="580" height="36" as="geometry"/>
                 </mxCell>
                 <mxCell id="gpu" value="GPU DEVICE" style="swimlane;startSize=24;whiteSpace=wrap;html=1;fillColor=#f7f0fb;strokeColor=#7d2fa6;fontSize=11;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;" parent="1" vertex="1">
                     <mxGeometry x="160" y="150" width="580" height="306" as="geometry"/>
                 </mxCell>
-                <mxCell id="g_grid" value="GRID — ⌈1000/16⌉² = 63×63 thread blocks, scheduled across the GPU&#39;s SMs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d3f0;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" parent="gpu" vertex="1">
+                <mxCell id="g_grid" value="GRID - ⌈1000/16⌉² = 63×63 thread blocks, scheduled across the GPU&#39;s SMs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d3f0;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" parent="gpu" vertex="1">
                     <mxGeometry x="16" y="34" width="548" height="34" as="geometry"/>
                 </mxCell>
                 <mxCell id="g_block" value="BLOCK = 16×16 = 256 threads   ·   thread (u,v) = blockIdx·blockDim + threadIdx" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4b8e6;strokeColor=#7d2fa6;fontSize=10;verticalAlign=middle;" parent="gpu" vertex="1">

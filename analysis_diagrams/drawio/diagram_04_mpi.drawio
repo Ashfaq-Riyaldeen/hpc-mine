@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram id="page4" name="4. MPI">
-        <mxGraphModel dx="258" dy="156" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="640" math="0" shadow="0">
+        <mxGraphModel dx="878" dy="215" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="640" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ttl" value="MPI — Distributed-Memory Message Passing" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#23527c;" parent="1" vertex="1">
+                <mxCell id="ttl" value="MPI - Distributed-Memory Message Passing" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#23527c;" parent="1" vertex="1">
                     <mxGeometry x="150" y="16" width="600" height="26" as="geometry"/>
                 </mxCell>
-                <mxCell id="sub" value="Each rank is a separate process with its OWN memory — data is shared only through explicit collectives" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+                <mxCell id="sub" value="Each rank is a separate process with its OWN memory, data is shared only through explicit collectives" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
                     <mxGeometry x="150" y="40" width="600" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="r0" value="Rank 0  (also prints results)" style="swimlane;startSize=24;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;" parent="1" vertex="1">
@@ -37,25 +37,25 @@
                 <mxCell id="r2b" value="Computes SIM rows 667–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6c8ebf;strokeColor=#23527c;fontColor=#ffffff;fontSize=10;verticalAlign=middle;" parent="r2" vertex="1">
                     <mxGeometry x="20" y="86" width="220" height="42" as="geometry"/>
                 </mxCell>
-                <mxCell id="agv" value="MPI_Allgatherv  —  every rank sends its row block, every rank receives the COMPLETE N×N similarity matrix" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="agv" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;MPI_Allgatherv - every rank sends its row block, every rank receives the COMPLETE N×N similarity matrix&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="40" y="266" width="820" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="ag1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" source="r1" target="agv" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="pred" value="Phase 4 Predictions — fully local on each rank (no communication: the full matrix is already present everywhere)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="pred" value="Phase 4 Predictions - fully local on each rank (no communication: the full matrix is already present everywhere)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="40" y="324" width="820" height="32" as="geometry"/>
                 </mxCell>
-                <mxCell id="red" value="MPI_Reduce(SUM) → Rank 0  —  partial test-set error from each rank summed to one global MAE / RMSE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="red" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;MPI_Reduce(SUM) → Rank 0 - partial test-set error from each rank summed to one global MAE / RMSE&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="40" y="372" width="820" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1">
+                <mxCell id="2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="169.78" y="222" as="sourcePoint"/>
                         <mxPoint x="169.78" y="266" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1">
+                <mxCell id="3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=block;startFill=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#82b366;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" parent="1" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="750" y="222" as="sourcePoint"/>
                         <mxPoint x="750" y="266" as="targetPoint"/>

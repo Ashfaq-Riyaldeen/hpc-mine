@@ -1,10 +1,10 @@
 <mxfile host="65bd71144e">
     <diagram id="page6" name="6. Hybrid MPI+OpenMP">
-        <mxGraphModel dx="702" dy="172" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="620" math="0" shadow="0">
+        <mxGraphModel dx="878" dy="215" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="620" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ttl" value="Hybrid MPI + OpenMP — Two-Level Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#1f6f54;" parent="1" vertex="1">
+                <mxCell id="ttl" value="Hybrid MPI + OpenMP - Two-Level Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#1f6f54;" parent="1" vertex="1">
                     <mxGeometry x="150" y="16" width="600" height="26" as="geometry"/>
                 </mxCell>
                 <mxCell id="sub" value="MPI distributes rows across nodes (coarse grain); OpenMP threads share memory inside each node (fine grain)" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">

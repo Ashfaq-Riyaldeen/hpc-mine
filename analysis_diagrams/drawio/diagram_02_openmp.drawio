@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram id="page2" name="2. OpenMP">
-        <mxGraphModel dx="624" dy="291" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="600" math="0" shadow="0">
+        <mxGraphModel dx="702" dy="172" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="600" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ttl" value="OpenMP — Shared-Memory Fork / Join Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#2d7a2d;" parent="1" vertex="1">
+                <mxCell id="ttl" value="OpenMP - Shared-Memory Fork / Join Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#2d7a2d;" parent="1" vertex="1">
                     <mxGeometry x="150" y="18" width="600" height="26" as="geometry"/>
                 </mxCell>
-                <mxCell id="sub" value="#pragma omp parallel for — one shared address space, work split across a team of threads" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+                <mxCell id="sub" value="#pragma omp parallel for: one shared address space, work split across a team of threads" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
                     <mxGeometry x="150" y="42" width="600" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="ml" value="Master&#xa;Thread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d7a2d;strokeColor=#1e5320;fontColor=#ffffff;fontSize=11;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
@@ -67,7 +67,7 @@
                 <mxCell id="bar" value="Implicit barrier:&#xa;all threads finish&#xa;before master resumes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="660" y="228" width="160" height="48" as="geometry"/>
                 </mxCell>
-                <mxCell id="sm" value="SHARED MEMORY (one address space)   —   ratings[ ]   ·   user_mean[ ]   ·   sim_matrix[ ]   ·   predictions[ ]   (no data copying)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=2;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="sm" value="SHARED MEMORY (one address space) - ratings[ ]   ·   user_mean[ ]   ·   sim_matrix[ ]   ·   predictions[ ]   (no data copying)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=2;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="30" y="300" width="840" height="34" as="geometry"/>
                 </mxCell>
             </root>

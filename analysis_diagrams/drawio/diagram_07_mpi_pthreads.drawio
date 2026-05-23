@@ -4,7 +4,7 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="ttl" value="Hybrid MPI + Pthreads — Two-Level Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#a05a00;" parent="1" vertex="1">
+                <mxCell id="ttl" value="Hybrid MPI + Pthreads - Two-Level Parallelism" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#a05a00;" parent="1" vertex="1">
                     <mxGeometry x="150" y="16" width="600" height="26" as="geometry"/>
                 </mxCell>
                 <mxCell id="sub" value="MPI distributes rows across nodes (coarse grain); POSIX threads share memory inside each node (fine grain)" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
@@ -13,7 +13,7 @@
                 <mxCell id="cl" value="CLUSTER" style="swimlane;startSize=26;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;align=left;spacingLeft=8;" parent="1" vertex="1">
                     <mxGeometry x="40" y="74" width="820" height="232" as="geometry"/>
                 </mxCell>
-                <mxCell id="n0" value="Node 0  —  MPI Rank 0  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" parent="cl" vertex="1">
+                <mxCell id="n0" value="Node 0 - MPI Rank 0  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" parent="cl" vertex="1">
                     <mxGeometry x="18" y="36" width="384" height="180" as="geometry"/>
                 </mxCell>
                 <mxCell id="n0m" value="Shared memory · MPI rows 0–499" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=9;verticalAlign=middle;" parent="n0" vertex="1">
@@ -37,7 +37,7 @@
                 <mxCell id="n0lbl" value="pthread_create per phase · work_range static partition · join = barrier" style="text;html=1;align=center;fontSize=9;fontColor=#a05a00;" parent="n0" vertex="1">
                     <mxGeometry x="12" y="148" width="360" height="24" as="geometry"/>
                 </mxCell>
-                <mxCell id="n1" value="Node 1  —  MPI Rank 1  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" parent="cl" vertex="1">
+                <mxCell id="n1" value="Node 1 - MPI Rank 1  (private address space)" style="swimlane;startSize=22;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;verticalAlign=top;align=center;" parent="cl" vertex="1">
                     <mxGeometry x="418" y="36" width="384" height="180" as="geometry"/>
                 </mxCell>
                 <mxCell id="n1m" value="Shared memory · MPI rows 500–999" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=9;verticalAlign=middle;" parent="n1" vertex="1">
