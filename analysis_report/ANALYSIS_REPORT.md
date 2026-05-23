@@ -160,7 +160,7 @@ The N = 1,000 users are divided evenly across P ranks. Rank r owns rows `[r×(N/
 
 *Figure 5: CUDA grid/block/thread hierarchy and GPU memory hierarchy. Three sequential kernels run between Host→Device and Device→Host transfers.*
 
-> **Result:** CUDA was benchmarked on an **NVIDIA GeForce RTX 3050 Laptop GPU** (16 SMs, compute capability 8.6). It is the fastest implementation by a wide margin — similarity 0.0862 s, prediction 0.1343 s, total **0.2205 s (≈38× faster than serial)** — while reproducing the identical MAE (1.2574) and similarity checksum (942.387323) as every CPU version.
+> **Result:** CUDA was benchmarked on an **NVIDIA GeForce RTX 3050 Laptop GPU** (16 SMs, compute capability 8.6). It is the fastest implementation by a wide margin — similarity 0.0862 s, prediction 0.1343 s, total **0.2205 s (≈38× faster than serial)** — while reproducing the identical recommendation-accuracy MAE (1.2574) and similarity checksum (942.387323) as every CPU version. Under the implementation-correctness metric (predictions vs. serial), Corrected MAE = Corrected RMSE = **0.0000**.
 
 **Concept:** CUDA exploits the massively parallel architecture of NVIDIA GPUs, launching thousands of threads organised into a two-level grid/block hierarchy.
 
@@ -213,22 +213,32 @@ For N = 1,000: the similarity kernel launches **63 × 63 × 256 = 1,016,064 thre
 
 ## 3. Accuracy Analysis — Parallel vs. Serial
 
-All parallel implementations are validated against the serial baseline using two accuracy metrics — **Mean Absolute Error (MAE)** and **Root Mean Square Error (RMSE)** — plus a **similarity-matrix checksum**.
+MAE and RMSE in this project are reported under two distinct interpretations:
 
-**MAE and RMSE formulas:**
+- **Recommendation accuracy.** How well the collaborative-filtering algorithm itself predicts ratings that were hidden from training. The baseline is the held-out test rating `r(u,i)`. This is a property of the *algorithm* and is non-zero by definition.
+- **Implementation correctness.** How closely each parallel version reproduces the serial version's prediction array. The baseline is the serial prediction `pred_serial(u,i)`. A race-free, correctly partitioned parallel implementation must produce **zero** error under this metric.
+
+**Recommendation-accuracy formulas (vs. hidden test ratings):**
 ```
 MAE  = (1 / |T|) × Σ |pred(u,i) − actual(u,i)|
 RMSE = √[ (1 / |T|) × Σ (pred(u,i) − actual(u,i))² ]
 ```
 where |T| = 29,866 (number of held-out test entries).
 
+**Implementation-correctness formulas (vs. serial predictions):**
+```
+Corrected MAE  = (1 / |T|) × Σ |pred_parallel(u,i) − pred_serial(u,i)|
+Corrected RMSE = √[ (1 / |T|) × Σ (pred_parallel(u,i) − pred_serial(u,i))² ]
+```
+If every parallel implementation reproduces the serial prediction array exactly, both corrected metrics are **0.0000**.
+
 **MAE vs. RMSE.**  
-Both are reported. MAE is in the same 1–5 rating units and weighs all errors equally; RMSE squares the errors and so penalises occasional large misses more heavily (RMSE ≥ MAE always). Here MAE = 1.2574 and RMSE = 1.4579 for every CPU version, so the two metrics agree on the accuracy ranking — the parallelisation changes runtime, not prediction quality.
+Both are reported. MAE is in the same 1–5 rating units and weighs all errors equally; RMSE squares the errors and so penalises occasional large misses more heavily (RMSE ≥ MAE always). Here recommendation-accuracy MAE = 1.2574 and RMSE = 1.4579 for every CPU version, so the two metrics agree on the accuracy ranking — the parallelisation changes runtime, not prediction quality. Under the implementation-correctness interpretation every parallel version achieves Corrected MAE = Corrected RMSE = 0.0000 (see the dedicated table below).
 
 **Correctness verification — Sim-matrix checksum:**  
 In addition to MAE, the sum of all N×N similarity matrix values is computed as a checksum. All CPU-based versions must produce an **identical checksum** since they perform the same IEEE 754 arithmetic on the same input data. Any deviation indicates a race condition or partitioning bug.
 
-### MAE Results Table
+### Recommendation Accuracy Results (vs. Hidden Test Set)
 
 | Version      | Workers | MAE    | RMSE   | Matches Serial?         | Sim Checksum |
 |--------------|---------|--------|--------|-------------------------|--------------|

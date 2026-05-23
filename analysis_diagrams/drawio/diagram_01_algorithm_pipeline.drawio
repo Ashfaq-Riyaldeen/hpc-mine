@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="page1" name="1. Algorithm Pipeline">
-        <mxGraphModel dx="1276" dy="313" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="600" math="0" shadow="0">
+        <mxGraphModel dx="702" dy="172" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="600" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,7 +10,7 @@
                 <mxCell id="sub" value="Identical algorithm and data (SEED=42) in every version : only the runtime changes" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
                     <mxGeometry x="125" y="44" width="600" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="p1" value="Phase 1&amp;nbsp; Data Generation&lt;br&gt;O(N·M)  ·  70% sparse  ·  ratings ∈ {1..5}  ·  10% held out as test set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
+                <mxCell id="p1" value="Phase 1&amp;nbsp; Data Generation&lt;br&gt;O(N·M)  ·  70% sparse  ·  ratings ∈ {1..5}&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="250" y="78" width="320" height="56" as="geometry"/>
                 </mxCell>
                 <mxCell id="p2" value="Phase 2&amp;nbsp; User Means&lt;br&gt;O(N·M)  ·  μ_u = average of each user&#39;s known ratings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
@@ -49,9 +49,6 @@
                 <mxCell id="b4" value="Parallel: OpenMP · Pthreads · MPI · CUDA · Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
                     <mxGeometry x="610" y="364" width="210" height="32" as="geometry"/>
                 </mxCell>
-                <mxCell id="b5" value="Reduction: OpenMP/Hybrid · MPI_Reduce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
-                    <mxGeometry x="610" y="448" width="210" height="32" as="geometry"/>
-                </mxCell>
                 <mxCell id="e1" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#999999;strokeWidth=1.5;" parent="1" source="p1" target="b1" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
@@ -62,9 +59,6 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="e4" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#d6b656;strokeWidth=1.5;" parent="1" source="p4" target="b4" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="e5" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#6c8ebf;strokeWidth=1.5;" parent="1" source="p5" target="b5" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="lt" value="N = users, M = items&#xa;Default: N = M = 1000" style="text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#444444;" parent="1" vertex="1">

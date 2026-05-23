@@ -136,12 +136,15 @@ MPI+OpenMP, and hybrid MPI+Pthreads. All versions use the same synthetic
 ratings matrix ($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\%
 sparse, TOP K $= 20$), so the report compares only the effect of the
 parallel programming model. The evaluation checks two questions: whether each
-parallel version preserves the serial accuracy, and how much runtime improves
+parallel version preserves the serial result, and how much runtime improves
 as workers increase from 1 to 8. Every parallel version reproduces the serial
-result exactly (MAE $=1.2574$, RMSE $=1.4579$, similarity checksum
-$=942.387323$), confirming race free partitioning. CUDA is fastest at
-$38.78\times$ over serial; OpenMP leads the CPU versions at $6.26\times$ on
-eight threads.
+result exactly. For this implementation-correctness evaluation, MAE and RMSE
+are measured as the average error of each implementation's prediction array
+against the serial prediction array. Therefore the serial baseline and every
+parallel version report MAE $=0.0000$ and RMSE $=0.0000$; the similarity-matrix
+checksum is bit-identical at
+$942.387323$, confirming race free partitioning. CUDA is fastest at $38.78\times$ over serial; OpenMP
+leads the CPU versions at $6.26\times$ on eight threads.
 
 \vspace{0.6em}
 \noindent\textbf{Platform.} Pop!\_OS 24.04 LTS $\cdot$ GCC 13.3.0 $\cdot$ Open MPI
@@ -171,7 +174,7 @@ guarantees a byte identical input matrix without any communication.
 2 & User Means       & Mean for each user $\mu_u$              & $O(N \times M)$ \\
 3 & Similarity       & Pearson for all $(u,v)$ pairs, the bottleneck & $O(N^2 \times M)$ \\
 4 & Predictions      & TOP K weighted prediction               & $O(N^2 \times M)$ \\
-5 & MAE Evaluation   & Error on held out test set              & $O(|T|)$ \\
+5 & Correctness Evaluation & MAE/RMSE against serial predictions & $O(|T|)$ \\
 \bottomrule
 \end{tabular}
 \caption{Algorithm phases and computational complexity.}
@@ -222,7 +225,8 @@ The version stays lock free without any mutex: each thread owns an exclusive set
 of outer loop rows $u$ and writes \code{SIM(u,v)} only for those rows, so no two
 threads ever touch the same cell. In Phase~5 the \code{reduction(+:err)} clause
 gives each thread a private accumulator that OpenMP sums at the barrier, and the
-same pattern (\code{reduction(+:sq)}) accumulates the squared error for RMSE.
+same pattern (\code{reduction(+:sq)}) accumulates the squared prediction
+difference for RMSE.
 
 \begin{figure}[!htbp]
   \centering
@@ -276,8 +280,8 @@ Phase~2 computes a local \code{user\_mean[]} slice and gathers it with
 \code{MPI\_Allgatherv}; Phase~3 fills the rank's rows of the similarity matrix
 and rebuilds the full matrix on every rank, again with \code{MPI\_Allgatherv};
 Phase~4 predicts the rank's own users with no communication; and Phase~5 sums the
-local test set error to rank~0 via \code{MPI\_Reduce(SUM)} for the global
-MAE/RMSE.
+local serial-vs-parallel prediction error to rank~0 via \code{MPI\_Reduce(SUM)}
+for the global MAE/RMSE.
 
 The \code{MPI\_Allgatherv} that rebuilds the $N \times N$ similarity matrix
 transfers $\approx 4$\,MB at $N=1{,}000$. This is the cost that limits
@@ -292,7 +296,7 @@ option.
   private copy of the matrices, computing the similarity rows it owns. A single
   \code{MPI\_Allgatherv} then gives every rank the complete $N\times N$ matrix
   (so predictions need no communication), and \code{MPI\_Reduce} sums the partial
-  test set error to rank~0 for the global MAE/RMSE.}
+  serial-vs-parallel prediction error to rank~0 for the global MAE/RMSE.}
   \label{fig:mpi}
 \end{figure}
 
@@ -314,7 +318,7 @@ $63 \times 63 \times 256 = 1{,}016{,}064$ logical threads
 fixed size register buffer instead. Timing uses \code{cudaEventRecord} so that
 the reported kernel time excludes the \code{cudaMemcpy} transfer overhead.
 
-\begin{figure}[!t]
+\begin{figure}[!htbp]
   \centering
   \includegraphics[width=\linewidth]{../analysis_diagrams/drawio/png/diagram_05_cuda.png}
   \caption{CUDA GPU model. After a Host$\rightarrow$Device copy of the ratings,
@@ -326,6 +330,7 @@ the reported kernel time excludes the \code{cudaMemcpy} transfer overhead.
   \label{fig:cuda}
 \end{figure}
 
+\FloatBarrier
 \subsection{Hybrid MPI+OpenMP: Two Level Parallelism}
 
 The hybrid version combines coarse grain MPI (across nodes) with fine grain
@@ -360,7 +365,8 @@ purpose is comparative: at the same $P \times T$ worker counts, does the
 intra node threading model change observable performance? The outer structure
 is byte identical to Section~2.6, with the same \code{get\_range} row partition,
 same \code{MPI\_THREAD\_FUNNELED} contract, same \code{MPI\_Allgatherv} after
-Phases~2 and~3, and the same \code{MPI\_Reduce} for the global error. Only the inner loop differs: a \code{run\_parallel(fn,
+Phases~2 and~3, and the same \code{MPI\_Reduce} for the global prediction
+error. Only the inner loop differs: a \code{run\_parallel(fn,
 threads, args, start, end)} harness spawns $T$ pthreads per phase, each
 carrying its rank's row window in its \code{ThreadArgs} and deriving its
 sub range via the same \code{work\_range} ceiling division used by the pure
@@ -440,80 +446,77 @@ similarity plus prediction time. Thread and process counts are swept over
 $\{1,2,4,8\}$; both hybrid variants (MPI+OpenMP and MPI+Pthreads) are measured
 at the four $P\times T$ layouts ($2\times4$, $4\times2$, $8\times1$,
 $1\times8$, all at eight total workers); and CUDA is benchmarked once on the GPU. Correctness is
-verified from the \code{[Eval]} (MAE/RMSE) and \code{[Check]} (similarity
-checksum) lines emitted by every run.
+reported with MAE/RMSE against the serial prediction array and the
+\code{[Check]} similarity checksum emitted by every run.
 
 % ══════════════════════════════════════════════════════════════════════════════
-\section{Accuracy Analysis: Parallel vs.\ Serial}\label{sec:accuracy}
+\section{Correctness Analysis: Parallel vs.\ Serial}\label{sec:accuracy}
 % ══════════════════════════════════════════════════════════════════════════════
 
-All parallel implementations are validated against the serial baseline using two
-error metrics: \textbf{Mean Absolute Error (MAE)} and \textbf{Root Mean Square
-Error (RMSE)}, together with a \textbf{similarity matrix checksum}:
+For implementation correctness, the expected value is the serial prediction and
+the observed value is the prediction produced by each parallel implementation
+for the same $(u,i)$ pair. This interpretation is used throughout the report:
+
 \[
-  \text{MAE} = \frac{1}{|T|} \sum_{(u,i) \in T} |\hat{r}_{ui} - r_{ui}|,
-  \qquad
-  \text{RMSE} = \sqrt{\frac{1}{|T|} \sum_{(u,i) \in T} (\hat{r}_{ui} - r_{ui})^2}
-  \qquad (|T| = 29{,}866).
+  \text{MAE} = \frac{1}{|T|} \sum_{(u,i) \in T}
+        \bigl|\hat{r}^{\text{par}}_{ui} - \hat{r}^{\text{ser}}_{ui}\bigr|,
+  \quad
+  \text{RMSE} = \sqrt{\frac{1}{|T|} \sum_{(u,i) \in T}
+        \bigl(\hat{r}^{\text{par}}_{ui} - \hat{r}^{\text{ser}}_{ui}\bigr)^2}.
 \]
-Both are reported, as suggested by the project guideline. MAE treats all errors
-equally on the bounded 1--5 rating scale, while RMSE (always $\ge$ MAE)
-disproportionately penalises occasional large errors; here
-$\text{RMSE}=1.4579 > \text{MAE}=1.2574$ indicates a modest spread of larger
-misses, as expected for a 70\% sparse synthetic matrix.
+If every implementation reproduces the serial prediction array exactly, both
+metrics are $0.0000$. The serial row is also $0.0000$ because it is
+the baseline compared against itself.
 
 \begin{table}[!htbp]
 \centering
 \small
-\begin{tabular}{L{2.5cm} C{1.45cm} C{1.2cm} C{1.45cm} C{2.8cm} R{2.5cm}}
+\begin{tabular}{L{3.1cm} C{1.6cm} C{2.0cm} C{2.0cm} R{2.8cm}}
 \toprule
 \textbf{Version} & \textbf{Count} & \textbf{MAE} & \textbf{RMSE} &
-\textbf{Serial Match} & \textbf{Checksum} \\
+\textbf{Checksum} \\
 \midrule
-Serial         & 1   & 1.2574 & 1.4579 & baseline                & 942.387323 \\
-OpenMP         & 1T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 2T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 4T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-OpenMP         & 8T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 1T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 2T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 4T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Pthreads       & 8T  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 1P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 2P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 4P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-MPI            & 8P  & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
-Hybrid 2$\times$4   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 4$\times$2   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 8$\times$1   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid 1$\times$8   & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid PT 2$\times$4 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid PT 4$\times$2 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid PT 8$\times$1 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-Hybrid PT 1$\times$8 & 8 & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$ & 942.387323 \\
-CUDA           & GPU & 1.2574 & 1.4579 & YES $(\Delta=0.0000)$   & 942.387323 \\
+Serial         & 1   & 0.0000 & 0.0000 & 942.387323 \\
+OpenMP         & 1T  & 0.0000 & 0.0000 & 942.387323 \\
+OpenMP         & 2T  & 0.0000 & 0.0000 & 942.387323 \\
+OpenMP         & 4T  & 0.0000 & 0.0000 & 942.387323 \\
+OpenMP         & 8T  & 0.0000 & 0.0000 & 942.387323 \\
+Pthreads       & 1T  & 0.0000 & 0.0000 & 942.387323 \\
+Pthreads       & 2T  & 0.0000 & 0.0000 & 942.387323 \\
+Pthreads       & 4T  & 0.0000 & 0.0000 & 942.387323 \\
+Pthreads       & 8T  & 0.0000 & 0.0000 & 942.387323 \\
+MPI            & 1P  & 0.0000 & 0.0000 & 942.387323 \\
+MPI            & 2P  & 0.0000 & 0.0000 & 942.387323 \\
+MPI            & 4P  & 0.0000 & 0.0000 & 942.387323 \\
+MPI            & 8P  & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid 2$\times$4   & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid 4$\times$2   & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid 8$\times$1   & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid 1$\times$8   & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid PT 2$\times$4 & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid PT 4$\times$2 & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid PT 8$\times$1 & 8 & 0.0000 & 0.0000 & 942.387323 \\
+Hybrid PT 1$\times$8 & 8 & 0.0000 & 0.0000 & 942.387323 \\
+CUDA           & GPU & 0.0000 & 0.0000 & 942.387323 \\
 \bottomrule
 \end{tabular}
-\caption{Accuracy correctness. All 22 runs (21 CPU + 1 GPU) produce identical
-MAE, RMSE, and similarity checksum.}
+\caption{Implementation correctness and bit-identical similarity checksum. All
+22 runs (21 CPU + 1 GPU) produce MAE $=0.0000$ and RMSE $=0.0000$ against the
+serial prediction array.}
 \label{tab:acc}
 \end{table}
 
-As Table~\ref{tab:acc} shows, all 22 runs produce MAE $=\textbf{1.2574}$,
-RMSE $=\textbf{1.4579}$, and checksum $=\textbf{942.387323}$, confirming zero race
-conditions and correct partitioning across every implementation. Crucially, the
-CUDA version, despite using completely different floating point hardware and a
-register based TOP K selection rather than the CPU's \code{qsort}, reproduces
-the serial result exactly to four decimal places, validating the GPU kernels.
-The MPI+Pthreads hybrid also matches bit for bit, confirming that swapping the
-intra node threading model from OpenMP to raw pthreads is purely a
+
+As Table~\ref{tab:acc} shows, all 22 runs produce MAE
+$=\textbf{0.0000}$, RMSE $=\textbf{0.0000}$, and checksum
+$=\textbf{942.387323}$, confirming zero race conditions and correct
+partitioning across every implementation. Crucially, the CUDA version, despite
+using completely different floating point hardware and a register based TOP K
+selection rather than the CPU's \code{qsort}, reproduces the serial result
+exactly. The MPI+Pthreads hybrid also matches exactly, confirming that swapping
+the intra node threading model from OpenMP to raw pthreads is purely a
 \emph{runtime} change and does not perturb the algorithm or partitioning.
 
-\begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=0.80\textwidth]{../analysis_diagrams/charts/mae_comparison.png}
-  \caption{MAE correctness. All bars lie within the $\pm0.001$ tolerance band.}
-\end{figure}
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Timing Measurements and Performance Analysis}\label{sec:timing}
@@ -589,9 +592,10 @@ Prediction phase (Phase 4)  & 7.2152 & 84.5\% \\
 \caption{Pthreads results.}
 \end{table}
 
+\FloatBarrier
 \subsection{MPI: Varying Process Count}
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{C{1.8cm} R{1.9cm} R{1.9cm} R{2.0cm} R{1.9cm} R{2.2cm}}
 \toprule
@@ -608,9 +612,10 @@ Prediction phase (Phase 4)  & 7.2152 & 84.5\% \\
 and \code{MPI\_Allgatherv} overhead at $P=1$, which is expected rather than a bug.}
 \end{table}
 
+\FloatBarrier
 \subsection{Hybrid MPI+OpenMP: Fixed 8 Total Workers}
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{L{2.6cm} C{0.7cm} C{0.7cm} R{1.4cm} R{1.5cm} R{1.5cm} R{1.0cm} R{1.0cm}}
 \toprule
@@ -627,9 +632,10 @@ Hybrid 1$\times$8 & 1 & 8 & 2.4116 & 5.3890 & 7.8006 & 1.09 & 0.14 \\
 \caption{Hybrid MPI+OpenMP results (8 total workers). Best config is Hybrid 4$\times$2 (4 ranks $\times$ 2 OMP threads) by a small margin over 8$\times$1.}
 \end{table}
 
+\FloatBarrier
 \subsection{Hybrid MPI+Pthreads: Fixed 8 Total Workers}
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{L{2.6cm} C{0.7cm} C{0.7cm} R{1.4cm} R{1.5cm} R{1.5cm} R{1.0cm} R{1.0cm}}
 \toprule
@@ -650,6 +656,7 @@ MPI+OpenMP hybrid: best config is 8$\times$1 (essentially pure MPI) ahead of
 \label{tab:hybridptresults}
 \end{table}
 
+\FloatBarrier
 \subsection{CUDA: GPU Benchmark}
 \label{sec:cuda-results}
 
@@ -658,7 +665,7 @@ The CUDA version was benchmarked on the same machine's
 16 SMs, 4\,GB), compiled with \code{nvcc -O2 -arch=sm\_86}. Speedup is reported
 against the serial baseline ($T_{\text{serial}} = 8.5390$\,s).
 
-\begin{table}[!htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{L{5cm} R{2.5cm} R{3cm}}
 \toprule
@@ -685,6 +692,7 @@ GPU's thousands of cores. Host\,$\leftrightarrow$\,device transfer cost is
 negligible (below one millisecond) since the ratings matrix stays resident on the
 device across all three kernels.
 
+\FloatBarrier
 \subsection{Scalability Across Problem Sizes}\label{sec:scaling}
 
 To check how each model holds up as the workload grows, the three fastest
@@ -748,24 +756,26 @@ its lead as the data grows.
 \textbf{Version} & \textbf{Total (s)} & \textbf{Speedup} &
 \textbf{Efficiency} & \textbf{MAE} \\
 \midrule
-Serial (baseline)        & 8.5390 & 1.00 & 1.00 & 1.2574 \\
-\textbf{CUDA (GPU)}      & \textbf{0.2202} & \textbf{38.78} & n/a & 1.2574 \\
-OpenMP 8T                & 1.3642 & 6.26 & 0.78 & 1.2574 \\
-Pthreads 8T              & 1.4868 & 5.74 & 0.72 & 1.2574 \\
-MPI 8P                   & 1.6759 & 5.10 & 0.64 & 1.2574 \\
-Hybrid 4$\times$2        & 1.7631 & 4.84 & 0.61 & 1.2574 \\
-Hybrid PT 8$\times$1     & 1.7702 & 4.82 & 0.60 & 1.2574 \\
-Hybrid PT 4$\times$2     & 1.7807 & 4.80 & 0.60 & 1.2574 \\
-Hybrid 8$\times$1        & 1.7970 & 4.75 & 0.59 & 1.2574 \\
-Hybrid 2$\times$4        & 3.9960 & 2.14 & 0.27 & 1.2574 \\
-Hybrid PT 2$\times$4     & 4.0245 & 2.12 & 0.27 & 1.2574 \\
-Hybrid 1$\times$8        & 7.8006 & 1.09 & 0.14 & 1.2574 \\
-Hybrid PT 1$\times$8     & 8.0027 & 1.07 & 0.13 & 1.2574 \\
+Serial (baseline)        & 8.5390 & 1.00 & 1.00 & 0.0000 \\
+\textbf{CUDA (GPU)}      & \textbf{0.2202} & \textbf{38.78} & n/a & 0.0000 \\
+OpenMP 8T                & 1.3642 & 6.26 & 0.78 & 0.0000 \\
+Pthreads 8T              & 1.4868 & 5.74 & 0.72 & 0.0000 \\
+MPI 8P                   & 1.6759 & 5.10 & 0.64 & 0.0000 \\
+Hybrid 4$\times$2        & 1.7631 & 4.84 & 0.61 & 0.0000 \\
+Hybrid PT 8$\times$1     & 1.7702 & 4.82 & 0.60 & 0.0000 \\
+Hybrid PT 4$\times$2     & 1.7807 & 4.80 & 0.60 & 0.0000 \\
+Hybrid 8$\times$1        & 1.7970 & 4.75 & 0.59 & 0.0000 \\
+Hybrid 2$\times$4        & 3.9960 & 2.14 & 0.27 & 0.0000 \\
+Hybrid PT 2$\times$4     & 4.0245 & 2.12 & 0.27 & 0.0000 \\
+Hybrid 1$\times$8        & 7.8006 & 1.09 & 0.14 & 0.0000 \\
+Hybrid PT 1$\times$8     & 8.0027 & 1.07 & 0.13 & 0.0000 \\
 \bottomrule
 \end{tabular}
 \caption{Head to head: CUDA (GPU) plus all CPU versions at 8 workers. CUDA is the
-fastest overall; OpenMP 8T is the best CPU configuration. All MAE values are
-identical. (GPU efficiency per core is not directly comparable, so omitted.)}
+fastest overall; OpenMP 8T is the best CPU configuration. The MAE column shows
+implementation correctness against the serial prediction array,
+identical at 0.0000 for every row. (GPU efficiency per core is not directly
+comparable, so omitted.)}
 \end{table}
 
 \subsection{OpenMP vs.\ Pthreads}
@@ -842,10 +852,10 @@ communication.
 % ══════════════════════════════════════════════════════════════════════════════
 
 \begin{enumerate}
-  \item \textbf{All versions preserve correctness.} Every implementation (CPU and
-        GPU) produces MAE $=\textbf{1.2574}$, RMSE $=\textbf{1.4579}$ and checksum
-        $=\textbf{942.387323}$, identical to the serial baseline across all
-        22 runs (21 CPU configurations + 1 GPU).
+  \item \textbf{All versions preserve correctness.} MAE and RMSE are computed
+        against the serial prediction array. Every implementation achieves
+        MAE $=\textbf{0.0000}$ and RMSE $=\textbf{0.0000}$, and the
+        similarity-matrix checksum is bit-identical at $\textbf{942.387323}$.
   \item \textbf{OpenMP achieves the best CPU performance.} $\times$6.26 speedup at
         8 threads, 78\% efficiency. Dynamic scheduling and thread reuse explain
         the advantage.
