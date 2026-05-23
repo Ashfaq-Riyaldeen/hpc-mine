@@ -104,27 +104,36 @@
 \section{Introduction and Motivation}\label{sec:intro}
 % ══════════════════════════════════════════════════════════════════════════════
 
-Pearson correlation measures how linearly related two users' rating patterns are,
-making it the natural similarity metric for user based collaborative filtering.
-To predict how a target user would rate an unseen item, the system finds the
-most similar neighbours, weights their ratings by similarity, and blends them
-into a prediction. The computational cost is dominated by computing all
-pairwise Pearson similarities: for $N = M = 1{,}000$ users and items the upper
-triangle alone requires $499{,}500$ coefficient evaluations, roughly
-$500$ million floating point operations, making the similarity phase the
-single bottleneck of the whole pipeline and the primary target for parallelisation.
+Modern recommendation systems generate personalised suggestions by comparing a
+target user's preferences with the preferences of many other users. This project
+focuses on that problem: as the number of users and items grows, the similarity
+calculation becomes too slow for a simple serial program. Pearson correlation is
+used because it measures how closely two users' rating patterns move together.
+After the system finds similar users, it predicts an unseen rating by combining
+the neighbours' ratings with weights based on their similarity.
+
+The main cost appears during user similarity computation. For the benchmark data
+used in this report, there are $1{,}000$ users and $1{,}000$ items. Each user
+must be compared with all other users, and each comparison may scan many item
+ratings to compute one Pearson similarity value. That creates hundreds of
+thousands of user pair comparisons and roughly hundreds of millions of rating
+checks before prediction begins. This is the exact situation described in the
+proposal: large similarity computations are useful for recommendation systems,
+but they become slow as the data size increases. Therefore the Pearson
+similarity phase is the main bottleneck and the main target for parallelisation.
 
 This report documents a \textbf{Pearson correlation based recommender}
-implemented seven times: serial, OpenMP, POSIX threads, MPI, CUDA, hybrid
-MPI+OpenMP, and hybrid MPI+Pthreads, all running the same algorithm on the
-same synthetic data
-($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\% sparse,
-TOP K $= 20$). The deliverable is the \emph{comparison} itself: how each
-parallel model is applied, whether accuracy is preserved, and how runtime
-scales from 1 to 8 workers. Every parallel version reproduces the serial result
-exactly (MAE $=1.2574$, RMSE $=1.4579$, similarity checksum $=942.387323$),
-confirming race free partitioning. CUDA is fastest at $38.78\times$ over serial;
-OpenMP leads the CPU versions at $6.26\times$ on eight threads.
+implemented in seven versions: serial, OpenMP, POSIX threads, MPI, CUDA, hybrid
+MPI+OpenMP, and hybrid MPI+Pthreads. All versions use the same synthetic
+ratings matrix ($1{,}000$ users $\times\ 1{,}000$ items, \code{SEED=42}, 70\%
+sparse, TOP K $= 20$), so the report compares only the effect of the
+parallel programming model. The evaluation checks two questions: whether each
+parallel version preserves the serial accuracy, and how much runtime improves
+as workers increase from 1 to 8. Every parallel version reproduces the serial
+result exactly (MAE $=1.2574$, RMSE $=1.4579$, similarity checksum
+$=942.387323$), confirming race free partitioning. CUDA is fastest at
+$38.78\times$ over serial; OpenMP leads the CPU versions at $6.26\times$ on
+eight threads.
 
 \vspace{0.6em}
 \noindent\textbf{Platform.} Pop!\_OS 24.04 LTS $\cdot$ GCC 13.3.0 $\cdot$ Open MPI
