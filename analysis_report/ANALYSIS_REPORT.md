@@ -16,7 +16,7 @@
 ## Table of Contents
 1. [Introduction](#1-introduction)
 2. [Algorithm Design and Parallel Programming Concepts](#2-algorithm-design-and-parallel-programming-concepts)
-3. [Accuracy Analysis — Parallel vs. Serial](#3-accuracy-analysis--parallel-vs-serial)
+3. [Correctness Analysis — Parallel vs. Serial](#3-correctness-analysis--parallel-vs-serial)
 4. [Timing Measurements and Performance Analysis](#4-timing-measurements-and-performance-analysis)
 5. [Performance Discussion](#5-performance-discussion)
 6. [Conclusions](#6-conclusions)
@@ -160,7 +160,7 @@ The N = 1,000 users are divided evenly across P ranks. Rank r owns rows `[r×(N/
 
 *Figure 5: CUDA grid/block/thread hierarchy and GPU memory hierarchy. Three sequential kernels run between Host→Device and Device→Host transfers.*
 
-> **Result:** CUDA was benchmarked on an **NVIDIA GeForce RTX 3050 Laptop GPU** (16 SMs, compute capability 8.6). It is the fastest implementation by a wide margin — similarity 0.0862 s, prediction 0.1343 s, total **0.2205 s (≈38× faster than serial)** — while reproducing the identical recommendation-accuracy MAE (1.2574) and similarity checksum (942.387323) as every CPU version. Under the implementation-correctness metric (predictions vs. serial), Corrected MAE = Corrected RMSE = **0.0000**.
+> **Result:** CUDA was benchmarked on an **NVIDIA GeForce RTX 3050 Laptop GPU** (16 SMs, compute capability 8.6). It is the fastest implementation by a wide margin — similarity 0.0862 s, prediction 0.1343 s, total **0.2205 s (≈38× faster than serial)** — and reproduces the serial prediction array exactly, giving MAE = RMSE = **0.0000** against the serial baseline and a bit-identical similarity checksum of 942.387323.
 
 **Concept:** CUDA exploits the massively parallel architecture of NVIDIA GPUs, launching thousands of threads organised into a two-level grid/block hierarchy.
 
@@ -211,65 +211,53 @@ For N = 1,000: the similarity kernel launches **63 × 63 × 256 = 1,016,064 thre
 
 ---
 
-## 3. Accuracy Analysis — Parallel vs. Serial
+## 3. Correctness Analysis — Parallel vs. Serial
 
-MAE and RMSE in this project are reported under two distinct interpretations:
+For implementation correctness, the expected value is the serial prediction and the observed value is the prediction produced by each parallel implementation for the same `(u, i)` pair. This interpretation is used throughout the report:
 
-- **Recommendation accuracy.** How well the collaborative-filtering algorithm itself predicts ratings that were hidden from training. The baseline is the held-out test rating `r(u,i)`. This is a property of the *algorithm* and is non-zero by definition.
-- **Implementation correctness.** How closely each parallel version reproduces the serial version's prediction array. The baseline is the serial prediction `pred_serial(u,i)`. A race-free, correctly partitioned parallel implementation must produce **zero** error under this metric.
-
-**Recommendation-accuracy formulas (vs. hidden test ratings):**
 ```
-MAE  = (1 / |T|) × Σ |pred(u,i) − actual(u,i)|
-RMSE = √[ (1 / |T|) × Σ (pred(u,i) − actual(u,i))² ]
+MAE  = (1 / |T|) × Σ |pred_parallel(u,i) − pred_serial(u,i)|
+RMSE = √[ (1 / |T|) × Σ (pred_parallel(u,i) − pred_serial(u,i))² ]
 ```
-where |T| = 29,866 (number of held-out test entries).
 
-**Implementation-correctness formulas (vs. serial predictions):**
-```
-Corrected MAE  = (1 / |T|) × Σ |pred_parallel(u,i) − pred_serial(u,i)|
-Corrected RMSE = √[ (1 / |T|) × Σ (pred_parallel(u,i) − pred_serial(u,i))² ]
-```
-If every parallel implementation reproduces the serial prediction array exactly, both corrected metrics are **0.0000**.
+where `|T| = 29,866` is the canonical test set. If every implementation reproduces the serial prediction array exactly, both metrics are `0.0000`. The serial row is also `0.0000` because it is the baseline compared against itself.
 
-**MAE vs. RMSE.**  
-Both are reported. MAE is in the same 1–5 rating units and weighs all errors equally; RMSE squares the errors and so penalises occasional large misses more heavily (RMSE ≥ MAE always). Here recommendation-accuracy MAE = 1.2574 and RMSE = 1.4579 for every CPU version, so the two metrics agree on the accuracy ranking — the parallelisation changes runtime, not prediction quality. Under the implementation-correctness interpretation every parallel version achieves Corrected MAE = Corrected RMSE = 0.0000 (see the dedicated table below).
+**Measurement pipeline.** Each binary writes its test-set prediction array to a JSON file when the environment variable `PRED_DUMP_PATH` is set; `results/run_benchmarks.sh` sets a per-configuration path (e.g. `results/predictions/openmp_8T.json`) before every invocation and propagates the variable to MPI ranks via `mpirun -x PRED_DUMP_PATH`. After the sweeps, `results/compute_corrected_mae.py` loads `results/predictions/serial.json` as the baseline, computes MAE and RMSE of each parallel JSON against it, and writes `results/corrected_mae.csv`. The values in the table below are read directly from that CSV.
 
-**Correctness verification — Sim-matrix checksum:**  
-In addition to MAE, the sum of all N×N similarity matrix values is computed as a checksum. All CPU-based versions must produce an **identical checksum** since they perform the same IEEE 754 arithmetic on the same input data. Any deviation indicates a race condition or partitioning bug.
+**Sim-matrix checksum.** In addition to the corrected MAE/RMSE, the sum of all `N × N` similarity matrix values is computed as a checksum. All CPU-based versions must produce an **identical checksum** since they perform the same IEEE 754 arithmetic on the same input data. Any deviation indicates a race condition or partitioning bug.
 
-### Recommendation Accuracy Results (vs. Hidden Test Set)
+### Correctness Results
 
-| Version      | Workers | MAE    | RMSE   | Matches Serial?         | Sim Checksum |
-|--------------|---------|--------|--------|-------------------------|--------------|
-| Serial       | 1       | 1.2574 | 1.4579 | baseline                | 942.387323   |
-| OpenMP       | 1T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| OpenMP       | 2T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| OpenMP       | 4T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| OpenMP       | 8T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Pthreads     | 1T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Pthreads     | 2T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Pthreads     | 4T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Pthreads     | 8T      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| MPI          | 1P      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| MPI          | 2P      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| MPI          | 4P      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| MPI          | 8P      | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Hybrid 2×4   | 8       | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Hybrid 4×2   | 8       | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Hybrid 8×1   | 8       | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| Hybrid 1×8   | 8       | 1.2574 | 1.4579 | ✓ YES (Δ = 0.0000)      | 942.387323   |
-| **CUDA**     | **GPU** | **1.2574** | **1.4579** | **✓ YES (Δ = 0.0000)** | **942.387323** |
+| Version      | Workers | MAE    | RMSE   | Sim Checksum |
+|--------------|---------|--------|--------|--------------|
+| Serial              | 1   | 0.0000 | 0.0000 | 942.387323 |
+| OpenMP              | 1T  | 0.0000 | 0.0000 | 942.387323 |
+| OpenMP              | 2T  | 0.0000 | 0.0000 | 942.387323 |
+| OpenMP              | 4T  | 0.0000 | 0.0000 | 942.387323 |
+| OpenMP              | 8T  | 0.0000 | 0.0000 | 942.387323 |
+| Pthreads            | 1T  | 0.0000 | 0.0000 | 942.387323 |
+| Pthreads            | 2T  | 0.0000 | 0.0000 | 942.387323 |
+| Pthreads            | 4T  | 0.0000 | 0.0000 | 942.387323 |
+| Pthreads            | 8T  | 0.0000 | 0.0000 | 942.387323 |
+| MPI                 | 1P  | 0.0000 | 0.0000 | 942.387323 |
+| MPI                 | 2P  | 0.0000 | 0.0000 | 942.387323 |
+| MPI                 | 4P  | 0.0000 | 0.0000 | 942.387323 |
+| MPI                 | 8P  | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid 2×4          | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid 4×2          | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid 8×1          | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid 1×8          | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid PT 2×4       | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid PT 4×2       | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid PT 8×1       | 8   | 0.0000 | 0.0000 | 942.387323 |
+| Hybrid PT 1×8       | 8   | 0.0000 | 0.0000 | 942.387323 |
+| **CUDA**            | **GPU** | **0.0000** | **0.0000** | **942.387323** |
 
-**Every run — all CPU versions and the CUDA GPU version — produces an MAE of exactly 1.2574, an RMSE of 1.4579, and an identical similarity-matrix checksum of 942.387323.**  
+**Every run — all CPU versions and the CUDA GPU version — produces MAE = 0.0000 and RMSE = 0.0000 against the serial prediction array, with an identical similarity-matrix checksum of 942.387323.**  
 This confirms:
 - No race conditions in any parallel version (CPU or GPU)
 - Data partitioning and synchronisation are mathematically correct
 - Fixed random seed (SEED = 42) ensures every version operates on the same dataset
-
-![MAE Correctness Chart](../analysis_diagrams/charts/mae_comparison.png)
-
-*Figure 7: MAE correctness across all parallel versions vs. serial baseline. All bars lie within the ±0.001 tolerance band (green shading).*
 
 ---
 
@@ -433,15 +421,15 @@ Run `bash results/run_benchmarks.sh` (now sweeps the three sizes) to regenerate 
 
 | Version                | Total (s) | Speedup | Efficiency | MAE    | RMSE   |
 |------------------------|-----------|---------|------------|--------|--------|
-| **CUDA (GPU)**         | **0.2205**| **38.02** | n/a (GPU)| 1.2574 | 1.4579 |
-| **Serial (baseline)**  | 8.3826    | 1.00    | 1.00       | 1.2574 | 1.4579 |
-| **OpenMP 8T**          | **1.3272**| **6.32**| **0.79**   | 1.2574 | 1.4579 |
-| Pthreads 8T            | 1.4794    | 5.67    | 0.71       | 1.2574 | 1.4579 |
-| MPI 8P                 | 1.6395    | 5.11    | 0.64       | 1.2574 | 1.4579 |
-| Hybrid 8×1             | 1.7053    | 4.92    | 0.61       | 1.2574 | 1.4579 |
-| Hybrid 4×2             | 1.7800    | 4.71    | 0.59       | 1.2574 | 1.4579 |
-| Hybrid 2×4             | 3.9798    | 2.11    | 0.26       | 1.2574 | 1.4579 |
-| Hybrid 1×8             | 7.9433    | 1.06    | 0.13       | 1.2574 | 1.4579 |
+| **CUDA (GPU)**         | **0.2205**| **38.02** | n/a (GPU)| 0.0000 | 0.0000 |
+| **Serial (baseline)**  | 8.3826    | 1.00    | 1.00       | 0.0000 | 0.0000 |
+| **OpenMP 8T**          | **1.3272**| **6.32**| **0.79**   | 0.0000 | 0.0000 |
+| Pthreads 8T            | 1.4794    | 5.67    | 0.71       | 0.0000 | 0.0000 |
+| MPI 8P                 | 1.6395    | 5.11    | 0.64       | 0.0000 | 0.0000 |
+| Hybrid 8×1             | 1.7053    | 4.92    | 0.61       | 0.0000 | 0.0000 |
+| Hybrid 4×2             | 1.7800    | 4.71    | 0.59       | 0.0000 | 0.0000 |
+| Hybrid 2×4             | 3.9798    | 2.11    | 0.26       | 0.0000 | 0.0000 |
+| Hybrid 1×8             | 7.9433    | 1.06    | 0.13       | 0.0000 | 0.0000 |
 
 CUDA on the RTX 3050 is the overall winner (×38). Among the CPU models at 8 workers, OpenMP leads, followed by Pthreads, MPI, then the Hybrid configurations.
 
@@ -505,7 +493,7 @@ None of the implementations reaches the algorithmic limit because the real bottl
 This project successfully implemented and benchmarked a Pearson Correlation Collaborative Filtering Recommender System across five HPC parallelisation strategies. Key findings:
 
 ### Finding 1 — All versions preserve numerical correctness
-Every implementation — CPU and the CUDA GPU version — produces an MAE of exactly **1.2574**, an RMSE of **1.4579**, and a similarity-matrix checksum of **942.387323**, identical to the serial baseline. This confirms zero race conditions and correct data partitioning everywhere.
+Every implementation — CPU and the CUDA GPU version — produces MAE = **0.0000** and RMSE = **0.0000** against the serial prediction array, with a bit-identical similarity-matrix checksum of **942.387323**. This confirms zero race conditions and correct data partitioning everywhere.
 
 ### Finding 2 — CUDA delivers the largest speedup
 ×38 speedup (0.2205 s vs 8.3826 s) on the RTX 3050 Laptop GPU. Thousands of GPU threads and high-bandwidth device memory make the O(N²·M) similarity/prediction phases dramatically faster than any CPU model, while reproducing identical accuracy.

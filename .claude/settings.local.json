@@ -83,7 +83,9 @@
       "Bash(mkdir -p \"hybrid/mpi_openmp\" \"hybrid/mpi_pthreads\")",
       "Bash(git mv *)",
       "Bash(\"/c/Program Files/draw.io/draw.io.exe\" --export --format png --scale 2 --border 10 --output png/diagram_07_mpi_pthreads.png diagram_07_mpi_pthreads.drawio)",
-      "Bash(rm -f build.log analysis_report.aux analysis_report.log analysis_report.toc analysis_report.out)"
+      "Bash(rm -f build.log analysis_report.aux analysis_report.log analysis_report.toc analysis_report.out)",
+      "Bash(py -c \"import ast; ast.parse\\(open\\(r'c:/Users/A S H F A K/Downloads/hpc-mine \\(1\\)/hpc-mine/results/compute_corrected_mae.py'\\).read\\(\\)\\); print\\('py OK'\\)\")",
+      "Bash(py *)"
     ]
   }
 }
