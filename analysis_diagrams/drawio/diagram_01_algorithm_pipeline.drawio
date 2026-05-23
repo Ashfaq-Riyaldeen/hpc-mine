@@ -1,69 +1,76 @@
-<mxfile host="app.diagrams.net" version="21.1.2">
-  <diagram id="page1" name="1. Algorithm Pipeline">
-    <mxGraphModel dx="1000" dy="640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="600" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-
-        <!-- Title -->
-        <mxCell id="ttl" value="User-Based Collaborative Filtering — 5-Phase Algorithm Pipeline" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#1a1a1a;" vertex="1" parent="1">
-          <mxGeometry x="125" y="20" width="600" height="26" as="geometry" />
-        </mxCell>
-        <mxCell id="sub" value="Identical algorithm and data (SEED=42) in every version — only the runtime changes" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="125" y="44" width="600" height="20" as="geometry" />
-        </mxCell>
-
-        <!-- Phases (centre column) -->
-        <mxCell id="p1" value="Phase 1 — Data Generation&#10;O(N·M)  ·  70% sparse  ·  ratings ∈ {1..5}  ·  10% held out as test set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="78" width="320" height="56" as="geometry" />
-        </mxCell>
-        <mxCell id="p2" value="Phase 2 — User Means&#10;O(N·M)  ·  μ_u = average of each user's known ratings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=8;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="162" width="320" height="56" as="geometry" />
-        </mxCell>
-        <mxCell id="p3" value="Phase 3 — Pearson Similarity Matrix   ⚡ BOTTLENECK&#10;O(N²·M)  ·  ~97% of runtime&#10;sim(u,v) = Σ(R_ui−μ_u)(R_vi−μ_v) / [√Σ(R_ui−μ_u)² · √Σ(R_vi−μ_v)²]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=11;arcSize=6;fontColor=#6b0014;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="246" width="320" height="78" as="geometry" />
-        </mxCell>
-        <mxCell id="p4" value="Phase 4 — Rating Predictions&#10;O(N²·M)  ·  weighted average of TOP-K=20 nearest neighbours" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;arcSize=8;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="352" width="320" height="56" as="geometry" />
-        </mxCell>
-        <mxCell id="p5" value="Phase 5 — Accuracy Evaluation&#10;O(|T|)  ·  MAE &amp; RMSE on held-out test set  ·  match ±0.001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="250" y="436" width="320" height="56" as="geometry" />
-        </mxCell>
-
-        <!-- Flow arrows -->
-        <mxCell id="a12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" edge="1" source="p1" target="p2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="a23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" edge="1" source="p2" target="p3" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="a34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" edge="1" source="p3" target="p4" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="a45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" edge="1" source="p4" target="p5" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- Right column: which versions parallelise each phase -->
-        <mxCell id="b1" value="Serial only (RNG not thread-safe)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="610" y="90" width="210" height="32" as="geometry" />
-        </mxCell>
-        <mxCell id="b2" value="Parallel: OpenMP · Pthreads · MPI · CUDA · Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="610" y="174" width="210" height="32" as="geometry" />
-        </mxCell>
-        <mxCell id="b3" value="Parallel — main target of every version" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="610" y="269" width="210" height="32" as="geometry" />
-        </mxCell>
-        <mxCell id="b4" value="Parallel: OpenMP · Pthreads · MPI · CUDA · Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="610" y="364" width="210" height="32" as="geometry" />
-        </mxCell>
-        <mxCell id="b5" value="Reduction: OpenMP/Hybrid · MPI_Reduce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="610" y="448" width="210" height="32" as="geometry" />
-        </mxCell>
-
-        <mxCell id="e1" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#999999;strokeWidth=1.5;" edge="1" source="p1" target="b1" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;strokeWidth=1.5;" edge="1" source="p2" target="b2" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;strokeWidth=1.5;" edge="1" source="p3" target="b3" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#d6b656;strokeWidth=1.5;" edge="1" source="p4" target="b4" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#6c8ebf;strokeWidth=1.5;" edge="1" source="p5" target="b5" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <!-- Legend (left) -->
-        <mxCell id="lt" value="N = users, M = items&#10;Default: N = M = 1000" style="text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#444444;" vertex="1" parent="1">
-          <mxGeometry x="30" y="260" width="180" height="50" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="page1" name="1. Algorithm Pipeline">
+        <mxGraphModel dx="1276" dy="313" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="600" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ttl" value="User-Based Collaborative Filtering - 5 Phase Algorithm Pipeline" style="text;html=1;align=center;verticalAlign=middle;fontStyle=1;fontSize=16;fontColor=#1a1a1a;" parent="1" vertex="1">
+                    <mxGeometry x="125" y="20" width="600" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="sub" value="Identical algorithm and data (SEED=42) in every version : only the runtime changes" style="text;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="125" y="44" width="600" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1" value="Phase 1&amp;nbsp; Data Generation&lt;br&gt;O(N·M)  ·  70% sparse  ·  ratings ∈ {1..5}  ·  10% held out as test set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="78" width="320" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2" value="Phase 2&amp;nbsp; User Means&lt;br&gt;O(N·M)  ·  μ_u = average of each user&#39;s known ratings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="162" width="320" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="p3" value="Phase 3&amp;nbsp; Pearson Similarity Matrix&amp;nbsp;&lt;br&gt;O(N²·M)  ·  ~97% of runtime" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=11;arcSize=6;fontColor=#6b0014;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="246" width="320" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="p4" value="Phase 4&amp;nbsp; Rating Predictions&lt;br&gt;O(N²·M)  ·  weighted average of TOP-K=20 nearest neighbours" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="352" width="320" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="p5" value="Phase 5&amp;nbsp; Accuracy Evaluation&lt;br&gt;O(|T|)  ·  MAE &amp;amp; RMSE on held-out test set  ·  match ±0.001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;arcSize=8;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="436" width="320" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="a12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" parent="1" source="p1" target="p2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="a23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" parent="1" source="p2" target="p3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="a34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" parent="1" source="p3" target="p4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="a45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#555555;" parent="1" source="p4" target="p5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b1" value="Serial only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="90" width="210" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="b2" value="Parallel: OpenMP · Pthreads · MPI · CUDA · Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="174" width="210" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="b3" value="Parallel: main target of every version" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="269" width="210" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="b4" value="Parallel: OpenMP · Pthreads · MPI · CUDA · Hybrid" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="364" width="210" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="b5" value="Reduction: OpenMP/Hybrid · MPI_Reduce" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="448" width="210" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#999999;strokeWidth=1.5;" parent="1" source="p1" target="b1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;strokeWidth=1.5;" parent="1" source="p2" target="b2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;strokeWidth=1.5;" parent="1" source="p3" target="b3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#d6b656;strokeWidth=1.5;" parent="1" source="p4" target="b4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="html=1;dashed=1;endArrow=open;endFill=0;strokeColor=#6c8ebf;strokeWidth=1.5;" parent="1" source="p5" target="b5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="lt" value="N = users, M = items&#xa;Default: N = M = 1000" style="text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#444444;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="269" width="180" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
