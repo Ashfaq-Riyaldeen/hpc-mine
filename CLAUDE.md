@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A university HPC project (EC7207 / EE7218, Group 11): one **User-Based Collaborative Filtering recommender** (Pearson-correlation similarity) implemented **seven times** — Serial, OpenMP, Pthreads, MPI, CUDA, Hybrid MPI+OpenMP, and Hybrid MPI+Pthreads — so their performance and accuracy can be compared. The deliverable is the comparison itself (the analysis report + diagrams), not a production system.
+A university HPC project (EC7207 / EE7218, Group 11): one **User-Based Collaborative Filtering recommender** (Pearson-correlation similarity) implemented **seven times** — Serial, OpenMP, Pthreads, MPI, CUDA, Hybrid MPI+OpenMP, and Hybrid MPI+Pthreads — so their performance and accuracy can be compared. The deliverable is the comparison itself (the analysis report + diagrams), not a production system.
 
 ## The core invariant (read this before editing any `*_recommender.*`)
 
